@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   hashlib.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/06/06 15:35:22 by jye               #+#    #+#             */
+/*   Updated: 2017/06/16 17:28:35 by jye              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef HASHLIB_H
 # define HASHLIB_H
@@ -6,38 +17,35 @@
 # include <stdint.h>
 # include "lst.h"
 
-# define HASH_TABLE struct s_hash_table
-# define BUCKET		struct s_bucket
-
 # define HT_SEARCH		0x0
 # define HT_NOSEARCH	0x1
 
-# define HT_DEFAULT_BUCKET 0x1fff
+# define HT_DEFAULT_BUCKET 0x2000
 
-# define HASH_INDEX(k, t, h) ((h = hash_string(k)) & (t)->nbuckets)
+# define HT_INDEX(k, t, h) ((h = hash_string(k)) % (t)->nbuckets)
 
-struct	s_hash_table
+typedef struct	s_hashtable
 {
 	t_lst	**bucket;
 	int		nentries;
 	int		nbuckets;
-};
+}				t_hashtable;
 
-struct	s_bucket
+typedef struct	s_bucket
 {
 	char		*key;
 	void		*item;
 	uint64_t	khash;
 	int			naccess;
-};
+}				t_bucket;
 
-HASH_TABLE	*init_hashtable(size_t nbuckets);
-HASH_TABLE	*hash_copytable(HASH_TABLE *table);
-uint64_t	hash_string(const char *key);
-BUCKET		*hash_search(HASH_TABLE *table, char *key);
-BUCKET		*hash_insert(HASH_TABLE *table, char *key, int options);
-int			hash_resizetable(HASH_TABLE *table, size_t nbuckets);
-void		flush_buckets(HASH_TABLE *table, void (*flush)());
-void		flush_hashtable(HASH_TABLE *table, void (*flush)());
+t_hashtable		*init_hashtable(size_t nbuckets);
+t_hashtable		*hash_copytable(t_hashtable *table, void *(*dup)());
+uint64_t		hash_string(const char *key);
+t_bucket		*hash_search(t_hashtable *table, char *key);
+t_bucket		*hash_insert(t_hashtable *table, char *key, int options);
+int				hash_resizetable(t_hashtable *table, size_t nbuckets);
+int				hash_popentry(t_hashtable *table, char *key, void (*flush)());
+void			flush_hashtable(t_hashtable *table, void (*flush)());
 
 #endif

@@ -1,18 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/06/16 19:06:11 by jye              ###   ########.fr       */
+/*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
+/*   Updated: 2017/06/16 19:06:09 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
+#include <stdlib.h>
 
-# include "lst.h"
+#include "hashlib.h"
+#include "parser.h"
+#include "token.h"
 
-#endif
+t_lst	*parsetoken(t_lst *token)
+{
+	syntaxcheck(token);
+	processtoken(token);
+}

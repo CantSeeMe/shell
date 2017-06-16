@@ -1,0 +1,10 @@
+minishell
+a.out
+a.out.dSYM
+*.o
+*.exe
+*.a
+*~
+#*#
+.#*
+debug
