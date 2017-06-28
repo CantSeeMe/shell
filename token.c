@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:31 by jye               #+#    #+#             */
-/*   Updated: 2017/06/16 18:44:34 by jye              ###   ########.fr       */
+/*   Updated: 2017/06/21 18:45:40 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ static t_symbol				eval_token(char *s)
 		++s;
 	if (*s == 0)
 		return (number);
-	else if (strchr(SYMBREAK, *s))
-		return (-1);
 	else
 		return (word);
 }
@@ -48,8 +46,24 @@ static t_token				*init_token(char *s, t_symbol sym)
 
 static char					*goto_lastsym(char *s)
 {
-	while (*s && strchr(SYMBREAK, *s))
-		++s;
+	char	*e;
+	char	c;
+
+	e = s;
+	while (*e && strchr(SYMBREAK, *e))
+		++e;
+	while (e != s)
+	{
+		c = *e;
+		*e = 0;
+		if (hash_search(g_httoken, s))
+		{
+			*e = c;
+			return (e);
+		}
+		*e = c;
+		e -= 1;
+	}
 	return (s);
 }
 
