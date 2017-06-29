@@ -1,22 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_error.c                                      :+:      :+:    :+:   */
+/*   shvar.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/28 19:20:46 by jye               #+#    #+#             */
-/*   Updated: 2017/06/29 17:20:37 by jye              ###   ########.fr       */
+/*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
+/*   Updated: 2017/06/29 19:03:39 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include "parser.h"
+#include <stdlib.h>
+#include "hashlib.h"
 
-void		parse_error(char *to, int errortype)
+#include <string.h>
+
+t_hashtable	g_htvar;
+
+int		insert_shvar(char *s, int envp)
 {
-	static const char *e[] = {"%s: unexpected token '%s'\n",
-								"%s: expected token near '%s'\n"};
+	char	*ptr;
+	char	*key;
+	char	*value;
 
-	dprintf(2, e[errortype], PROGRAM_NAME, to);
+	ptr = strchr(s, '=');
+	*ptr = 0;
+	value = NULL;
+	if ((key = strdup(s)) == 0 ||
+		(value = strdup(ptr + 1)) == 0)
+	{
+		free(key);
+		free(value);
+		return (1);
+	}
+	return (0);
 }

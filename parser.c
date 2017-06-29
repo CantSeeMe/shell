@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/06/28 20:06:21 by jye              ###   ########.fr       */
+/*   Updated: 2017/06/29 17:22:49 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,8 @@ void	parse_command(t_command *co)
 	while (argv_token)
 	{
 		to = (t_token *)argv_token->data;
-		if (to->sym >= greater || (to->sym == number && to->symbreak && argv_token->next))
+		if (to->sym >= greater ||
+			(to->sym == number && to->symbreak && argv_token->next))
 		{
 			if ((rd = get_redirection(&argv_token)) == 0)
 				continue ;

@@ -1,22 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_error.c                                      :+:      :+:    :+:   */
+/*   shvar.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/28 19:20:46 by jye               #+#    #+#             */
-/*   Updated: 2017/06/29 17:20:37 by jye              ###   ########.fr       */
+/*   Created: 2017/06/29 17:23:44 by jye               #+#    #+#             */
+/*   Updated: 2017/06/29 19:03:40 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include "parser.h"
+#ifndef SHVAR_H
+# define SHVAR_H
 
-void		parse_error(char *to, int errortype)
+# include "hashlib.h"
+
+extern t_hashtable	g_htvar;
+
+typedef struct	s_shvar
 {
-	static const char *e[] = {"%s: unexpected token '%s'\n",
-								"%s: expected token near '%s'\n"};
+	char	*key;
+	char	*value;
+	int		envp;
+}				t_shvar;
 
-	dprintf(2, e[errortype], PROGRAM_NAME, to);
-}
+#endif
