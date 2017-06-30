@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/06/29 17:22:49 by jye              ###   ########.fr       */
+/*   Updated: 2017/06/30 15:50:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,17 +155,4 @@ void	parse_token(t_lst *clst)
 		parse_command((t_command *)clst->data);
 		clst = clst->next;
 	}
-}
-
-int		main(int ac, char **av)
-{
-	t_lst	*t;
-
-	init_tokenizer();
-	t = tokenize(av[1]);
-	if (syntax_check(t))
-		return (1);
-	t = split_token(t);
-	parse_token(t);
-	exit(0);
 }
