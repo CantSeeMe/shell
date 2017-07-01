@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/07/01 17:58:19 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/01 18:27:30 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,21 @@
 
 t_hashtable		*g_htccsh;
 
+int		chash_init(void)
+{
+	if ((g_htccsh = init_hashtable(HT_DEFAULT_BUCKET)) == 0)
+		return (1);
+	else
+		return (0);
+}
+
 int		chash_insert(t_ccsh *c)
 {
 	t_bucket	*item;
 	t_ccsh		*cmd;
 
-	item = hash_insert(g_htccsh, c->key, HT_NOSEARCH);
-	
+	if ((item = hash_insert(g_htccsh, c->key, HT_NOSEARCH)) == 0)
+		return (1);
 }
 
 char	*cat_path_file(char *cur_dir, char *file)
@@ -74,7 +82,7 @@ int		insert_direx(char *envp)
 
 int		insert_builtin(void)
 {
-
+	return (0);
 }
 
 int		boot_envp_cmd(char *envp)
