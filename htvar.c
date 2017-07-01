@@ -6,14 +6,14 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/06/30 16:56:31 by root             ###   ########.fr       */
+/*   Updated: 2017/07/01 16:14:58 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
 #include "hashlib.h"
-#include "shvar.h"
+#include "htvar.h"
 #include "lst.h"
 
 //
