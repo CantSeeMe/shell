@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:31 by jye               #+#    #+#             */
-/*   Updated: 2017/06/21 18:45:40 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/10 13:55:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static t_symbol				eval_token(char *s)
 	t_bucket				*item;
 
 	if ((item = hash_search(g_httoken, s)) != NULL)
-		return (((struct s_tokentype *)(item->item))->sym);
+		return (((struct s_tokentype *)(item->c))->sym);
 	while (*s && *s >= 0x30 && *s <= 0x39)
 		++s;
 	if (*s == 0)

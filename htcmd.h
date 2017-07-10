@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:35 by jye               #+#    #+#             */
-/*   Updated: 2017/07/01 16:53:06 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/10 14:57:01 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ typedef struct		s_ccsh
 {
 	char			*key;
 	union u_ccty	c;
-	int				cshell;
 }					t_ccsh;
 
 #endif

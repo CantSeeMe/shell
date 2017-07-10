@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 15:35:22 by jye               #+#    #+#             */
-/*   Updated: 2017/06/16 17:28:35 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/10 14:00:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ typedef struct	s_hashtable
 typedef struct	s_bucket
 {
 	char		*key;
-	void		*item;
+	void		*c;
 	uint64_t	khash;
 	int			naccess;
 }				t_bucket;
@@ -46,6 +46,6 @@ t_bucket		*hash_search(t_hashtable *table, char *key);
 t_bucket		*hash_insert(t_hashtable *table, char *key, int options);
 int				hash_resizetable(t_hashtable *table, size_t nbuckets);
 int				hash_popentry(t_hashtable *table, char *key, void (*flush)());
-void			flush_hashtable(t_hashtable *table, void (*flush)());
+void			hash_flushtable(t_hashtable *table, void (*flush)());
 
 #endif

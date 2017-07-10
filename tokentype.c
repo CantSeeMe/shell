@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 17:11:44 by jye               #+#    #+#             */
-/*   Updated: 2017/06/29 17:22:03 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/10 13:54:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int					init_tokenizer(void)
 			flush_hashtable(g_httoken, NULL);
 			return (1);
 		}
-		item->item = &g_tokentype[i];
+		item->c = &g_tokentype[i];
 		++i;
 	}
 	return (0);

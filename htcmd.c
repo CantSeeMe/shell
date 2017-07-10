@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/07/01 18:27:30 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/10 15:04:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,36 +19,31 @@
 
 #include <string.h>
 
-#define S_XMASK(x) ((x & S_IXUSR) | (x & S_IXGRP) | (x & S_IXOTH))
-
-t_hashtable		*g_htccsh;
+t_hashtable		*g_htext;
+t_hashtable		*g_htbi;
 
 int		chash_init(void)
 {
-	if ((g_htccsh = init_hashtable(HT_DEFAULT_BUCKET)) == 0)
+	if ((g_htext = init_hashtable(HT_DEFAULT_BUCKET)) == 0 ||
+		(g_htbi = init_hashtable(96)) == 0)
+	{
+		free(g_htext);
+		free(g_htbi);
 		return (1);
+	}
 	else
 		return (0);
 }
 
-int		chash_insert(t_ccsh *c)
+char	*cat_pathfile(char *cur_dir, char *file)
 {
-	t_bucket	*item;
-	t_ccsh		*cmd;
-
-	if ((item = hash_insert(g_htccsh, c->key, HT_NOSEARCH)) == 0)
-		return (1);
-}
-
-char	*cat_path_file(char *cur_dir, char *file)
-{
-	char	*path;
-	size_t	cd_len;
-	size_t	f_len;
+	static char	path[PATH_MAX];
+	size_t		cd_len;
+	size_t		f_len;
 
 	cd_len = strlen(cur_dir);
 	f_len = strlen(file);
-	if ((path = malloc(cd_len + f_len + 1)) == 0)
+	if (cd_len + f_len > PATH_MAX)
 		return (0);
 	memcpy(path, cur_dir, cd_len);
 	memcpy(path + cd_len, file, f_len);
@@ -56,51 +51,73 @@ char	*cat_path_file(char *cur_dir, char *file)
 	return (path);
 }
 
-int		insert_direx(char *envp)
-{
-	DIR				*cwd;
-	char			*cat;
-	struct dirent	*cwf;
-	struct stat		fs;
-
-	if ((cwd = opendir(envp)) == 0)
-		return (1);
-	while ((cwf = readdir(cwd)))
-	{
-		if ((cat = cat_path_file(envp, cwf->d_name)) == 0)
-			continue ;
-		stat(cat, &fs);
-		if (S_XMASK(fs.st_mode))
-		{
-			/* init s_ccsh */
-			/* insert s_ccsh, if fail, ignore, proceed to next*/
-		}
-		free(cat);
-	}
-	return (0);
-}
-
-int		insert_builtin(void)
-{
-	return (0);
-}
-
-int		boot_envp_cmd(char *envp)
+char	*path_lookup(char *key, char *envp)
 {
 	char	*ptr;
+	char	*path;
 
-	/* first step builtin */
-	/* second step environment PATH command */
 	while (envp != 1)
 	{
 		ptr = strchr(envp, ':');
 		if (ptr)
 			*ptr = 0;
-		if (insert_direx(envp))
-			;
+		path = cat_pathfile(envp, key);
+		if (access(path, X_OK))
+			return (path);
 		if (ptr)
 			ptr = ':';
 		envp = ptr + 1;
 	}
-	return (1);
+	return (0);
+}
+
+t_ccsh	*init_ccsh(char *key, void *c, int mode)
+{
+	t_ccsh	*n;
+
+	if ((n = malloc(sizeof(*n))) == 0)
+		return (0);
+	n->key = strdup(key);
+	if (mode)
+		n->c.path = strdup(c);
+	else
+		n->c.func = c;
+	return (n);
+}
+
+void	free_ccsh(t_ccsh *c)
+{
+	free(cc->c.path);
+	free(cc->key);
+	free(cc);
+}
+
+char	*cht_lookup(char *key, char *envp)
+{
+	char		*cpath;
+	t_bucket	*item;
+	t_ccsh		*cc;
+
+	item = hash_search(g_htext, key);
+	if (item == 0)
+	{
+		if ((cpath = path_lookup(key, envp)) == 0)
+			return (0);
+		if ((cc = init_ccsh()) == 0)
+			return (cpath);
+		if ((item = hash_insert(g_htext, key, HT_NOSEARCH)) == 0)
+		{
+			free(cc->c.path);
+			free(cc->key);
+			free(cc);
+			return (cpath);
+		}
+		item->c = cc;
+	}
+	return (((t_ccsh *)item->c)->c.path);
+}
+
+void	*chash_flush(void)
+{
+	hash_flushtable(g_htext, free_ccsh);
 }

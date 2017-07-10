@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 16:04:05 by jye               #+#    #+#             */
-/*   Updated: 2017/06/16 17:34:15 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/10 14:00:56 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ t_bucket		*hash_insert(t_hashtable *table, char *key, int options)
 		push_lst__(table->bucket + HT_INDEX(key, table, khash), item);
 		item->key = key;
 		item->khash = khash;
-		item->item = NULL;
+		item->c = NULL;
 		item->naccess = 0;
 	}
 	return (item);
@@ -146,8 +146,9 @@ int			hash_popentry(t_hashtable *table, char *key, void (*flush)())
 		if (item->khash == khash)
 		{
 			if (flush)
-				flush(item->item);
-			pop_lst__(bucket == table->bucket[i] ? table->bucket + i : &bucket, free);
+				flush(item->c);
+			pop_lst__(bucket == table->bucket[i] ?
+					  table->bucket + i : &bucket, free);
 			return (0);
 		}
 		bucket = bucket->next;
@@ -155,7 +156,7 @@ int			hash_popentry(t_hashtable *table, char *key, void (*flush)())
 	return (1);
 }
 
-void		flush_hashtable(t_hashtable *table, void (*flush)())
+void		hash_flushtable(t_hashtable *table, void (*flush)())
 {
 	t_lst		*n;
 	t_bucket	*item;
@@ -169,7 +170,7 @@ void		flush_hashtable(t_hashtable *table, void (*flush)())
 		{
 			item = (t_bucket *)n->data;
 			if (flush)
-				flush(item->item);
+				flush(item->c);
 			pop_lst__(&n, free);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/07/01 16:14:58 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/10 13:53:51 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ int		vhash_insert(t_var *var)
 
 	if ((item = hash_insert(g_htvar, var->key, HT_SEARCH)) == 0)
 		return (1);
-	if (item->item)
+	if (item->c)
 	{
-		c = (t_var *)item->item;
+		c = (t_var *)item->c;
 		free(c->value);
 		c->value = var->value;
 		c->envp = var->envp;
@@ -50,7 +50,7 @@ int		vhash_insert(t_var *var)
 	}
 	else
 	{
-		item->item = var;
+		item->c = var;
 	}
 	return (0);
 }
@@ -62,7 +62,7 @@ void	vhash_pop(char *key)
 
 	if ((item = hash_search(g_htvar, key)) == 0)
 		return ;
-	var = (t_var *)item->item;
+	var = (t_var *)item->c;
 	if (var->lock)
 	{
 		var->envp = 0;
