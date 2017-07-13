@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 16:07:52 by jye               #+#    #+#             */
-/*   Updated: 2017/07/13 17:25:15 by jye              ###   ########.fr       */
+/*   Updated: 2017/07/13 18:30:31 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <signal.h>
 #include <errno.h>
 #include <string.h>
-#include "lst.h"
 
 typedef struct	s_job
 {
@@ -30,31 +29,30 @@ int		main(int ac, char **av, char **envp)
 	char	*smth[] = {"ls", "-R", getenv("HOME"), NULL};
 	int		status;
 	sigset_t	set;
-	sigset_t	old;
 
-	sigfillset(&set);
-	sigdelset(&set, SIGSTOP);
-	sigdelset(&set, SIGINT);
+	sigemptyset(&set); // initialize sigset
+	sigaddset(&set, SIGTSTP); // adding some mask
+	sigaddset(&set, SIGINT);
 
-	sigprocmask(SIG_BLOCK, &set, NULL);
 	id = fork();
 	if (id == 0) /* child */
 	{
-		sigprocmask(SIG_UNBLOCK, &set, NULL);
-		execve("/bin/ls", smth, envp);
-		return (0);
+//		sigprocmask(SIG_UNBLOCK, &set, NULL); // unblock signal on current process
+		return (execve("/bin/ls", smth, envp));
 	}
 	else
 	{
 		/* father */
-//		kill(id, SIGSTOP);
+		sigprocmask(SIG_BLOCK, &set, NULL); // block signal on current process
 		waitpid(id, &status, WUNTRACED);
-		dprintf(2, "%d %d %s\n", WEXITSTATUS(status), id, strerror(errno));
+		dprintf(2, "%d %d %d %d %s\n", WEXITSTATUS(status), WTERMSIG(status),
+				WCOREDUMP(status), WSTOPSIG(status), strerror(errno));
 		if (WIFSTOPPED(status))
 		{
 			kill(id, SIGCONT);
 		}
 	}
-	waitpid(id, &status, WUNTRACED);
+	waitpid(id, &status, 0);
 	dprintf(2, "%d %d %s\n", WEXITSTATUS(status), id, strerror(errno));
+	/* WNOHANG for no pchild process wait */
 }
