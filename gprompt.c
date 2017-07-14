@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:51 by root              #+#    #+#             */
-/*   Updated: 2017/07/12 11:10:08 by root             ###   ########.fr       */
+/*   Updated: 2017/07/13 14:22:04 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include "hashlib.h"
 
 #include <termios.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 struct termios	g_otermios;
 t_buffer		g_buffer;

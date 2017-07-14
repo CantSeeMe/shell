@@ -6,22 +6,25 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/07/12 15:49:22 by root             ###   ########.fr       */
+/*   Updated: 2017/07/14 10:07:44 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <termios.h>
-#include <cusrses.h>
+#include <curses.h>
 #include <term.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
+#include <sys/ioctl.h>
+
 
 #include "prompt.h"
 #include "lst.h"
 
-int		putchar_(char c)
+int		putchar_(int c)
 {
 	return (write(STDERR_FILENO, &c, 1));
 }
@@ -34,14 +37,14 @@ int		set_manual_ttymode(void)
 
 	tcgetattr(STDIN_FILENO, &termios);
 	g_otermios = termios;
-	termios.lflag &= ~(ISIG | ECHO | ECHOE | ICANON);
-	return (tcsetattr(STDIN_FILENO, &termios, TCSADRAIN));
+	termios.c_lflag &= ~(ISIG | ECHO | ECHOE | ICANON);
+	return (tcsetattr(STDIN_FILENO, TCSADRAIN, &termios));
 
 }
 
-int		set_original_ttymode(void)
+int		revert_manual_ttymode(void)
 {
-	return (tcsetattr(STDIN_FILENO, &g_termios, TCSADRAIN))
+	return (tcsetattr(STDIN_FILENO, TCSADRAIN, &g_otermios));
 }
 
 /********** cursor **************/
@@ -62,6 +65,11 @@ void	move_cursor(ssize_t s)
 		while (g_cursor.x >= g_ttysize.x)
 		{
 			g_cursor.y += 1;
+			if (g_cursor.y >= g_ttysize.y)
+			{
+				g_pactual.y -= 1;
+				g_cursor.y -= 1;
+			}
 			g_cursor.x = g_cursor.x - g_ttysize.x;
 		}
 	}
@@ -80,6 +88,7 @@ void	update_cursor(void)
 	s[read(STDIN_FILENO, s, 15)] = 0;
 	g_cursor.x = atoi(strchr(s, ';') + 1) - 1;
 	g_cursor.y = atoi(strchr(s, '[') + 1) - 1;
+	tcflush(STDIN_FILENO, TCIFLUSH);
 }
 
 /********************************/
@@ -90,7 +99,7 @@ int		update_screen_size(void)
 {
 	struct winsize w;
 
-	if (ioctl(STDIN_FILENO, TIOGCWINSZ, &w) == -1)
+	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &w) == -1)
 		return (1);
 	g_ttysize.x = w.ws_col;
 	g_ttysize.y = w.ws_row;
@@ -126,6 +135,7 @@ void	refresh_buffer(int rows, int cols, char *buffer, size_t count)
 		}
 		if (rows >= g_ttysize.y)
 		{
+			g_pactual.y -= 1;
 			rows -= 1;
 			tputs(tgetstr("sf", 0), 1, putchar_);
 		}
@@ -150,35 +160,72 @@ int		realloc_buffer(size_t s)
 
 /********************************/
 
+/********keyboard event**********/
 
-void	keyboard_event()
+void	default_event(uint64_t c, int r)
 {
-	static ..[];
-	int		event;
 
-	event = ()
 }
 
-char	*prompt_user()
+void	ctrl_event(uint64_t c, int r)
+{
+
+}
+
+void	meta_event(uint64_t c, int r)
+{
+
+}
+
+void	special_event(uint64_t c, int r)
+{
+
+}
+
+void	keyboard_event(uint64_t	c, int r)
+{
+	static void	(*f[])(uint64_t, int) = {
+		default_event, ctrl_event, meta_event, special_event};
+	int			event;
+
+	event = IS_BACKSPACE_KEYCODE(c) * 4;
+	event += IS_SPECIAL_KEYCODE(c) * 3;
+	event += IS_META_MODIFIER(c) * 2;
+	event += IS_CTRL_MODIFIER(c);
+//	f[event](c, r);
+}
+
+/********************************/
+
+char	*prompt_user(char *p, size_t psize)
 {
 	uint64_t	c;
-	ssize_t		r;
+	int			r;
 
-//	signal(SIGINT, );
+	if (g_buffer.s == 0)
+		malloc_buffer(DEFAULT_BUFFER_SIZE);
 	if (set_manual_ttymode())
 	{
 		// tcsetattr failed, setting back original termios attribute
-		tcsetattr(STDIN_FILENO, &g_otermios, TCSANOW);
+		tcsetattr(STDIN_FILENO, TCSADRAIN, &g_otermios);
 		return (0);
 	}
-	
-	
+//	signal(SIGINT, );
 	while (42)
 	{
 //		signal(SIGWINCH, );
 		r = read(STDIN_FILENO, &c, sizeof(c));
-//		some action here
+		keyboard_event(c, r);
+		dprintf(1, "%lx\n", c);
+		if (c == 'q')
+			break ;
 		c = 0;
 	}
+	revert_manual_ttymode();
 	return (g_buffer.s);
+}
+
+int		main(int ac, char **av, char **envp)
+{
+	prompt_user();
 }
