@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/07/26 17:55:03 by root             ###   ########.fr       */
+/*   Updated: 2017/07/27 12:15:58 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,6 @@ void	buff_next_word(void);
 ** screen cursor motion
 */
 
-void	shift_cursor(int s);
+void	shift_cursor(int current, int target);
 
 #endif

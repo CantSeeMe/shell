@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/07/27 11:43:26 by root             ###   ########.fr       */
+/*   Updated: 2017/07/27 13:52:49 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ int		set_manual_ttymode(void)
 
 	tcgetattr(STDIN_FILENO, &termios);
 	g_otermios = termios;
-	termios.c_lflag &= ~(ISIG | ECHO | ECHOE | ICANON);
+	termios.c_oflag &= ~OPOST;
+	termios.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
 	return (tcsetattr(STDIN_FILENO, TCSANOW, &termios));
 }
 
@@ -48,26 +49,30 @@ int		revert_manual_ttymode(void)
 
 /********** cursor **************/
 
-void	shift_cursor(int s)
+void	shift_cursor(int current, int target)
 {
-	g_curs.col += s;
-	g_curs.row += g_curs.col / g_winsize.col;
-	g_curs.col = g_curs.col % g_winsize.col;
-}
+	int	col;
+	int	row;
 
-void	refresh_cursor(void)
-{
-	tputs(tparm(tgetstr("cm", 0), g_curs.row, g_curs.col), 0, putchar_);
-}
+	col = ((g_psize + target) % g_winsize.col) -
+		  ((g_psize + current) % g_winsize.col);
+	row = ((g_psize + target) / g_winsize.col) -
+		  ((g_psize + current) / g_winsize.col);
+	while (row > 0)
+	{
+		tputs(tgetstr("do", 0), 0, putchar_);
+		row--;
+	}
+	while (row++ < 0)
+		tputs(tgetstr("up", 0), 0, putchar_);
 
-void	query_cursor(void)
-{
-	char	cr[20];
-
-	write(STDOUT_FILENO, "\e[6n", 4);
-	cr[read(STDIN_FILENO, cr, 20)] = 0;
-	g_curs.row = atoi(strchr(cr, '[') + 1) - 1;
-	g_curs.col = atoi(strchr(cr, ';') + 1) - 1;
+	while (col > 0)
+	{
+		tputs(tgetstr("nd", 0), 0, putchar_);
+		col--;
+	}
+	while (col++ < 0)
+		tputs(tgetstr("le", 0), 0, putchar_);
 }
 
 /********************************/
@@ -111,30 +116,24 @@ int		realloc_buffer(size_t s)
 	return (0);
 }
 
-void	refresh_buffer(char *s, ssize_t slen)
+void	refresh_buffer(int cursor, char *s, ssize_t slen)
 {
-	int		col;
-	int		row;
+	static char	q[] = {0, ' ', '\r'};
+	int			col;
 
-	col = g_curs.col;
-	row = g_curs.row;
+	col = (cursor + g_psize) % g_winsize.col;
 	while (slen--)
 	{
-		write(STDOUT_FILENO, s++, 1);
-		if (++col >= g_winsize.col)
+		q[0] = *s++;
+		++col;
+		if (col >= g_winsize.col)
 		{
-			row += 1;
+			write(STDERR_FILENO, q, 3);
 			col = 0;
 		}
-		if (col == 0)
+		else
 		{
-			tputs(tgetstr("cr", 0), 0, putchar_);
-			if (row >= g_winsize.row)
-			{
-				g_curs.row -= 1;
-				row -= 1;
-			}
-			tputs(tgetstr(row >= g_winsize.row ? "sf" : "do", 0), 0, putchar_);
+			write(STDERR_FILENO, q, 1);
 		}
 	}
 }
@@ -155,9 +154,9 @@ void	default_event(uint64_t c, int r)
 		   g_buffer.len - g_cubuf);
 	memcpy(g_buffer.s + g_cubuf, &c, r);
 	g_buffer.len += r;
-	refresh_buffer(g_buffer.s + g_cubuf, g_buffer.len - g_cubuf);
-	shift_cursor(r);
+	refresh_buffer(g_cubuf, g_buffer.s + g_cubuf, g_buffer.len - g_cubuf);
 	g_cubuf += r;
+	shift_cursor(g_buffer.len, g_cubuf);
 }
 
 void	place_holder(void)
@@ -251,27 +250,24 @@ void	keyboard_event(uint64_t	c, int r)
 		ctrl_event(c);
 	else
 		default_event(c, r);
-	refresh_cursor();
 }
 
 /********************************/
 
 void	update_tty(int s)
 {
-	int		row;
-	int		col;
+	int	row;
 
+	(void)s;
 	update_screen_size();
-	col = g_curs.col % g_winsize.col;
-	row = g_curs.col / g_winsize.col;
+	row = (g_psize + g_cubuf) / g_winsize.col;
 	while (row--)
 		tputs(tgetstr("up", 0), 0, putchar_);
 	tputs(tgetstr("cr", 0), 0, putchar_);
 	tputs(tgetstr("cd", 0), 0, putchar_);
-//	write(STDOUT_FILENO, g_prompt, strlen(g_prompt));
-	refresh_buffer(g_buffer.s, g_buffer.len);
-	shift_cursor(g_cubuf - g_buffer.len);
-	refresh_cursor();
+//write(STDERR_FILENO, g_prompt, strlen(g_prompt));
+	refresh_buffer(0, g_buffer.s, g_buffer.len);
+	shift_cursor(g_buffer.len, g_cubuf);
 }
 
 char	*prompt_user(char *p, size_t psize)
@@ -289,11 +285,10 @@ char	*prompt_user(char *p, size_t psize)
 	}
 	tgetent(getenv("TERM"), NULL);
 	update_screen_size();
-	query_cursor();
 //	signal(SIGINT, );
 	while (42)
 	{
-//		signal(SIGWINCH, update_tty);
+		signal(SIGWINCH, update_tty);
 		c = 0;
 		r = read(STDIN_FILENO, &c, sizeof(c));
 		keyboard_event(c, r);

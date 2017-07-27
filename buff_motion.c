@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/07/27 11:22:49 by root             ###   ########.fr       */
+/*   Updated: 2017/07/27 12:14:47 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,25 +22,25 @@
 
 void	buff_head(void)
 {
-	shift_cursor(-g_cubuf);
+	shift_cursor(g_cubuf, 0);
 	g_cubuf = 0;
 }
 
 void	buff_end(void)
 {
-	shift_cursor(g_buffer.len - g_cubuf);
+	shift_cursor(g_cubuf, g_buffer.len);
 	g_cubuf = g_buffer.len;
 }
 
 void	buff_prev(void)
 {
-	shift_cursor(-(g_cubuf > 0));
+	shift_cursor(g_cubuf, g_cubuf - (g_cubuf > 0));
 	g_cubuf -= g_cubuf > 0;
 }
 
 void	buff_next(void)
 {
-	shift_cursor(g_cubuf < g_buffer.len);
+	shift_cursor(g_cubuf, g_cubuf + (g_cubuf < g_buffer.len));
 	g_cubuf += g_cubuf < g_buffer.len;
 }
 
@@ -65,7 +65,7 @@ void	buff_next_word(void)
 			break ;
 		i++;
 	}
-	shift_cursor(-g_cubuf + i);
+	shift_cursor(g_cubuf, i);
 	g_cubuf = i;
 }
 
@@ -89,6 +89,6 @@ void	buff_prev_word(void)
 			break ;
 		i--;
 	}
-	shift_cursor((i - g_cubuf) + !ptr);
+	shift_cursor(g_cubuf, i + !ptr);
 	g_cubuf = i + !ptr;
 }
