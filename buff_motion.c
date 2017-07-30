@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/07/27 12:14:47 by root             ###   ########.fr       */
+/*   Updated: 2017/07/29 20:40:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,4 +91,76 @@ void	buff_prev_word(void)
 	}
 	shift_cursor(g_cubuf, i + !ptr);
 	g_cubuf = i + !ptr;
+}
+
+void	buff_del_prev(void)
+{
+	if (g_cubuf == 0)
+		return ;
+	g_cubuf -= 1;
+	memcpy(g_buffer.s + g_cubuf,
+		   g_buffer.s + g_cubuf + 1,
+		   g_buffer.len - g_cubuf);
+	shift_cursor(g_cubuf + 1, g_cubuf);
+	g_buffer.len -= 1;
+	g_buffer.s[g_buffer.len] = ' ';
+	refresh_buffer(g_cubuf,
+				   g_buffer.s + g_cubuf,
+				   g_buffer.len - g_cubuf + 1);
+	shift_cursor(g_buffer.len + 1, g_cubuf);
+}
+
+void	buff_del_next(void)
+{
+	if (g_cubuf == g_buffer.len)
+		return ;
+	memcpy(g_buffer.s + g_cubuf,
+		   g_buffer.s + g_cubuf + 1,
+		   g_buffer.len - g_cubuf);
+	g_buffer.len -= 1;
+	g_buffer.s[g_buffer.len] = ' ';
+	refresh_buffer(g_cubuf,
+				   g_buffer.s + g_cubuf,
+				   g_buffer.len - g_cubuf + 1);
+	shift_cursor(g_buffer.len + 1, g_cubuf);
+}
+
+void	buff_del_word(void)
+{
+	int		cubuf;
+	int		diff;
+
+	cubuf = g_cubuf;
+	buff_prev_word();
+	diff = cubuf - g_cubuf;
+	g_buffer.len -= diff;
+	memcpy(g_buffer.s + g_cubuf,
+		   g_buffer.s + cubuf,
+		   g_buffer.len - g_cubuf);
+	memset(g_buffer.s + g_buffer.len, ' ', diff);
+	refresh_buffer(g_cubuf, g_buffer.s + g_cubuf, g_buffer.len - g_cubuf + diff);
+	shift_cursor(g_buffer.len + diff, g_cubuf);
+}
+
+void	buff_new_line(void)
+{
+	int		diff;
+
+	diff = (g_psize + g_buffer.len) / g_winsize.col -
+		(g_psize + g_cubuf) / g_winsize.col;
+	while (diff--)
+	{
+		write(STDERR_FILENO, '\n', 1);
+	}
+	write(STDERR_FILENO, '\r', 1);
+}
+
+int		init_readline(void)
+{
+
+}
+
+void	exit_readline(void)
+{
+	buff_new_line();
 }

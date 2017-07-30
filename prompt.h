@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/07/27 12:15:58 by root             ###   ########.fr       */
+/*   Updated: 2017/07/29 18:30:00 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,19 @@
 **# define KEYCODE_BACKSPACE		0x7f
 */
 /*
-**# define KEYCODE_CTRL_Z			0x1a
-**# define KEYCODE_CTRL_C			0x3
-**# define KEYCODE_CTRL_L			0xc
-**# define KEYCODE_CTRL_K			0xb
-**# define KEYCODE_CTRL_A			0x1
-**# define KEYCODE_CTRL_B			0x2
-**# define KEYCODE_CTRL_E			0x5
-**# define KEYCODE_CTRL_F			0x6
-**# define KEYCODE_CTRL_Y			0x19
-**# define KEYCODE_CTRL_W			0x17
-**# define KEYCODE_CTRL_U			0x15
-**# define KEYCODE_CTRL_SLASH		0x1f
+**# define KEYCODE_CTRL_Z			0x1a ignored
+**# define KEYCODE_CTRL_C			0x3 with kill
+**# define KEYCODE_CTRL_D			0x4 ??...
+**# define KEYCODE_CTRL_L			0xc with termcap
+**# define KEYCODE_CTRL_K			0xb with termcap
+**# define KEYCODE_CTRL_A			0x1 done
+**# define KEYCODE_CTRL_B			0x2 done
+**# define KEYCODE_CTRL_E			0x5 done
+**# define KEYCODE_CTRL_F			0x6 done
+**# define KEYCODE_CTRL_Y			0x19 TODO
+**# define KEYCODE_CTRL_W			0x17 TODO
+**# define KEYCODE_CTRL_U			0x15 TODO
+**# define KEYCODE_CTRL_SLASH		0x1f TODO
 */
 
 # include <stddef.h>
@@ -116,11 +117,15 @@ void	buff_prev(void);
 void	buff_next(void);
 void	buff_prev_word(void);
 void	buff_next_word(void);
+void	buff_del_word(void);
+void	buff_del_next(void);
+void	buff_del_prev(void);
 
 /*
 ** screen cursor motion
 */
 
+void	refresh_buffer(int pos, char *buff, ssize_t slen);
 void	shift_cursor(int current, int target);
 
 #endif

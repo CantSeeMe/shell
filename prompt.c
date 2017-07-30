@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/07/27 13:52:49 by root             ###   ########.fr       */
+/*   Updated: 2017/07/29 20:31:45 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,25 +61,33 @@ void	shift_cursor(int current, int target)
 	while (row > 0)
 	{
 		tputs(tgetstr("do", 0), 0, putchar_);
+//		dprintf(3, "do ");
 		row--;
 	}
 	while (row++ < 0)
+	{
 		tputs(tgetstr("up", 0), 0, putchar_);
-
+//		dprintf(3, "up ");
+	}
 	while (col > 0)
 	{
 		tputs(tgetstr("nd", 0), 0, putchar_);
+//		dprintf(3, "nd ");
 		col--;
 	}
 	while (col++ < 0)
+	{
+//		dprintf(3, "le ");
 		tputs(tgetstr("le", 0), 0, putchar_);
+	}
+//	dprintf(3, "\n");
 }
 
 /********************************/
 
 /*********** screen *************/
 
-int		update_screen_size(void)
+int		update_winsize(void)
 {
 	struct winsize w;
 
@@ -169,9 +177,9 @@ void	ctrl_event(uint64_t c)
 	static void (*f[])() = {
 		buff_head, buff_prev, place_holder, place_holder, buff_end,
 		buff_next, place_holder, place_holder, place_holder, place_holder,
+		exit_readline/*TODO*/, place_holder, place_holder, place_holder, place_holder,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
-		place_holder, place_holder, place_holder, place_holder, place_holder,
-		place_holder, place_holder, place_holder, place_holder, place_holder,
+		place_holder, place_holder, buff_del_word, place_holder, place_holder,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
 		place_holder, place_holder};
 
@@ -215,7 +223,7 @@ void	special_event(uint64_t c)
 	static void (*special2[4])() = {
 		place_holder, place_holder, buff_next_word, buff_prev_word};
 	static void (*special3[4])() = {
-		place_holder, place_holder, place_holder, place_holder};
+		buff_del_next, place_holder, place_holder, place_holder};
 
 	c = c >> 16;
 	if (c >= 0x41 && c <= 0x48)
@@ -227,21 +235,16 @@ void	special_event(uint64_t c)
 		special2[(c >> 24) - 0x41]();
 	}
 	else if ((c & 0x7e30) == 0x7e30 &&
-			((c & 0xff) > 2 && (c & 0xff) <= 6))
+			((c & 0xf) > 2 && (c & 0xf) <= 6))
 	{
 		special3[(c ^ 0x7e30) - 0x3]();
 	}
 }
 
-void	backspace_event(void)
-{
-	
-}
-
 void	keyboard_event(uint64_t	c, int r)
 {
 	if (IS_BACKSPACE_KEYCODE(c))
-		backspace_event();
+		buff_del_prev();
 	else if (IS_SPECIAL_KEYCODE(c))
 		special_event(c);
 	else if (IS_META_MODIFIER(c))
@@ -254,7 +257,7 @@ void	keyboard_event(uint64_t	c, int r)
 
 /********************************/
 
-void	update_tty(int s)
+void	reload_line(int s)
 {
 	int	row;
 
@@ -270,7 +273,7 @@ void	update_tty(int s)
 	shift_cursor(g_buffer.len, g_cubuf);
 }
 
-char	*prompt_user(char *p, size_t psize)
+char	*readline_user(char *p, size_t psize)
 {
 	uint64_t	c;
 	int			r;
@@ -284,15 +287,15 @@ char	*prompt_user(char *p, size_t psize)
 		return (0);
 	}
 	tgetent(getenv("TERM"), NULL);
-	update_screen_size();
+	update_winsize();
 //	signal(SIGINT, );
-	while (42)
+	while (g_trigger & RL_USERLINE)
 	{
-		signal(SIGWINCH, update_tty);
+		signal(SIGWINCH, reload_line);
 		c = 0;
 		r = read(STDIN_FILENO, &c, sizeof(c));
 		keyboard_event(c, r);
-//		dprintf(1, "%lx , %d\n", c, r);
+//		dprintf(1, "%lx , %d\n\r", c, r);
 		if (c == 'q')
 			break ;
 	}
