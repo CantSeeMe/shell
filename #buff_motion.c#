@@ -293,17 +293,6 @@ void	buff_record_delete(int start, int end)
 
 int		buff_record(int end, int action)
 {
-	static size_t	start;
-	static int		last_action;
-	static void		(*act[2])() = {};
-
-	if (last_action != action)
-	{
-		if (last_action != RL_ACTION_MOVE)
-			act[last_action](start, end);
-		last_action = action;
-		start = end;
-	}
 }
 
 void	buff_revert_line(void)

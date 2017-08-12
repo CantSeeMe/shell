@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/07/29 18:30:00 by root             ###   ########.fr       */
+/*   Updated: 2017/07/31 11:32:37 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,15 @@
 
 # define DEFAULT_BUFFER_SIZE 4096
 
-# define IS_SPECIAL_KEYCODE(x) (((x) & 0x5b1b) == 0x5b1b)
-# define IS_META_MODIFIER(x) ((x) == 0x1b)
-# define IS_BACKSPACE_KEYCODE(x) ((x) == 0x7f)
-# define IS_CTRL_MODIFIER(x) ((x) < 0x20)
+# define RL_ACTION_WRITE	0x0
+# define RL_ACTION_DELETE	0x1
+# define RL_ACTION_MOVE		0x2
+
+# define IS_SPECIAL_KEYCODE(x)		(((x) & 0x5b1b) == 0x5b1b)
+# define IS_META_MODIFIER(x)		((x) == 0x1b)
+# define IS_BACKSPACE_KEYCODE(x)	((x) == 0x7f)
+# define IS_CTRL_MODIFIER(x)		((x) < 0x20)
+
 /*
 **# define KEYCODE_ARROW_UP		0x41
 **# define KEYCODE_ARROW_DOWN		0x42
@@ -96,7 +101,6 @@ extern struct termios	g_otermios;
 extern char				*g_prompt;
 extern t_buff			g_buffer;
 
-extern t_curs			g_curs;
 extern t_curs			g_winsize;
 
 extern size_t			g_psize;
@@ -105,7 +109,6 @@ extern size_t			g_cubuf;
 extern t_lst			*g_record;
 extern t_lst			*g_chronicle;
 extern char				*g_yank;
-extern int				g_trigger;
 
 /*
 ** buffer motion
@@ -117,15 +120,37 @@ void	buff_prev(void);
 void	buff_next(void);
 void	buff_prev_word(void);
 void	buff_next_word(void);
+
+void	buff_capitalize(void);
+void	buff_lowtoup(void);
+void	buff_uptolow(void);
+
 void	buff_del_word(void);
 void	buff_del_next(void);
 void	buff_del_prev(void);
+
+void	buff_refresh(int cursor, char *buff, ssize_t slen);
+int		buff_malloc(size_t mlen);
+int		buff_realloc(size_t mlen);
+
+void	buff_newline(void);
+void	buff_delete(void);
 
 /*
 ** screen cursor motion
 */
 
-void	refresh_buffer(int pos, char *buff, ssize_t slen);
 void	shift_cursor(int current, int target);
+
+/*
+**etc
+*/
+
+void	exit_readline(void);
+
+static inline int	putchar_(int c)
+{
+	return (write(STDERR_FILENO, &c, 1));
+}
 
 #endif

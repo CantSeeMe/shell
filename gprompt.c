@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:51 by root              #+#    #+#             */
-/*   Updated: 2017/07/26 17:53:51 by root             ###   ########.fr       */
+/*   Updated: 2017/07/30 08:59:09 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ struct termios	 g_otermios;
 char			 *g_prompt;
 t_buff			 g_buffer;
 
-t_curs			 g_curs;
 t_curs			 g_winsize;
 
 size_t			 g_psize;

@@ -160,6 +160,7 @@ void	keyboard_event(uint64_t	c, int r)
 		ctrl_event(c);
 	else
 		default_event(c, r);
+	record_event(`)
 }
 
 /********************************/
