@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/08/15 21:01:03 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/16 01:29:48 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,24 +57,6 @@ int		update_winsize(void)
 
 /********keyboard event**********/
 
-void	default_event(uint64_t c, int r)
-{
-	if (g_buffer.len + r >= g_buffer.msize)
-	{
-		if (buff_realloc(g_buffer.msize + DEFAULT_BUFFER_SIZE))
-			return ;
-	}
-	memcpy(g_buffer.s + g_cubuf + r,
-		   g_buffer.s + g_cubuf,
-		   g_buffer.len - g_cubuf);
-	memcpy(g_buffer.s + g_cubuf, &c, r);
-	g_buffer.len += r;
-	buff_refresh(g_cubuf, g_buffer.s + g_cubuf, g_buffer.len - g_cubuf);
-	g_cubuf += r;
-	buff_record(g_cubuf, -r, RL_ACTION_DELETE);
-	shift_cursor(g_buffer.len, g_cubuf);
-}
-
 void	place_holder(void)
 {
 	return ;
@@ -85,14 +67,16 @@ void	ctrl_event(uint64_t c)
 	static void (*f[])() = {
 		buff_head, buff_prev, place_holder, buff_delete, buff_end,
 		buff_next, place_holder, place_holder, place_holder, exit_readline,
+		buff_kill_next, buff_clear_content,
+		place_holder, place_holder, place_holder,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
+		buff_kill_prev, place_holder, buff_del_word, place_holder, buff_yankout,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
-		place_holder, place_holder, buff_del_word, place_holder, place_holder,
-		place_holder, place_holder, place_holder, place_holder, place_holder,
-		/*place_holder,*/ buff_revert
+		buff_revert
 	};
 
 	f[c - 1]();
+	last_action = f[c - 1];
 }
 
 /*
@@ -111,17 +95,19 @@ void	meta_event(void)
 	c = 0;
 	read(STDIN_FILENO, &c, sizeof(c));
 	if (c == 'f')
-		buff_next_word();
+		(last_action = buff_next_word)();
 	else if (c == 'b')
-		buff_prev_word();
+		(last_action = buff_prev_word)();
 	else if (c == 'u')
-		buff_lowtoup();
+		(last_action = buff_lowtoup)();
 	else if (c == 'l')
-		buff_uptolow();
+		(last_action = buff_uptolow)();
 	else if (c == 'r')
-	{}
+	{
+
+	}
 	else if (c == 'c')
-		buff_capitalize();
+		(last_action = buff_capitalize)();
 }
 
 void	special_event(uint64_t c)
@@ -137,16 +123,16 @@ void	special_event(uint64_t c)
 	c = c >> 16;
 	if (c >= 0x41 && c <= 0x48)
 	{
-		special1[c - 0x41]();
+		(last_action = special1[c - 0x41])();
 	}
 	else if (IS_CTRL_ARROW(c))
 	{
-		special2[(c >> 24) - 0x41]();
+		(last_action = special2[(c >> 24) - 0x41])();
 	}
 	else if ((c & 0x7e30) == 0x7e30 &&
 			((c & 0xf) > 2 && (c & 0xf) <= 6))
 	{
-		special3[(c ^ 0x7e30) - 0x3]();
+		(last_action = special3[(c ^ 0x7e30) - 0x3])();
 	}
 }
 
@@ -161,7 +147,8 @@ void	keyboard_event(uint64_t	c, int r)
 	else if (IS_CTRL_MODIFIER(c))
 		ctrl_event(c);
 	else
-		default_event(c, r);
+		buff_insert(&c, r);
+	buff_yankin();
 }
 
 /********************************/
@@ -223,10 +210,14 @@ char	*ft_readline(char *prompt, size_t psize)
 			break ;
 	}
 	revert_manual_ttymode();
+	g_buffer.s[g_buffer.len] = 0;
 	return (g_buffer.s);
 }
 
 int		main(int ac, char **av, char **envp)
 {
-	ft_readline("", 0);
+	char	*s;
+
+	s = ft_readline("", 0);
+	dprintf(STDOUT_FILENO, "%s\n", s);
 }

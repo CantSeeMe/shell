@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:51 by root              #+#    #+#             */
-/*   Updated: 2017/08/15 15:55:35 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/15 23:50:57 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ size_t			g_psize;
 size_t			g_cubuf;
 
 t_lst			*g_record;
-t_lst			*g_chronicle;
+/*
+**t_lst			*g_chronicle;
+*/
 char			*g_yank;
+size_t			g_yanksize;
 int				g_trigger;
+void			(*last_action)();
