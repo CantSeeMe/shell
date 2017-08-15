@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/07/31 09:17:56 by root             ###   ########.fr       */
+/*   Updated: 2017/08/15 21:01:03 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void	default_event(uint64_t c, int r)
 	g_buffer.len += r;
 	buff_refresh(g_cubuf, g_buffer.s + g_cubuf, g_buffer.len - g_cubuf);
 	g_cubuf += r;
+	buff_record(g_cubuf, -r, RL_ACTION_DELETE);
 	shift_cursor(g_buffer.len, g_cubuf);
 }
 
@@ -88,7 +89,8 @@ void	ctrl_event(uint64_t c)
 		place_holder, place_holder, place_holder, place_holder, place_holder,
 		place_holder, place_holder, buff_del_word, place_holder, place_holder,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
-		place_holder, place_holder};
+		/*place_holder,*/ buff_revert
+	};
 
 	f[c - 1]();
 }

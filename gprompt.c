@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:51 by root              #+#    #+#             */
-/*   Updated: 2017/07/30 08:59:09 by root             ###   ########.fr       */
+/*   Updated: 2017/08/15 15:55:35 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-struct termios	 g_otermios;
-char			 *g_prompt;
-t_buff			 g_buffer;
+struct termios	g_otermios;
+char			*g_prompt;
+t_buff			g_buffer;
 
-t_curs			 g_winsize;
+t_curs			g_winsize;
 
-size_t			 g_psize;
-size_t			 g_cubuf;
+size_t			g_psize;
+size_t			g_cubuf;
 
-t_lst			 *g_record;
-t_lst			 *g_chronicle;
-char			 *g_yank;
-int				 g_trigger;
+t_lst			*g_record;
+t_lst			*g_chronicle;
+char			*g_yank;
+int				g_trigger;

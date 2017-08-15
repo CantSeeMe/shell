@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/07/31 11:32:37 by root             ###   ########.fr       */
+/*   Updated: 2017/08/15 19:44:34 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,14 @@
 
 # define DEFAULT_BUFFER_SIZE 4096
 
-# define RL_ACTION_WRITE	0x0
-# define RL_ACTION_DELETE	0x1
-# define RL_ACTION_MOVE		0x2
+# define RL_ACTION_MASK			0xff
+# define RL_ACTION_WRITE		0x00
+# define RL_ACTION_DELETE		0x01
+# define RL_ACTION_OVERWRITE	0x02
+
+# define RL_CURSOR_MASK			0xff00
+# define RL_CURSOR_RESET		0x0000
+# define RL_CURSOR_KEEP			0x0100
 
 # define IS_SPECIAL_KEYCODE(x)		(((x) & 0x5b1b) == 0x5b1b)
 # define IS_META_MODIFIER(x)		((x) == 0x1b)
@@ -30,7 +35,9 @@
 **# define KEYCODE_ARROW_RIGHT	0x43
 **# define KEYCODE_ARROW_LEFT		0x44
 */
+
 # define IS_CTRL_ARROW(x) (((x) & 0x353b31) == 0x353b31)
+
 /*
 **# define KEYCODE_CTRL_UP		0x41
 **# define KEYCODE_CTRL_DOWN		0x42
@@ -77,6 +84,7 @@ typedef struct	s_record
 	char	*buf;
 	ssize_t	bufsize;
 	int		start;
+	int		action;
 }				t_record;
 
 /* typedef struct	s_chronicle */
@@ -135,6 +143,9 @@ int		buff_realloc(size_t mlen);
 
 void	buff_newline(void);
 void	buff_delete(void);
+
+void	buff_record(int start, ssize_t bufsize, int action);
+void	buff_revert(void);
 
 /*
 ** screen cursor motion

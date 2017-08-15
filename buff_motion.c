@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/07/31 11:52:13 by root             ###   ########.fr       */
+/*   Updated: 2017/08/15 21:01:44 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,17 @@ void	buff_next_word(void)
 {
 	char	*s;
 	size_t	i;
-	char	*ptr;
 
 	s = g_buffer.s;
 	s[g_buffer.len] = 0;
 	i = g_cubuf;
-	while (!(ptr = strchr(WORD_ANCHAR, i[s])))
+	while (!strchr(WORD_ANCHAR, i[s]))
 	{
 		if (i == g_buffer.len)
 			break ;
 		i++;
 	}
-	while ((ptr = strchr(WORD_ANCHAR, i[s])))
+	while (strchr(WORD_ANCHAR, i[s]))
 	{
 		if (i == g_buffer.len)
 			break ;
@@ -74,24 +73,24 @@ void	buff_prev_word(void)
 {
 	char	*s;
 	int		i;
-	char	*ptr;
 
 	s = g_buffer.s;
-	i = g_cubuf - (g_cubuf > 0);
-	while (!(ptr = strchr(WORD_ANCHAR, i[s])))
+	if ((i = g_cubuf - (g_cubuf > 0)) == -1)
+		return ;
+	while (!strchr(WORD_ANCHAR, i[s]))
 	{
 		if (i <= 0)
 			break ;
 		i--;
 	}
-	while ((ptr = strchr(WORD_ANCHAR, i[s])))
+	while (strchr(WORD_ANCHAR, i[s]))
 	{
 		if (i <= 0)
 			break ;
 		i--;
 	}
-	shift_cursor(g_cubuf, i + !ptr);
-	g_cubuf = i + !ptr;
+	shift_cursor(g_cubuf, i + (i > 0));
+	g_cubuf = i + (i > 0);
 }
 
 void	buff_del_prev(void)
@@ -99,6 +98,7 @@ void	buff_del_prev(void)
 	if (g_cubuf == 0)
 		return ;
 	g_cubuf -= 1;
+	buff_record(g_cubuf, 1, RL_ACTION_WRITE);
 	memcpy(g_buffer.s + g_cubuf,
 		   g_buffer.s + g_cubuf + 1,
 		   g_buffer.len - g_cubuf);
@@ -106,8 +106,8 @@ void	buff_del_prev(void)
 	g_buffer.len -= 1;
 	g_buffer.s[g_buffer.len] = ' ';
 	buff_refresh(g_cubuf,
-				   g_buffer.s + g_cubuf,
-				   g_buffer.len - g_cubuf + 1);
+				 g_buffer.s + g_cubuf,
+				 g_buffer.len - g_cubuf + 1);
 	shift_cursor(g_buffer.len + 1, g_cubuf);
 }
 
@@ -115,14 +115,15 @@ void	buff_del_next(void)
 {
 	if (g_cubuf == g_buffer.len)
 		return ;
+	buff_record(g_cubuf, 1, RL_ACTION_WRITE | RL_CURSOR_KEEP);
 	memcpy(g_buffer.s + g_cubuf,
 		   g_buffer.s + g_cubuf + 1,
 		   g_buffer.len - g_cubuf);
 	g_buffer.len -= 1;
 	g_buffer.s[g_buffer.len] = ' ';
 	buff_refresh(g_cubuf,
-				   g_buffer.s + g_cubuf,
-				   g_buffer.len - g_cubuf + 1);
+				 g_buffer.s + g_cubuf,
+				 g_buffer.len - g_cubuf + 1);
 	shift_cursor(g_buffer.len + 1, g_cubuf);
 }
 
@@ -134,6 +135,7 @@ void	buff_del_word(void)
 	cubuf = g_cubuf;
 	buff_prev_word();
 	diff = cubuf - g_cubuf;
+	buff_record(g_cubuf, diff, RL_ACTION_WRITE);
 	g_buffer.len -= diff;
 	memcpy(g_buffer.s + g_cubuf,
 		   g_buffer.s + cubuf,
@@ -146,19 +148,25 @@ void	buff_del_word(void)
 void	buff_lowtoup(void)
 {
 	char	*s;
+	int		i;
 	int		diff;
 
 	s = g_buffer.s + g_cubuf;
 	g_buffer.s[g_buffer.len] = 0;
-	while (!strchr(WORD_ANCHAR, *s))
-		++s;
-	while (*s && strchr(WORD_ANCHAR, *s))
+	diff = 0;
+	while (!strchr(WORD_ANCHAR, s[diff]))
+		diff++;
+	i = diff;
+	while (s[diff] && strchr(WORD_ANCHAR, s[diff]))
+		diff++;
+	buff_record(g_cubuf, diff,
+				RL_ACTION_OVERWRITE | RL_CURSOR_KEEP);
+	while (i < diff)
 	{
-		if (*s >= 0x60 && *s <= 0x7a)
-			*s -= 0x20;
-		++s;
+		if (s[i] >= 0x60 && s[i] <= 0x7a)
+			s[i] -= 0x20;
+		++i;
 	}
-	diff = s - (g_buffer.s + g_cubuf);
 	buff_refresh(g_cubuf, g_buffer.s + g_cubuf, diff);
 	g_cubuf += diff;
 }
@@ -167,18 +175,24 @@ void	buff_uptolow(void)
 {
 	char	*s;
 	int		diff;
+	int		i;
 
 	s = g_buffer.s + g_cubuf;
 	g_buffer.s[g_buffer.len] = 0;
-	while (!strchr(WORD_ANCHAR, *s))
-		++s;
-	while (*s && strchr(WORD_ANCHAR, *s))
+	diff = 0;
+	while (!strchr(WORD_ANCHAR, s[diff]))
+		diff++;
+	i = diff;
+	while (s[diff] && strchr(WORD_ANCHAR, s[diff]))
+		diff++;
+	buff_record(g_cubuf, diff,
+				RL_ACTION_OVERWRITE | RL_CURSOR_KEEP);
+	while (i < diff)
 	{
-		if (*s >= 0x40 && *s <= 0x5a)
-			*s += 0x20;
-		++s;
+		if (s[i] >= 0x40 && s[i] <= 0x5a)
+			s[i] += 0x20;
+		i++;
 	}
-	diff = s - (g_buffer.s + g_cubuf);
 	buff_refresh(g_cubuf, g_buffer.s + g_cubuf, diff);
 	g_cubuf += diff;
 }
@@ -186,24 +200,28 @@ void	buff_uptolow(void)
 void	buff_capitalize(void)
 {
 	char	*s;
-	int		l;
 	int		diff;
+	int		i;
 
 	g_buffer.s[g_buffer.len] = 0;
 	s = g_buffer.s + g_cubuf;
-	l = 0;
-	while (!strchr(WORD_ANCHAR, *s))
-		++s;
-	while (*s && strchr(WORD_ANCHAR, *s))
+	diff = 0;
+	while (!strchr(WORD_ANCHAR, s[diff]))
+		diff++;
+	i = diff;
+	while (s[diff] && strchr(WORD_ANCHAR, s[diff]))
+		diff++;
+	buff_record(g_cubuf, diff,
+				RL_ACTION_OVERWRITE | RL_CURSOR_KEEP);
+	if (s[i] >= 0x60 && s[i] <= 0x7a)
+		s[i] -= 0x20;
+	i += 1;
+	while (i < diff)
 	{
-		if (!l && *s >= 0x60 && *s <= 0x7a)
-			*s -= 0x20;
-		if (l && *s >= 0x40 && *s <= 0x5a)
-			*s += 0x20;
-		l = 1;
-		++s;
+		if (s[i] >= 0x40 && s[i] <= 0x5a)
+			s[i] += 0x20;
+		++i;
 	}
-	diff = s - (g_buffer.s + g_cubuf);
 	buff_refresh(g_cubuf, g_buffer.s + g_cubuf, diff);
 	g_cubuf += diff;
 }
@@ -280,33 +298,99 @@ void	buff_delete(void)
 	}
 }
 
-void	buff_record_write(int start, int end, int action)
+void	buff_record(int start, ssize_t bufsize, int action)
 {
 	t_record	*r;
 
-}
-
-void	buff_record_delete(int start, int end)
-{
-	t_record	*r;
-}
-
-int		buff_record(int end, int action)
-{
-	static size_t	start;
-	static int		last_action;
-	static void		(*act[2])() = {};
-
-	if (last_action != action)
+	if (!bufsize)
+		return ;
+	if ((r = malloc(sizeof(*r))) == 0)
+		return ;
+	r->start = start;
+	if ((r->bufsize = bufsize) > 0)
 	{
-		if (last_action != RL_ACTION_MOVE)
-			act[last_action](start, end);
-		last_action = action;
-		start = end;
+		if ((r->buf = malloc(r->bufsize + 1)) == 0)
+		{
+			free(r);
+			return ;
+		}
+		memcpy(r->buf, g_buffer.s + start, r->bufsize);
+		r->buf[r->bufsize] = 0;
 	}
+	else
+		r->buf = 0;
+	r->action = action;
+	if (push_lst__(&g_record, r))
+	{
+		free(r->buf);
+		free(r);
+	}
+	dprintf(3, "%-10s = %-6d\n", "r->start", r->start);
+	dprintf(3, "%-10s = %-6d\n", "r->bufsize", r->bufsize);
+	dprintf(3, "%-10s = %#.4x\n", "r->action", r->action);
+	dprintf(3, "%-10s = %s\n", "r->buf", r->buf);
 }
 
-void	buff_revert_line(void)
+void	buff_revert_write(t_record *r)
 {
+	shift_cursor(g_cubuf, r->start);
+	memmove(g_buffer.s + r->start + r->bufsize,
+			g_buffer.s + r->start,
+			r->bufsize);
+	memcpy(g_buffer.s + r->start,
+		   r->buf,
+		   r->bufsize);
+	g_buffer.len += r->bufsize;
+	buff_refresh(r->start,
+				 g_buffer.s + r->start,
+				 g_buffer.len - r->start);
+	g_cubuf = r->start + r->bufsize;
+	shift_cursor(g_buffer.len, g_cubuf);
+	dprintf(3, "buff_revert_write\n");
+}
 
+void	buff_revert_delete(t_record *r)
+{
+	memmove(g_buffer.s + r->start + r->bufsize,
+			g_buffer.s + r->start,
+			g_buffer.len - r->start);
+	memset(g_buffer.s + g_buffer.len + r->bufsize,
+		   ' ',
+		   -(r->bufsize));
+	shift_cursor(g_cubuf, r->start + r->bufsize);
+	g_cubuf = r->start + r->bufsize;
+	buff_refresh(g_cubuf,
+				 g_buffer.s + g_cubuf,
+				 g_buffer.len - g_cubuf);
+	shift_cursor(g_buffer.len, g_cubuf);
+	g_buffer.len += r->bufsize;
+	dprintf(3, "buff_revert_delete\n");
+}
+
+void	buff_revert_overwrite(t_record *r)
+{
+	memcpy(g_buffer.s + r->start, r->buf,
+		   r->bufsize);
+	shift_cursor(g_cubuf, r->start);
+	buff_refresh(r->start, g_buffer.s + r->start, r->bufsize);
+	shift_cursor(r->start + r->bufsize, r->start);
+	g_cubuf = r->start;
+	dprintf(3, "buff_revert_overwrite\n");
+}
+
+void	buff_revert(void)
+{
+	static void (*act[3])() = {
+		buff_revert_write,
+		buff_revert_delete,
+		buff_revert_overwrite
+	};
+	t_record	*r;
+
+	if (!g_record)
+		return ;
+	r = (t_record *)g_record->data;
+	act[r->action](r);
+	free(r->buf);
+	pop_lst__(&g_record, free);
 }
