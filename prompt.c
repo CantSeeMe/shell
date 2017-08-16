@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 01:29:48 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/16 02:07:41 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,7 @@ void	meta_event(void)
 	else if (c == 'l')
 		(last_action = buff_uptolow)();
 	else if (c == 'r')
-	{
-
-	}
+		(last_action = buff_clear_line)();
 	else if (c == 'c')
 		(last_action = buff_capitalize)();
 }
@@ -187,7 +185,7 @@ char	*ft_readline(char *prompt, size_t psize)
 {
 	uint64_t	c;
 	int			r;
-
+// is_atty
 	if (init_readline())
 		return ((char *)0);
 	if (set_manual_ttymode())
@@ -205,7 +203,6 @@ char	*ft_readline(char *prompt, size_t psize)
 		c = 0;
 		r = read(STDIN_FILENO, &c, sizeof(c));
 		keyboard_event(c, r);
-//		dprintf(1, "%lx , %d\n\r", c, r);
 		if (c == 'q')
 			break ;
 	}

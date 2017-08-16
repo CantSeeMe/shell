@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 01:28:43 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/16 02:09:37 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,21 @@ void	buff_clear_content(void)
 	// print prompt
 	buff_refresh(0, g_buffer.s, g_buffer.len);
 	shift_cursor(g_buffer.len, g_cubuf);
+}
+
+void	buff_clear_line(void)
+{
+	shift_cursor(g_cubuf, 0);
+	memset(g_buffer.s, ' ', g_buffer.len);
+	buff_refresh(0, g_buffer.s, g_buffer.len);
+	shift_cursor(g_buffer.len, 0);
+	g_buffer.len = 0;
+	g_cubuf = 0;
+	while (g_record)
+	{
+		free(((t_record *)g_record->data)->buf);
+		pop_lst__(&g_record, free);
+	}
 }
 
 /*****************************/
