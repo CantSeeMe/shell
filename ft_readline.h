@@ -6,12 +6,12 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 02:07:03 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/16 04:01:19 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PROMPT_H
-# define PROMPT_H
+#ifndef FT_READLINE_H
+# define FT_READLINE_H
 
 # define DEFAULT_BUFFER_SIZE 4096
 

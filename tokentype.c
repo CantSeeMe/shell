@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 17:11:44 by jye               #+#    #+#             */
-/*   Updated: 2017/07/10 13:54:19 by root             ###   ########.fr       */
+/*   Updated: 2017/08/16 04:47:51 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ struct s_tokentype	g_tokentype[] = {
 	{";", period},
 	{"&&", andsym},
 	{"||", orsym},
-	{"|", pipe},
+	{"|", pip},
 	{">", greater},
 	{">>", ggreater},
 	{"<", lower},
@@ -42,7 +42,7 @@ int					init_tokenizer(void)
 								g_tokentype[i].s,
 								HT_NOSEARCH)) == NULL)
 		{
-			flush_hashtable(g_httoken, NULL);
+			hash_flushtable(g_httoken, NULL);
 			return (1);
 		}
 		item->c = &g_tokentype[i];

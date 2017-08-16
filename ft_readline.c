@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 02:07:41 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/16 04:01:33 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 
-#include "prompt.h"
+#include "ft_readline.h"
 #include "lst.h"
 
 
@@ -203,18 +203,8 @@ char	*ft_readline(char *prompt, size_t psize)
 		c = 0;
 		r = read(STDIN_FILENO, &c, sizeof(c));
 		keyboard_event(c, r);
-		if (c == 'q')
-			break ;
 	}
 	revert_manual_ttymode();
 	g_buffer.s[g_buffer.len] = 0;
 	return (g_buffer.s);
-}
-
-int		main(int ac, char **av, char **envp)
-{
-	char	*s;
-
-	s = ft_readline("", 0);
-	dprintf(STDOUT_FILENO, "%s\n", s);
 }

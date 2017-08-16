@@ -6,11 +6,11 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/30 08:43:16 by root              #+#    #+#             */
-/*   Updated: 2017/07/30 10:33:13 by root             ###   ########.fr       */
+/*   Updated: 2017/08/16 04:44:39 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "prompt.h"
+#include "ft_readline.h"
 #include <curses.h>
 #include <term.h>
 

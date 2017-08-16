@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 02:09:37 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/16 04:01:46 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 #define WORD_ANCHAR	WORD_UCHAR WORD_LCHAR WORD_NCHAR
 
-#include "prompt.h"
+#include "ft_readline.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

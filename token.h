@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:32 by jye               #+#    #+#             */
-/*   Updated: 2017/06/27 23:01:45 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/16 04:47:56 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef enum	e_symbol
 {
 	word, number,
 	ampersand, period,
-	andsym, orsym, pipe,
+	andsym, orsym, pip,
 	greater, ggreater, lower, llower, greater_amp
 }				t_symbol;
 
