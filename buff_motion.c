@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 04:01:46 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/19 13:16:23 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -398,9 +398,9 @@ void	buff_record(int start, ssize_t bufsize, int action)
 		free(r->buf);
 		free(r);
 	}
-	dprintf(3, "%10s = %zd\n", "r->bufsize", r->bufsize);
-	dprintf(3, "%10s = %s\n", "r->buf", r->buf);
-	dprintf(3, "----------------------------------------\n");
+//	dprintf(3, "%10s = %zd\n", "r->bufsize", r->bufsize);
+//	dprintf(3, "%10s = %s\n", "r->buf", r->buf);
+//	dprintf(3, "----------------------------------------\n");
 }
 
 void	buff_revert_write(t_record *r)

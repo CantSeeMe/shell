@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/08/16 06:05:22 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/19 15:16:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,12 +151,14 @@ void	parse_command(t_command *co)
 t_lst	*parse_token(t_lst *tokens)
 {
 	t_lst	*clst;
+	t_lst	*h;
 
 	clst = split_token(tokens);
+	h = clst;
 	while (clst)
 	{
 		parse_command((t_command *)clst->data);
 		clst = clst->next;
 	}
-	return (clst);
+	return (h);
 }

@@ -1,38 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   base.c                                             :+:      :+:    :+:   */
+/*   parse_error.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/08/19 15:41:35 by root             ###   ########.fr       */
+/*   Created: 2017/06/28 19:20:46 by jye               #+#    #+#             */
+/*   Updated: 2017/08/19 12:38:11 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "hashlib.h"
-#include "ft_readline.h"
-#include "token.h"
-#include "parser.h"
-#include "lst.h"
-
-
+//
 #include <stdio.h>
+#include "parser.h"
 
-int		main(int ac, char **av)
+void		parse_error(char *to, int errortype)
 {
-	char	*s;
-	t_lst	*t;
-	t_command	*c;
-	t_lst	*z;
-
-	s = ft_readline("", 0);
-	init_tokenizer();
-	t = tokenize(s);
-	t = parse_token(t);
-	c = t->data;
-	z = c->av.lav;
-/*****process parsed bullshit in a fork or not******/
-	
-	return (0);
+	static const char *e[] = {"%s: unexpected token '%s'\n",
+								"%s: expected token near '%s'\n"};
+	dprintf(2, e[errortype], PROGRAM_NAME, to);
 }

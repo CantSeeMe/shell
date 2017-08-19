@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/07/10 15:04:19 by root             ###   ########.fr       */
+/*   Updated: 2017/08/19 15:41:04 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	free_ccsh(t_ccsh *c)
 	free(cc);
 }
 
-char	*cht_lookup(char *key, char *envp)
+char	*chash_lookup(char *key, char *envp)
 {
 	char		*cpath;
 	t_bucket	*item;
