@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/07/10 13:53:51 by root             ###   ########.fr       */
+/*   Updated: 2017/08/20 12:52:40 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 
 t_hashtable		*g_htvar;
 t_lst			*g_envp;
-t_lst			*g_lockedvar;
 
 int		vhash_init(void)
 {
@@ -43,9 +42,9 @@ int		vhash_insert(t_var *var)
 		c = (t_var *)item->c;
 		free(c->value);
 		c->value = var->value;
-		c->envp = var->envp;
-		c->lock = var->lock;
 		free(var->key);
+		if (var->lock_)
+			pop_lst__(&var->lock_, NULL);
 		free(var);
 	}
 	else
@@ -63,36 +62,26 @@ void	vhash_pop(char *key)
 	if ((item = hash_search(g_htvar, key)) == 0)
 		return ;
 	var = (t_var *)item->c;
-	if (var->lock)
-	{
-		var->envp = 0;
-		free(var->value);
-		var->value = 0;
-		push_lst__(&g_lockedvar, var);
-	}
-	else
-	{
-		free(var->key);
-		free(var->value);
-		hash_popentry(g_htvar, key, free);
-	}
+	free(var->key);
+	free(var->value);
+	pop_lst__(&var->lock_, NULL);
+	hash_popentry(g_htvar, key, free);
+}
+
+char	*vhash_search(char *key)
+{
+	t_bucket	*item;
+	t_var		*v;
+
+	item = hash_search(g_htvar, key);
+	if (item == 0)
+		return (0);
+	v = item->c;
+	return (v->value);
 }
 
 ////////
 
-t_var	*init_var(char *key, char *value, int envp)
-{
-	t_var	*v;
-
-	if ((v = malloc(sizeof(*v))) == 0)
-		return ((t_var *)0);
-	v->key = key;
-	v->value = value;
-	v->envp = envp;
-	v->lock = envp;
-	return (v);
-}
-	
 int		key_value_string(char *s, char **key, char **value)
 {
 	char	*ptr;
@@ -109,34 +98,42 @@ int		key_value_string(char *s, char **key, char **value)
 	return (0);
 }
 
-int		insert_var(char *s, int envp)
+t_var	*init_var(char *s, int envp)
 {
 	char	*key;
 	char	*value;
 	t_var	*v;
 
 	if (key_value_string(s, &key, &value))
-		return (1);
-	if ((v = init_var(key, value, envp)) == 0)
+		return ((t_var *)0);
+	if ((v = malloc(sizeof(*v))) == 0)
 	{
 		free(key);
 		free(value);
-		return (1);
+		return ((t_var *)0);
 	}
-	if (vhash_insert(v))
-		return (1);
-	if (envp)
+	v->key = key;
+	v->value = value;
+	if ((v->envp_ = envp))
+	{
 		push_lst__(&g_envp, v);
-	return (0);
+		v->lock_ = g_envp;
+	}
+	else
+		v->lock_ = 0;
+	return (v);
 }
 
-int		boot_var_envp(char **envp)
+int		init_htvar(char **envp)
 {
+	t_var	*v;
+
 	if (vhash_init())
 		return (1);
 	while (*envp)
 	{
-		insert_var(*envp, 1);
+		if ((v = init_var(*envp, 1)))
+			vhash_insert(v);
 		++envp;
 	}
 	return (0);
