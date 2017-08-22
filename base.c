@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/08/20 14:31:13 by root             ###   ########.fr       */
+/*   Updated: 2017/08/21 20:50:25 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int		transmute_av(t_command *c)
 {
@@ -45,7 +46,6 @@ int		transmute_av(t_command *c)
 /******************************/
 /******************************/
 
-
 int		main(int ac, char **av, char **envp)
 {
 	char	*s;
@@ -62,7 +62,23 @@ int		main(int ac, char **av, char **envp)
 	transmute_av(c);
 	init_htvar(envp);
 	chash_init();
+	/////
 	z = chash_lookup(*c->av.cav, vhash_search("PATH"));
+	if (z == 0)
+	{
+		if (strchr(*c->av.cav, '/'))
+		{
+			if (!access(*c->av.cav, X_OK))
+			{
+				c->cmd.c = *c->av.cav;
+			}
+		}
+	}
+	else
+	{
+		c->cmd = *z;
+	}
+	dprintf(1, "%s\n", c->cmd.c);
 /*****process parsed bullshit in a fork or not******/
 	
 	return (0);

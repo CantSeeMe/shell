@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/08/20 13:15:05 by root             ###   ########.fr       */
+/*   Updated: 2017/08/21 20:44:38 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,16 +84,16 @@ t_ccsh	*init_ccsh(char *key, void *c, int type)
 		return (0);
 	n->key = strdup(key);
 	if (type)
-		n->c.path = strdup(c);
+		n->c = strdup(c);
 	else
-		n->c.func = c;
+		n->c = c;
 	n->type = type;
 	return (n);
 }
 
 void	free_ccsh(t_ccsh *c)
 {
-	free(c->c.path);
+	free(c->c);
 	free(c->key);
 	free(c);
 }
@@ -126,7 +126,7 @@ t_ccsh	*chash_search(char *key, char *envp)
 			return (0);
 		if ((item = hash_insert(g_htext, key, HT_NOSEARCH)) == 0)
 		{
-			free(cc->c.path);
+			free(cc->c);
 			free(cc->key);
 			free(cc);
 			return (0);

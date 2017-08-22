@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/08/16 04:49:26 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/21 20:45:51 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PARSER_H
 
 # include "lst.h"
+# include "htcmd.h"
 # define RDF_STDOUT		0x0
 # define RDF_STDIN		0x1
 # define RDF_FDREDIR	0x2
@@ -31,7 +32,7 @@ union			u_argv
 
 typedef struct	s_command
 {
-	char			*path_cmd;
+	t_ccsh			cmd;
 	char			**envp;
 	union u_argv	av;
 	t_lst			*redir;

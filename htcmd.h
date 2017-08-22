@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:35 by jye               #+#    #+#             */
-/*   Updated: 2017/08/20 12:49:16 by root             ###   ########.fr       */
+/*   Updated: 2017/08/21 20:44:40 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,11 @@
 
 typedef int	(*t_builtin)(int ac, char **av, char **envp);
 
-union				u_ccty
-{
-	char		*path;
-	t_builtin	*func;
-};
-
 typedef struct		s_ccsh
 {
 	char			*key;
 	int				type;
-	union u_ccty	c;
+	void			*c;
 }					t_ccsh;
 
 int		chash_init(void);
