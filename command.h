@@ -6,20 +6,19 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/08/21 20:45:51 by root             ###   ########.fr       */
+/*   Updated: 2017/08/23 17:42:28 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
+#ifndef COMMAND_H
+# define COMMAND_H
 
 # include "lst.h"
 # include "htcmd.h"
+# include "error.h"
 # define RDF_STDOUT		0x0
 # define RDF_STDIN		0x1
 # define RDF_FDREDIR	0x2
-
-# define PROGRAM_NAME	"minishell"
 
 # define ERROR_UNEXPECTED	0
 # define ERROR_EXPECTED 	1
@@ -36,6 +35,8 @@ typedef struct	s_command
 	char			**envp;
 	union u_argv	av;
 	t_lst			*redir;
+	pid_t			pid;
+	int				var_;
 	int				ac;
 	int				endsym;
 }				t_command;
@@ -54,7 +55,6 @@ typedef struct	s_rdtype
 }				t_rdtype;
 
 t_lst			*parse_token(t_lst *token);
-void			parse_error(char *to, int errortype);
 t_rdtype		*get_redirection(t_lst **token);
 
 #endif

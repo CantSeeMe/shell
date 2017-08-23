@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_error.c                                      :+:      :+:    :+:   */
+/*   error.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/28 19:20:46 by jye               #+#    #+#             */
-/*   Updated: 2017/08/19 12:38:11 by root             ###   ########.fr       */
+/*   Created: 2017/08/22 08:42:05 by root              #+#    #+#             */
+/*   Updated: 2017/08/22 09:28:42 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//
-#include <stdio.h>
-#include "parser.h"
+#ifndef ERROR_H
+# define ERROR_H
 
-void		parse_error(char *to, int errortype)
-{
-	static const char *e[] = {"%s: unexpected token '%s'\n",
-								"%s: expected token near '%s'\n"};
-	dprintf(2, e[errortype], PROGRAM_NAME, to);
-}
+# define PROGRAM_NAME	"minishell"
+
+void	parse_error(char *to, int errortype);
+void	exec_error(char *exec, int errortype);
+
+#endif

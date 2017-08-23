@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/08/20 14:23:20 by root             ###   ########.fr       */
+/*   Updated: 2017/08/22 20:05:55 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <fcntl.h>
 
 #include "hashlib.h"
-#include "parser.h"
+#include "command.h"
 #include "token.h"
 
 //to be removed
@@ -64,6 +64,7 @@ t_command	*init_command(void)
 	}
 	co->av.lav = l;
 	co->ac = 0;
+	co->endsym = period;
 	return (co);
 }
 
