@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/08/21 20:44:38 by root             ###   ########.fr       */
+/*   Updated: 2017/08/25 06:04:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
 t_hashtable		*g_htext;
 t_hashtable		*g_htbi;

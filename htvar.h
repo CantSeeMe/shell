@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:44 by jye               #+#    #+#             */
-/*   Updated: 2017/08/22 09:30:17 by root             ###   ########.fr       */
+/*   Updated: 2017/08/25 06:01:53 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,13 @@
 
 # include "hashlib.h"
 
-extern t_hashtable	*g_htvar;
 extern t_lst		*g_envp;
+extern int			g_envpsize;
 
 typedef struct	s_var
 {
 	char	*key;
 	char	*value;
-	int		envp_;
 	t_lst	*lock_;
 }				t_var;
 

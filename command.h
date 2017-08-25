@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/08/23 17:42:28 by root             ###   ########.fr       */
+/*   Updated: 2017/08/25 06:03:18 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ typedef struct	s_command
 	char			**envp;
 	union u_argv	av;
 	t_lst			*redir;
-	pid_t			pid;
 	int				var_;
 	int				ac;
 	int				endsym;

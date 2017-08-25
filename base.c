@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/08/23 14:28:10 by root             ###   ########.fr       */
+/*   Updated: 2017/08/25 08:14:31 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,11 @@
 #include "htcmd.h"
 #include "htvar.h"
 #include "error.h"
+#include "job.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <signal.h>
 #include <unistd.h>
 
@@ -52,35 +51,6 @@ int		transmute_av(t_command *c)
 /******************************/
 /******************************/
 
-int		test_execpath(char *c)
-{
-	struct stat stats;
-
-	if (c == 0)
-		return (0);
-	if (!strchr(c, '/'))
-	{
-		exec_error(c, 0);
-		return (1);
-	}
-	if (stat(c, &stats))
-	{
-		exec_error(c, 1);
-		return (1);
-	}
-	if (S_ISDIR(stats.st_mode))
-	{
-		exec_error(c, 2);
-		return (1);
-	}
-	if (!(stats.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-	{
-		exec_error(c, 3);
-		return (1);
-	}
-	return (0);
-}
-
 int		set_execpath(t_command *c)
 {
 	t_ccsh		*z;
@@ -98,8 +68,6 @@ int		set_execpath(t_command *c)
 	}
 	if ((z = chash_lookup(*(c->av.cav + c->var_), vhash_search("PATH"))) == 0)
 	{
-		if (test_execpath(*(c->av.cav + c->var_)))
-			return (1);
 		c->cmd.c = (*c->av.cav + c->var_);
 	}
 	else
@@ -109,6 +77,25 @@ int		set_execpath(t_command *c)
 	return (0);
 }
 
+int		set_envp(t_command *c)
+{
+	int		i;
+	t_lst	*envp;
+	t_var	*v;
+
+	if ((c->envp = malloc(sizeof(char *) * (g_envpsize + 1))) == 0)
+		return (1);
+	i = g_envpsize;
+	c->envp[i--] = 0;
+	envp = g_envp;
+	while (envp)
+	{
+		v = envp->data;
+		c->envp[i--] = v->value;
+		envp = envp->next;
+	}
+	return (0);
+}
 
 int		main(int ac, char **av, char **envp)
 {
@@ -122,12 +109,24 @@ int		main(int ac, char **av, char **envp)
 	t = parse_token(t);
 	c = t->data;
 //	dprintf(1, "%s\n", c->av.lav->data);
-	transmute_av(c);
 	init_htvar(envp);
 	chash_init();
 /////
-	set_execpath(c);
-	dprintf(1, "%d %d %d\n", SIGSTOP, SIGTSTP, c->endsym);
+	t_lst	*cp = t;
+	while (cp)
+	{
+		c = cp->data;
+		transmute_av(c);
+		set_execpath(c);
+		set_envp(c);
+		cp = cp->next;
+	}
+	while (t)
+	{
+		t_job	*job;
+		job = job_create(&t);
+		job_exec(job);
+	}
 	// cut the pack of command into jobs of ; / &
 	/////
 /*****process parsed bullshit in a fork or not******/

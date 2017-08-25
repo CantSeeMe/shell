@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/08/20 12:52:40 by root             ###   ########.fr       */
+/*   Updated: 2017/08/24 18:10:32 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <string.h>
 
 t_hashtable		*g_htvar;
+int				g_envpsize;
 t_lst			*g_envp;
 
 int		vhash_init(void)
@@ -44,7 +45,10 @@ int		vhash_insert(t_var *var)
 		c->value = var->value;
 		free(var->key);
 		if (var->lock_)
+		{
 			pop_lst__(&var->lock_, NULL);
+			g_envpsize -= 1;
+		}
 		free(var);
 	}
 	else
@@ -64,7 +68,11 @@ void	vhash_pop(char *key)
 	var = (t_var *)item->c;
 	free(var->key);
 	free(var->value);
-	pop_lst__(&var->lock_, NULL);
+	if (var->lock_)
+	{
+		pop_lst__(&var->lock_, NULL);
+		g_envpsize -= 1;
+	}
 	hash_popentry(g_htvar, key, free);
 }
 
@@ -114,10 +122,11 @@ t_var	*init_var(char *s, int envp)
 	}
 	v->key = key;
 	v->value = value;
-	if ((v->envp_ = envp))
+	if (envp)
 	{
 		push_lst__(&g_envp, v);
 		v->lock_ = g_envp;
+		g_envpsize += 1;
 	}
 	else
 		v->lock_ = 0;
