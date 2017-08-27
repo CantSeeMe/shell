@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/08/25 08:14:31 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 02:38:10 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,14 +66,14 @@ int		set_execpath(t_command *c)
 	{
 		c->var_ = 0;
 	}
-	if ((z = chash_lookup(*(c->av.cav + c->var_), vhash_search("PATH"))) == 0)
-	{
+	c->cmd.type = C_SHELL_EXT;
+	if (strchr(*c->av.cav + c->var_, '/'))
 		c->cmd.c = (*c->av.cav + c->var_);
-	}
-	else
-	{
+	else if ((z = chash_lookup(*(c->av.cav + c->var_), vhash_search("PATH"))))
 		c->cmd = *z;
-	}
+	else
+		c->cmd.c = 0;
+//	dprintf(2, "%s\n", c->cmd.c);
 	return (0);
 }
 
@@ -91,7 +91,7 @@ int		set_envp(t_command *c)
 	while (envp)
 	{
 		v = envp->data;
-		c->envp[i--] = v->value;
+		c->envp[i--] = defrag_var(v);
 		envp = envp->next;
 	}
 	return (0);
@@ -103,14 +103,15 @@ int		main(int ac, char **av, char **envp)
 	t_lst	*t;
 	t_command	*c;
 
-	s = ft_readline("", 0);
+	init_htvar(envp);
+	chash_init();
+	
+	s = ft_readline("minishell> ", strlen("minishell> "));
 	init_tokenizer();
 	t = tokenize(s);
 	t = parse_token(t);
 	c = t->data;
 //	dprintf(1, "%s\n", c->av.lav->data);
-	init_htvar(envp);
-	chash_init();
 /////
 	t_lst	*cp = t;
 	while (cp)

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/08/22 20:05:55 by root             ###   ########.fr       */
+/*   Updated: 2017/08/27 01:03:47 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,33 +121,55 @@ t_lst		*split_token(t_lst *tokens)
 	return (clst);
 }
 
-void	parse_command(t_command *co)
+int		redir_token(t_token *to, t_lst *argv_token)
 {
-	t_lst		*argv;
+	return (to->sym >= greater ||
+			(to->sym == number && to->symbreak && argv_token->next));
+}
+
+int		parse_redir(t_lst **argv_token, t_lst **redir)
+{
+	t_rdtype *rd;
+
+	if ((rd = get_redirection(argv_token)) == 0)
+		return (1);
+	if (append_lst__(*redir, rd))
+	{
+		free(rd->fd_.s);
+		free(rd);
+		return (1);
+	}
+	*redir = (*redir)->next;
+	return (0);
+}
+
+int		parse_command(t_command *co)
+{
+	t_lst		*redir;
 	t_lst		*argv_token;
 	t_token		*to;
-	t_rdtype	*rd;
 
-	argv = 0;
 	argv_token = co->av.lav;
+	co->av.lav = 0;
+	if ((co->redir = init_lst__(NULL)) == 0)
+		return (1);
+	redir = co->redir;
 	while (argv_token)
 	{
 		to = (t_token *)argv_token->data;
-		if (to->sym >= greater ||
-			(to->sym == number && to->symbreak && argv_token->next))
+		if (redir_token(to, argv_token))
 		{
-			if ((rd = get_redirection(&argv_token)) == 0)
+			if (parse_redir(&argv_token, &redir))
 				continue ;
-			push_lst__(&co->redir, rd);
 		}
 		else
 		{
-			if (!push_lst__(&argv, to->s))
-				co->ac++;
+			co->ac += !push_lst__(&co->av.lav, to->s);
 			pop_lst__(&argv_token, free);
 		}
 	}
-	co->av.lav = argv;
+	pop_lst__(&co->redir, NULL);
+	return (0);
 }
 
 t_lst	*parse_token(t_lst *tokens)

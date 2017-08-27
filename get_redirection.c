@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 19:21:56 by jye               #+#    #+#             */
-/*   Updated: 2017/08/22 11:31:05 by root             ###   ########.fr       */
+/*   Updated: 2017/08/26 23:23:47 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ static void	fill_rdtype(t_rdtype *rd, t_token *to)
 	{
 		rd->fd_.o_flag = ((to->sym == greater) ? O_TRUNC : O_APPEND)
 			| (O_WRONLY | O_CREAT);
-		rd->rdtype = RDF_STDOUT;
+		rd->type = RDF_STDOUT;
 	}
 	else
 	{
 		rd->fd_.o_flag = ((to->sym == lower) ? O_RDONLY : -1);
-		rd->rdtype = RDF_STDIN + (to->sym == greater_amp);
+		rd->type = RDF_STDIN + (to->sym == greater_amp);
 	}
 }
 
@@ -36,9 +36,14 @@ static int	fill_fddata(t_rdtype *rd, t_token *to, int fd)
 	if (to->sym != number && to->sym != word)
 		return (1);
 	rd->fd_.s = to->s;
+	if (rd->type == RDF_FDREDIR && to->sym == word)
+	{
+		rd->type = RDF_STDOUT;
+		rd->fd_.o_flag = O_TRUNC | O_CREAT | O_WRONLY;
+	}
 	to->s = 0;
 	if (fd == -1)
-		rd->fd_.fd = (rd->rdtype == RDF_STDOUT);
+		rd->fd_.fd = (rd->type == RDF_STDOUT);
 	else
 		rd->fd_.fd = fd;
 	return (0);

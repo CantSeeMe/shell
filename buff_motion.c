@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/08/19 13:16:23 by root             ###   ########.fr       */
+/*   Updated: 2017/08/27 12:59:13 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void	buff_clear_content(void)
 	shift_cursor(g_buffer.len, g_cubuf);
 }
 
-void	buff_clear_line(void)
+void	buff_reset_state(void)
 {
 	shift_cursor(g_cubuf, 0);
 	memset(g_buffer.s, ' ', g_buffer.len);
@@ -398,9 +398,6 @@ void	buff_record(int start, ssize_t bufsize, int action)
 		free(r->buf);
 		free(r);
 	}
-//	dprintf(3, "%10s = %zd\n", "r->bufsize", r->bufsize);
-//	dprintf(3, "%10s = %s\n", "r->buf", r->buf);
-//	dprintf(3, "----------------------------------------\n");
 }
 
 void	buff_revert_write(t_record *r)
@@ -528,4 +525,36 @@ void	buff_yankout(void)
 	if (g_yanksize == 0)
 		return ;
 	buff_insert(g_yank, g_yanksize);
+}
+
+/*******************************/
+/*******************************/
+/*******************************/
+
+void	buff_chronicup(void)
+{
+	t_chronicle	*chro;
+	size_t		l;
+
+	if (g_chroncur->next == 0)
+		return ;
+	chro = g_chroncur->data;
+	chro->cur = g_buffer;
+	g_buffer.s[g_buffer.len] = 0;
+	chro->cur.s = strdup(g_buffer.s);
+	chro->cur.msize = -1;
+	g_chroncur = g_chroncur->next;
+	chro = g_chroncur->data;
+	l = strlen(chro->s);
+	if (chro->cur.s)
+		memcpy(g_bufffer.s, chro->cur.s, chro->cur.len);
+	else
+		memcpy(g_buffer.s chro->s, l);
+	memset(g_buffer.s)
+	g_buffer.len = chro->cur.s ? chro->cur.len : l;
+}
+
+void	buff_chronicdown(void)
+{
+
 }

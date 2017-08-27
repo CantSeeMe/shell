@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/08/24 18:10:32 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/26 20:12:43 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*vhash_search(char *key)
 
 ////////
 
-int		key_value_string(char *s, char **key, char **value)
+int		frag_var(char *s, char **key, char **value)
 {
 	char	*ptr;
 
@@ -106,13 +106,30 @@ int		key_value_string(char *s, char **key, char **value)
 	return (0);
 }
 
+char	*defrag_var(t_var *var)
+{
+	size_t	ks;
+	size_t	vs;
+	char	*s;
+
+	ks = strlen(var->key);
+	vs = strlen(var->value);
+	if ((s = malloc(ks + vs + 2)) == 0)
+		return (0);
+	memcpy(s, var->key, ks);
+	s[ks] = '=';
+	memcpy(s + ks + 1, var->value, vs);
+	s[ks + vs + 1] = 0;
+	return (s);
+}
+
 t_var	*init_var(char *s, int envp)
 {
 	char	*key;
 	char	*value;
 	t_var	*v;
 
-	if (key_value_string(s, &key, &value))
+	if (frag_var(s, &key, &value))
 		return ((t_var *)0);
 	if ((v = malloc(sizeof(*v))) == 0)
 	{

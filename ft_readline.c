@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 04:01:33 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 12:47:54 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 #include "ft_readline.h"
 #include "lst.h"
-
+#include "htvar.h"
 
 int		set_manual_ttymode(void)
 {
@@ -103,7 +103,7 @@ void	meta_event(void)
 	else if (c == 'l')
 		(last_action = buff_uptolow)();
 	else if (c == 'r')
-		(last_action = buff_clear_line)();
+		;/* (last_action = buff_reset_state)(); */
 	else if (c == 'c')
 		(last_action = buff_capitalize)();
 }
@@ -162,7 +162,7 @@ void	reload_line(int s)
 		tputs(tgetstr("up", 0), 0, putchar_);
 	tputs(tgetstr("cr", 0), 0, putchar_);
 	tputs(tgetstr("cd", 0), 0, putchar_);
-//write(STDERR_FILENO, g_prompt, strlen(g_prompt));
+	write(STDERR_FILENO, g_prompt, strlen(g_prompt));
 	buff_refresh(0, g_buffer.s, g_buffer.len);
 	shift_cursor(g_buffer.len, g_cubuf);
 }
@@ -171,21 +171,55 @@ int		init_readline(void)
 {
 	g_cubuf = 0;
 	g_buffer.len = 0;
+	if ((chro = malloc(sizeof(chro))) == 0)
+		return (1);
+	memset(chro, 0, sizeof(chro));
+	push_lst__(&g_chronicle, chro);
 	return (buff_malloc(DEFAULT_BUFFER_SIZE));
 }
 
-
 void	exit_readline(void)
+{
+	t_chronicle	*chro;
+
+	buff_newline();
+	g_buffer.msize = 0;
+	while (g_record)
+	{
+		free(((t_record *)g_record->data)->buf);
+		pop_lst__(&g_record, free);
+	}
+	chro = g_chronicle->data;
+	g_buffer.s[g_buffer.len] = 0;
+	chro->s = strdup(g_buffer.s);
+	g_chroncur = g_chronicle;
+}
+
+void	reset_readline(void)
 {
 	buff_newline();
 	g_buffer.msize = 0;
+	while (g_record)
+	{
+		free(((t_record *)g_record->data)->buf);
+		pop_lst__(&g_record, free);
+	}
+	g_buffer.len = 0;
+	g_cubuf = 0;
+}
+
+void	update_prompt(char *prompt, size_t psize)
+{
+	g_prompt = prompt;
+	g_psize = psize;
+	write(2, prompt, strlen(prompt));
 }
 
 char	*ft_readline(char *prompt, size_t psize)
 {
 	uint64_t	c;
 	int			r;
-// is_atty
+
 	if (init_readline())
 		return ((char *)0);
 	if (set_manual_ttymode())
@@ -194,9 +228,9 @@ char	*ft_readline(char *prompt, size_t psize)
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &g_otermios);
 		return ((char *)0);
 	}
-	tgetent(getenv("TERM"), NULL);
+	tgetent(vhash_search("TERM"), NULL);
 	update_winsize();
-//	signal(SIGINT, );
+	update_prompt(prompt, psize);
 	while (g_buffer.msize)
 	{
 		signal(SIGWINCH, reload_line);
@@ -205,6 +239,5 @@ char	*ft_readline(char *prompt, size_t psize)
 		keyboard_event(c, r);
 	}
 	revert_manual_ttymode();
-	g_buffer.s[g_buffer.len] = 0;
 	return (g_buffer.s);
 }

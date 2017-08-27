@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 16:07:52 by jye               #+#    #+#             */
-/*   Updated: 2017/08/25 09:01:20 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 02:35:57 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <string.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -29,49 +30,83 @@
 t_lst	*g_jobs;
 int		g_laststatus;
 
-int		test_execpath(char *c)
+int		test_execpath(t_command *c)
 {
 	struct stat stats;
 
-	if (c == 0)
-		return (0);
-	if (!strchr(c, '/'))
+	if (c->cmd.c == 0)
 	{
-		exec_error(c, 0);
+		exec_error(*(c->av.cav + c->var_), 0);
 		exit(127);
 	}
-	if (stat(c, &stats))
+	if (stat(c->cmd.c, &stats))
 	{
-		exec_error(c, 1);
+		exec_error(c->cmd.c, 1);
 		exit(127);
 	}
 	if (S_ISDIR(stats.st_mode))
 	{
-		exec_error(c, 2);
+		exec_error(c->cmd.c, 2);
 		exit(126);
 	}
 	if (!(stats.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
 	{
-		exec_error(c, 3);
+		exec_error(c->cmd.c, 3);
 		exit(126);
 	}
 	return (0);
 }
 
-/* void	job_openfds(t_lst *redir) */
-/* { */
+void	job_openstdin(t_rdtype *rd)
+{
+	int	fd;
 
-/* } */
+	fd = open(rd->fd_.s, rd->fd_.o_flag);
+	if (fd == -1)
+	{
+		exec_error(rd->fd_.s, 1);
+		exit(1);
+	}
+	dup2(fd, rd->fd_.fd);
+}
+
+void	job_openfds(t_lst *redir)
+{
+	t_rdtype	*rd;
+	int			fd;
+
+	if (redir == 0)
+		return ;
+	while (redir)
+	{
+		rd = (t_rdtype *)redir->data;
+		if (rd->type == RDF_FDREDIR)
+			dup2(atoi(rd->fd_.s), rd->fd_.fd);
+		else if (rd->type == RDF_STDIN)
+		{
+			if (rd->fd_.o_flag == -1)
+				;
+			else
+				job_openstdin(rd);
+		}
+		else
+		{
+			fd = open(rd->fd_.s, rd->fd_.o_flag, 0644);
+			dup2(fd, rd->fd_.fd);
+		}
+		redir = redir->next;
+	}
+}
 
 void	job_child_norm(t_command *c)
 {
-	if (c->cmd.c == 0)
+	if (c->var_ && c->cmd.c == 0)
 		exit(0);
-//	job_openfds(c->redir);
-	if (c->cmd.type == C_SHELL_BUILTIN)
+	job_openfds(c->redir);
+	if (c->cmd.type == C_SHELL_BUILTIN)		
 		((t_builtin)c->cmd.c)(c->ac, c->av.cav, c->envp);
-	test_execpath(c->cmd.c);
-	execve(c->cmd.c, c->av.cav, c->envp);
+	test_execpath(c);
+	execve(c->cmd.c, c->av.cav + c->var_, c->envp);
 }
 
 void	job_child_cond(t_lst *c, int endsym)
@@ -82,14 +117,9 @@ void	job_child_cond(t_lst *c, int endsym)
 		job_child_norm((t_command *)c->data);
 }
 
-int		and_check(int status)
+int		status_check(int status)
 {
-	return (!WTERMSIG(status) && !WEXITSTATUS(status));
-}
-
-int		or_check(int status)
-{
-	return (WTERMSIG(status) && WEXITSTATUS(status));
+	return (WTERMSIG(status) || WEXITSTATUS(status));
 }
 
 void	job_skipsym(t_lst **job, int sym)
@@ -97,7 +127,7 @@ void	job_skipsym(t_lst **job, int sym)
 	t_lst		*c;
 	t_command	*co;
 
-	c = (*job)->next;
+	c = (*job);
 	while (c)
 	{
 		co = c->data;
@@ -105,7 +135,8 @@ void	job_skipsym(t_lst **job, int sym)
 			break ;
 		c = c->next;
 	}
-	*job = c;
+	*job = c ? c->next : 0;
+
 }
 
 void	job_father_cond(t_lst *job)
@@ -116,14 +147,25 @@ void	job_father_cond(t_lst *job)
 
 	while (job)
 	{
+
 		c = job->data;
+		dprintf(2, "%s\n", c->endsym == andsym ? "andsym" :
+						   c->endsym == orsym ? "orsym" : "pipe");
 		pid = fork();
 		if (pid == 0)
 			job_child_cond(job, c->endsym);
 		waitpid(pid, &status, WUNTRACED);
-		if (c->endsym == andsym && and_check(status))
+		if (c->endsym == pip)
+			while (job)
+			{
+				if (((t_command *)job->data)->endsym != pip)
+					break ;
+				job = job->next;
+			}
+		job = job->next;
+		if (c->endsym == andsym && status_check(status))
 			job_skipsym(&job, orsym);
-		else if (c->endsym == orsym && or_check(status))
+		if (c->endsym == orsym && !status_check(status))
 			job_skipsym(&job, andsym);
 	}
 }
@@ -131,32 +173,28 @@ void	job_father_cond(t_lst *job)
 void	job_child_pipe(t_lst *job)
 {
 	pid_t		pid;
-	int			fdsave[2];
+	int			fdsave;
 	int			fd[2];
 	int			status;
 	t_command	*c;
 
-	fdsave[0] = dup(0);
-	fdsave[1] = dup(1);
-	fd[0] = 3;
-	pipe(fd);
-	dup2(fd[1], 0);
-	dup2(fd[0], 1);
+	fdsave = dup(1);
 	c = job->data;
 	while (c->endsym == pip)
 	{
+		pipe(fd);
+		dup2(fd[1], 1);
 		pid = fork();
 		if (pid == 0)
 			job_child_norm(c);
 		waitpid(pid, &status, WUNTRACED);
-		if (WTERMSIG(status))
-			;
+		dup2(fd[0], 0);
+		close(fd[1]);
 		job = job->next;
 		c = job->data;
 	}
-	dup2(fdsave[1], 1);
-//	close(fd[0]);
-//	close(fd[1]);
+	dup2(fdsave, 1);
+	close(fd[1]);
 	job_child_norm(c);
 }
 
@@ -167,7 +205,7 @@ void	job_father(t_job *job)
 	else if (job->type & JTPIPE)
 		job_child_pipe(job->c);
 	else
-		job_child_norm((t_command *)job->c->data);
+		job_child_norm((t_command *)job->c->data);		
 }
 
 void	job_grandfather(t_job *job)
@@ -243,38 +281,3 @@ t_job	*job_create(t_lst **c)
 	}
 	return (job);
 }
-
-/* /\**reference**\/ */
-/* int		main(int ac, char **av, char **envp) */
-/* { */
-/* 	pid_t	id; */
-/* 	char	*smth[] = {"ls", "-R", getenv("HOME"), NULL}; */
-/* 	int		status; */
-/* 	sigset_t	set; */
-
-/* 	sigemptyset(&set); // initialize sigset */
-/* 	sigaddset(&set, SIGTSTP); // adding some mask */
-/* 	sigaddset(&set, SIGINT); */
-
-/* 	id = fork(); */
-/* 	if (id == 0) /\* child *\/ */
-/* 	{ */
-/* //		sigprocmask(SIG_UNBLOCK, &set, NULL); // unblock signal on current process */
-/* 		return (execve("/bin/ls", smth, envp)); */
-/* 	} */
-/* 	else */
-/* 	{ */
-/* 		/\* father *\/ */
-/* 		sigprocmask(SIG_BLOCK, &set, NULL); // block signal on current process */
-/* 		waitpid(id, &status, WUNTRACED); */
-/* 		dprintf(2, "%d %d %d %d %s\n", WEXITSTATUS(status), WTERMSIG(status), */
-/* 				WCOREDUMP(status), WSTOPSIG(status), strerror(errno)); */
-/* 		if (WIFSTOPPED(status)) */
-/* 		{ */
-/* 			kill(id, SIGCONT); */
-/* 		} */
-/* 	} */
-/* 	waitpid(id, &status, 0); */
-/* 	dprintf(2, "%d %d %s\n", WEXITSTATUS(status), id, strerror(errno)); */
-/* 	/\* WNOHANG for no pchild process wait *\/ */
-/* } */

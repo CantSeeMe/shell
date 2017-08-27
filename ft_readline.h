@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/08/16 04:01:19 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 12:31:07 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,17 +89,16 @@ typedef struct	s_record
 	int		action;
 }				t_record;
 
-/*
-**typedef struct	s_chronicle
-**{
-**	t_lst		*record;
-**}				t_curs;
-*/
+typedef struct	s_chronicle
+{
+	t_lst		*record;
+	char		*s;
+	t_buff		cur;
+}				t_curs;
 
 typedef struct	s_buff
 {
 	char	*s;
-	char	*head;
 	size_t	msize;
 	size_t	len;
 }				t_buff;
@@ -121,9 +120,7 @@ extern size_t			g_psize;
 extern size_t			g_cubuf;
 
 extern t_lst			*g_record;
-/*
-**extern t_lst			*g_chronicle;
-*/
+extern t_lst			*g_chronicle;
 extern char				*g_yank;
 extern size_t			g_yanksize;
 extern void				(*last_action)();
@@ -155,7 +152,7 @@ int		buff_realloc(size_t mlen);
 void	buff_insert(void *c, int r);
 void	buff_newline(void);
 void	buff_delete(void);
-void	buff_clear_content(void);
+void	buff_reset_state(void);
 void	buff_clear_line(void);
 
 void	buff_record(int start, ssize_t bufsize, int action);

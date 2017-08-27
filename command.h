@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/08/25 06:03:18 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/26 23:22:38 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ struct			s_fd
 typedef struct	s_rdtype
 {
 	struct s_fd	fd_;
-	int			rdtype;
+	int			type;
 }				t_rdtype;
 
 t_lst			*parse_token(t_lst *token);
