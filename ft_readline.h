@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/08/27 12:31:07 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 21:45:07 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@
 **# define KEYCODE_ENTER			0xa done
 */
 
+# include "lst.h"
+
 # include <stddef.h>
 # include <unistd.h>
 
@@ -89,23 +91,24 @@ typedef struct	s_record
 	int		action;
 }				t_record;
 
-typedef struct	s_chronicle
-{
-	t_lst		*record;
-	char		*s;
-	t_buff		cur;
-}				t_curs;
-
 typedef struct	s_buff
 {
 	char	*s;
 	size_t	msize;
 	size_t	len;
+	size_t	cu;
 }				t_buff;
+
+typedef struct	s_chronicle
+{
+	t_lst		*record;
+	char		*s;
+	t_buff		cur;
+}				t_chronicle;
+
 
 char					*ft_readline(char *prompt, size_t psize);
 
-# include "lst.h"
 # include "hashlib.h"
 
 # include <termios.h>
@@ -117,10 +120,10 @@ extern t_buff			g_buffer;
 extern t_curs			g_winsize;
 
 extern size_t			g_psize;
-extern size_t			g_cubuf;
 
 extern t_lst			*g_record;
 extern t_lst			*g_chronicle;
+extern t_lst			*g_chroncur;
 extern char				*g_yank;
 extern size_t			g_yanksize;
 extern void				(*last_action)();
@@ -136,6 +139,7 @@ void	buff_next(void);
 void	buff_prev_word(void);
 void	buff_next_word(void);
 
+void	buff_autocomplete(void);
 void	buff_capitalize(void);
 void	buff_lowtoup(void);
 void	buff_uptolow(void);
@@ -161,6 +165,9 @@ void	buff_revert(void);
 void	buff_yankin(void);
 void	buff_yankout(void);
 
+void	buff_chronicup(void);
+void	buff_chronicdown(void);
+
 /*
 ** screen cursor motion
 */
@@ -172,6 +179,7 @@ void	shift_cursor(int current, int target);
 */
 
 void	exit_readline(void);
+void	reset_readline(void);
 
 static inline int	putchar_(int c)
 {

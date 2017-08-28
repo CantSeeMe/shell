@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/08/27 12:47:54 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 20:29:00 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ void	place_holder(void)
 void	ctrl_event(uint64_t c)
 {
 	static void (*f[])() = {
-		buff_head, buff_prev, place_holder, buff_delete, buff_end,
+		buff_head, buff_prev, reset_readline, buff_delete, buff_end,
 		buff_next, place_holder, place_holder, place_holder, exit_readline,
-		buff_kill_next, buff_clear_content,
+		buff_kill_next, buff_reset_state,
 		place_holder, place_holder, place_holder,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
 		buff_kill_prev, place_holder, buff_del_word, place_holder, buff_yankout,
@@ -103,7 +103,7 @@ void	meta_event(void)
 	else if (c == 'l')
 		(last_action = buff_uptolow)();
 	else if (c == 'r')
-		;/* (last_action = buff_reset_state)(); */
+		(last_action = buff_reset_state)();
 	else if (c == 'c')
 		(last_action = buff_capitalize)();
 }
@@ -111,7 +111,7 @@ void	meta_event(void)
 void	special_event(uint64_t c)
 {
 	static void (*special1[8])() = {
-		place_holder, place_holder, buff_next, buff_prev,
+		buff_chronicup, buff_chronicdown, buff_next, buff_prev,
 		place_holder, buff_head, place_holder, buff_end};
 	static void (*special2[4])() = {
 		place_holder, place_holder, buff_next_word, buff_prev_word};
@@ -157,24 +157,35 @@ void	reload_line(int s)
 
 	(void)s;
 	update_winsize();
-	row = (g_psize + g_cubuf) / g_winsize.col;
+	row = (g_psize + g_buffer.cu) / g_winsize.col;
 	while (row--)
 		tputs(tgetstr("up", 0), 0, putchar_);
 	tputs(tgetstr("cr", 0), 0, putchar_);
 	tputs(tgetstr("cd", 0), 0, putchar_);
 	write(STDERR_FILENO, g_prompt, strlen(g_prompt));
 	buff_refresh(0, g_buffer.s, g_buffer.len);
-	shift_cursor(g_buffer.len, g_cubuf);
+	shift_cursor(g_buffer.len, g_buffer.cu);
 }
 
 int		init_readline(void)
 {
-	g_cubuf = 0;
+	t_chronicle	*chro;
+
+	g_buffer.cu = 0;
 	g_buffer.len = 0;
-	if ((chro = malloc(sizeof(chro))) == 0)
+	if ((chro = malloc(sizeof(*chro))) == 0)
 		return (1);
-	memset(chro, 0, sizeof(chro));
-	push_lst__(&g_chronicle, chro);
+	memset(chro, 0, sizeof(*chro));
+	if (g_chronicle && ((t_chronicle *)g_chronicle->data)->s == 0)
+	{
+		free(chro);
+	}
+	else if (push_lst__(&g_chronicle, chro))
+	{
+		free(chro);
+		return (1);
+	}
+	g_chroncur = g_chronicle;
 	return (buff_malloc(DEFAULT_BUFFER_SIZE));
 }
 
@@ -189,10 +200,13 @@ void	exit_readline(void)
 		free(((t_record *)g_record->data)->buf);
 		pop_lst__(&g_record, free);
 	}
+	chro = (t_chronicle *)g_chroncur->data;
+	chro->record = 0;
 	chro = g_chronicle->data;
-	g_buffer.s[g_buffer.len] = 0;
-	chro->s = strdup(g_buffer.s);
-	g_chroncur = g_chronicle;
+	if (g_buffer.s)
+		g_buffer.s[g_buffer.len] = 0;
+	if (g_buffer.len)
+		chro->s = strdup(g_buffer.s);
 }
 
 void	reset_readline(void)
@@ -204,8 +218,11 @@ void	reset_readline(void)
 		free(((t_record *)g_record->data)->buf);
 		pop_lst__(&g_record, free);
 	}
-	g_buffer.len = 0;
-	g_cubuf = 0;
+	if (g_chroncur != g_chronicle)
+		free(((t_chronicle *)g_chronicle->data)->cur.s);
+	free(g_buffer.s);
+	g_buffer.s = (char *)-1;
+	pop_lst__(&g_chronicle, free);
 }
 
 void	update_prompt(char *prompt, size_t psize)

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:51 by root              #+#    #+#             */
-/*   Updated: 2017/08/27 12:44:13 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 13:50:21 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ t_buff			g_buffer;
 t_curs			g_winsize;
 
 size_t			g_psize;
-size_t			g_cubuf;
 
 t_lst			*g_record;
 t_lst			*g_chronicle;

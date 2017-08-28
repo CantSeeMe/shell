@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/08/27 02:38:10 by jye              ###   ########.fr       */
+/*   Updated: 2017/08/27 20:32:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,29 +105,34 @@ int		main(int ac, char **av, char **envp)
 
 	init_htvar(envp);
 	chash_init();
-	
-	s = ft_readline("minishell> ", strlen("minishell> "));
-	init_tokenizer();
-	t = tokenize(s);
-	t = parse_token(t);
-	c = t->data;
+	while (1)
+	{
+		s = ft_readline("minishell> ", strlen("minishell> "));
+		free(s);
+		if (s == NULL || s == (char *)-1)
+			exit(127);
+	}
+	/* init_tokenizer(); */
+	/* t = tokenize(s); */
+	/* t = parse_token(t); */
+	/* c = t->data; */
 //	dprintf(1, "%s\n", c->av.lav->data);
 /////
-	t_lst	*cp = t;
-	while (cp)
-	{
-		c = cp->data;
-		transmute_av(c);
-		set_execpath(c);
-		set_envp(c);
-		cp = cp->next;
-	}
-	while (t)
-	{
-		t_job	*job;
-		job = job_create(&t);
-		job_exec(job);
-	}
+	/* t_lst	*cp = t; */
+	/* while (cp) */
+	/* { */
+	/* 	c = cp->data; */
+	/* 	transmute_av(c); */
+	/* 	set_execpath(c); */
+	/* 	set_envp(c); */
+	/* 	cp = cp->next; */
+	/* } */
+	/* while (t) */
+	/* { */
+	/* 	t_job	*job; */
+	/* 	job = job_create(&t); */
+	/* 	job_exec(job); */
+	/* } */
 	// cut the pack of command into jobs of ; / &
 	/////
 /*****process parsed bullshit in a fork or not******/
