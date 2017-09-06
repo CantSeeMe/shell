@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/08/27 20:32:17 by root             ###   ########.fr       */
+/*   Updated: 2017/08/29 13:32:35 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,8 @@ int		main(int ac, char **av, char **envp)
 	while (1)
 	{
 		s = ft_readline("minishell> ", strlen("minishell> "));
-		free(s);
+		if (s != (char *)-1 && s != 0)
+			free(s);
 		if (s == NULL || s == (char *)-1)
 			exit(127);
 	}

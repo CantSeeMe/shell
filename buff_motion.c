@@ -6,15 +6,17 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/08/27 21:46:16 by root             ###   ########.fr       */
+/*   Updated: 2017/09/06 19:34:46 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define WORD_UCHAR	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define WORD_LCHAR	"abcdefghijklmnopqrstuvwxyz"
+#define WORD_SCHAR	"._-"
 #define WORD_NCHAR	"1234567890"
 
 #define WORD_ANCHAR	WORD_UCHAR WORD_LCHAR WORD_NCHAR
+#define WORD_FCHAR	WORD_ANCHAR WORD_SCHAR "/"
 
 #include "ft_readline.h"
 #include <string.h>
@@ -22,6 +24,7 @@
 #include <stdlib.h>
 #include <curses.h>
 #include <term.h>
+#include <dirent.h>
 
 void	buff_head(void)
 {
@@ -179,7 +182,7 @@ void	buff_kill_prev(void)
 void	buff_clear_content(void)
 {
 	tputs(tgetstr("cl", 0), 0, putchar_);
-	// print prompt
+	write(2, g_prompt, strlen(g_prompt));
 	buff_refresh(0, g_buffer.s, g_buffer.len);
 	shift_cursor(g_buffer.len, g_buffer.cu);
 }
@@ -208,16 +211,95 @@ void	buff_reset_state(void)
 		free(((t_record *)g_record->data)->buf);
 		pop_lst__(&g_record, free);
 	}
+	chro->record = 0;
+}
+ 
+/*****************************/
+/*****************************/
+/*****************************/
+
+void	buff_fill_fold(char **fold, char *p)
+{
+	char *s;
+
+	s = p;
+	while (s > g_buffer.s)
+	{
+		if (*s == ' ')
+			break ;
+		s--;
+	}
+	s += (s != g_buffer.s);
+	if (*p == '/' && s == p)
+	{
+		*fold = strdup("/");
+	}
+	else if (*p == '/')
+	{
+		*p = 0;
+		*fold = strdup(s);
+		*p = '/';
+	}
+	else
+		*fold = strdup(".");
 }
 
-/*****************************/
-/*****************************/
-/*****************************/
+void	buff_fill_alike(char **fold, char **alike)
+{
+	char	*p;
+	char	c;
+
+	p = g_buffer.s + g_buffer.cu;
+	c = g_buffer.s[g_buffer.cu];
+	g_buffer.s[g_buffer.cu] = 0;
+	while (p > g_buffer.s)
+	{
+		if (*p == '/' || *p == ' ')
+			break ;
+		p--;
+	}
+	if (p != g_buffer.s + g_buffer.cu && (*p == '/' || *p == ' '))
+		*alike = strdup(p + 1);
+	else
+		*alike = strdup(p);
+	g_buffer.s[g_buffer.cu] = c;
+	buff_fill_fold(fold, p);
+}
+
+typedef struct	s_cdir
+{
+	DIR		*cwd;
+	size_t	maxlen;
+	size_t	nb_file;
+	size_t	s_alloc;
+	int		bae;
+	char	**file;
+}				t_cdir;
+t_cdir	*buff_get_alike(char *fold, char *alike);
+void	buff_show_alike(t_cdir *c);
+void	ft_qsort(void **sort, ssize_t size,
+				int (*cmp)());
+void	buff_autocomplete_(t_cdir *cdir, char *fold, char *alike);
 
 void	buff_autocomplete(void)
 {
-	
+	t_cdir	*cdir;
+	char	*fold;
+	char	*alike;
+
+	buff_fill_alike(&fold, &alike);
+	if ((cdir = buff_get_alike(fold, alike)) == 0)
+		return ;
+	ft_qsort((void **)cdir->file, cdir->nb_file, strcmp);
+	if (last_action == buff_autocomplete && cdir->bae != 1)
+		buff_show_alike(cdir);
+	cdir->bae = cdir->nb_file;
+	buff_autocomplete_(cdir, fold, alike);
+	free(fold);
+	free(alike);
+	closedir(cdir->cwd);
 }
+
 
 void	buff_lowtoup(void)
 {

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/08/27 21:45:07 by root             ###   ########.fr       */
+/*   Updated: 2017/09/03 14:07:28 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void	shift_cursor(int current, int target);
 
 void	exit_readline(void);
 void	reset_readline(void);
+void	reload_line(int sig);
 
 static inline int	putchar_(int c)
 {

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/08/27 20:29:00 by root             ###   ########.fr       */
+/*   Updated: 2017/09/02 18:23:46 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ void	ctrl_event(uint64_t c)
 {
 	static void (*f[])() = {
 		buff_head, buff_prev, reset_readline, buff_delete, buff_end,
-		buff_next, place_holder, place_holder, place_holder, exit_readline,
+		buff_next, place_holder, place_holder,
+		buff_autocomplete, exit_readline,
 		buff_kill_next, buff_reset_state,
 		place_holder, place_holder, place_holder,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
@@ -112,7 +113,7 @@ void	special_event(uint64_t c)
 {
 	static void (*special1[8])() = {
 		buff_chronicup, buff_chronicdown, buff_next, buff_prev,
-		place_holder, buff_head, place_holder, buff_end};
+		place_holder, buff_end, place_holder, buff_head};
 	static void (*special2[4])() = {
 		place_holder, place_holder, buff_next_word, buff_prev_word};
 	static void (*special3[4])() = {
