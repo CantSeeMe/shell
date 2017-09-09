@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/08/27 01:03:47 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/09 19:16:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,33 +21,74 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "ft_readline.h"
+
 int			syntax_check(t_lst *tokens)
 {
-	t_token	*stack;
 	t_token	*to;
+	t_lst	*last;
+	char	*exp;
+	char	*prompt;
+	t_token	stack;
 
-	while (tokens)
+	if (tokens == (t_lst *)0)
+		return (1);
+	stack = (t_token){.s = (((t_token *)tokens->data)->s),
+					  .sym = (((t_token *)tokens->data)->sym),
+					  .symbreak = 0};
+	while (42)
 	{
-		to = (t_token *)tokens->data;
-		if (to->sym <= number)
-			stack = (t_token *)0;
-		else
+		while (tokens)
 		{
-			if (stack)
+			to = (t_token *)tokens->data;
+			if (to->sym <= number)
+				stack = ((t_token){.s = 0, .sym = 0, .symbreak = 0});
+			else
 			{
-				parse_error(stack->s, ERROR_EXPECTED);
+				if (stack.sym >= number)
+				{
+					parse_error(stack.s, ERROR_EXPECTED);
+					return (1);
+				}
+				stack = ((t_token){.s = to->s, .sym = to->sym, .symbreak = 0});
+			}
+			last = tokens;
+			tokens = tokens->next;
+		}
+		if (stack.sym != ampersand && stack.sym != period && stack.sym != 0)
+		{
+			if ((stack.sym > period && stack.sym < greater))
+			{
+				prompt = ((char*[]){"cmdand> ", "cmdor> ", "pipe> "})[stack.sym - andsym];
+				while ((exp = ft_readline(prompt, strlen(prompt))) &&
+					   (exp != 0 && exp != (char *)-1))
+				{
+					if ((tokens = tokenize(exp)) == 0)
+					{
+						free(exp);
+						exp = 0;
+						continue ;
+					}
+					free(exp);
+					break ;
+				}
+				if (exp == 0 || exp == (char *)-1)
+				{
+					if (exp == 0)
+					{}// unexpected end of line
+					return (1);
+				}
+				last->next = tokens;
+				continue ;
+			}
+			else
+			{
+				//unexpected token newline
 				return (1);
 			}
-			stack = to;
 		}
-		tokens = tokens->next;
+		return (0);
 	}
-	if (stack && stack->sym != ampersand && stack->sym != period)
-	{
-		parse_error(stack->s, ERROR_EXPECTED);
-		return (1);
-	}
-	return (0);
 }
 
 t_command	*init_command(void)
@@ -177,6 +218,15 @@ t_lst	*parse_token(t_lst *tokens)
 	t_lst	*clst;
 	t_lst	*h;
 
+	if (syntax_check(tokens))
+	{
+		while (tokens)
+		{
+			free(((t_token *)tokens->data)->s);
+			pop_lst__(&tokens, free);
+		}
+		return (0);
+	}
 	clst = split_token(tokens);
 	h = clst;
 	while (clst)

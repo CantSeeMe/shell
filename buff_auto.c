@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/03 14:46:41 by root              #+#    #+#             */
-/*   Updated: 2017/09/06 19:32:12 by root             ###   ########.fr       */
+/*   Updated: 2017/09/07 22:14:37 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,7 +291,6 @@ void	buff_autocomplete_(t_cdir *cdir, char *fold, char *alike)
 		return ;
 	ptr_comp = buff_get_last_part(cdir, strlen(alike));
 	n = strlen(ptr_comp);
-	dprintf(3, "%s %d\n", ptr_comp, n);
 	memmove(g_buffer.s + g_buffer.cu + n +
 			(cdir->nb_file == 1),
 			g_buffer.s + g_buffer.cu,
@@ -299,7 +298,6 @@ void	buff_autocomplete_(t_cdir *cdir, char *fold, char *alike)
 	memcpy(g_buffer.s + g_buffer.cu,
 		   ptr_comp,
 		   n);
-
 	if (cdir->nb_file == 1)
 	{
 		if ((abs_path = cat_broken_file(fold, alike, ptr_comp)) == 0)

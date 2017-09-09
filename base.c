@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/08/29 13:32:35 by root             ###   ########.fr       */
+/*   Updated: 2017/09/09 14:56:29 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "htvar.h"
 #include "error.h"
 #include "job.h"
+#include "etc_parse.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -100,25 +101,40 @@ int		set_envp(t_command *c)
 int		main(int ac, char **av, char **envp)
 {
 	char	*s;
+	char	*e;
 	t_lst	*t;
 	t_command	*c;
 
 	init_htvar(envp);
 	chash_init();
+	init_tokenizer();
 	while (1)
 	{
+		size_t lul;
 		s = ft_readline("minishell> ", strlen("minishell> "));
-		if (s != (char *)-1 && s != 0)
-			free(s);
 		if (s == NULL || s == (char *)-1)
 			exit(127);
+		dprintf(1, "%p\n", s);
+		e = transmute_exp_spec(s);
+		if (e)
+		{
+			lul = strlen(e);
+			for (int i = 0; i < lul; i++)
+				dprintf(1, "%hhd ", e[i]);
+			dprintf(1, "\n");
+		}
+		t = tokenize(s);
+		t = parse_token(t);
+		for (t_lst *z = t; z; z = z->next)
+		{
+			c = z->data;
+			dprintf(1, "%s\n", c->av.lav->data);
+		}
+		if (e != 0)
+			free(e);	
+		exit(1);
 	}
-	/* init_tokenizer(); */
-	/* t = tokenize(s); */
-	/* t = parse_token(t); */
 	/* c = t->data; */
-//	dprintf(1, "%s\n", c->av.lav->data);
-/////
 	/* t_lst	*cp = t; */
 	/* while (cp) */
 	/* { */

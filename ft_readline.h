@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/09/03 14:07:28 by root             ###   ########.fr       */
+/*   Updated: 2017/09/09 13:47:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,8 @@ typedef struct	s_chronicle
 	t_buff		cur;
 }				t_chronicle;
 
-
 char					*ft_readline(char *prompt, size_t psize);
+char					*expansion_readline(char *s, char *pr, size_t prsize);
 
 # include "hashlib.h"
 

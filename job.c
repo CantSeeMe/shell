@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 16:07:52 by jye               #+#    #+#             */
-/*   Updated: 2017/08/27 02:35:57 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/09 19:35:08 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ void	job_skipsym(t_lst **job, int sym)
 		c = c->next;
 	}
 	*job = c ? c->next : 0;
-
 }
 
 void	job_father_cond(t_lst *job)
