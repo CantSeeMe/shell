@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/09/09 19:16:34 by root             ###   ########.fr       */
+/*   Updated: 2017/09/11 16:54:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <stdio.h>
 
 #include "ft_readline.h"
+#include "etc_parse.h"
 
 int			syntax_check(t_lst *tokens)
 {
@@ -63,6 +64,7 @@ int			syntax_check(t_lst *tokens)
 				while ((exp = ft_readline(prompt, strlen(prompt))) &&
 					   (exp != 0 && exp != (char *)-1))
 				{
+					exp = transmute_exp_spec(exp);
 					if ((tokens = tokenize(exp)) == 0)
 					{
 						free(exp);
@@ -173,8 +175,12 @@ int		parse_redir(t_lst **argv_token, t_lst **redir)
 	t_rdtype *rd;
 
 	if ((rd = get_redirection(argv_token)) == 0)
+	{
+		dummy_redirection(argv_token);
 		return (1);
-	if (append_lst__(*redir, rd))
+	}
+	if (!*redir ||
+		append_lst__(*redir, rd))
 	{
 		free(rd->fd_.s);
 		free(rd);
@@ -192,8 +198,7 @@ int		parse_command(t_command *co)
 
 	argv_token = co->av.lav;
 	co->av.lav = 0;
-	if ((co->redir = init_lst__(NULL)) == 0)
-		return (1);
+	co->redir = init_lst__(NULL);
 	redir = co->redir;
 	while (argv_token)
 	{
@@ -209,7 +214,8 @@ int		parse_command(t_command *co)
 			pop_lst__(&argv_token, free);
 		}
 	}
-	pop_lst__(&co->redir, NULL);
+	if (co->redir)
+		pop_lst__(&co->redir, NULL);
 	return (0);
 }
 

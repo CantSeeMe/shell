@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 16:07:52 by jye               #+#    #+#             */
-/*   Updated: 2017/09/09 19:35:08 by root             ###   ########.fr       */
+/*   Updated: 2017/09/12 11:56:09 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "job.h"
 #include "command.h"
 #include "token.h"
+#include "etc_parse.h"
+#include "ft_readline.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -70,6 +72,50 @@ void	job_openstdin(t_rdtype *rd)
 	dup2(fd, rd->fd_.fd);
 }
 
+int		is_heretag(char *s, char *heretag)
+{
+	int		r;
+	size_t	sl;
+
+	r = 0;
+	while (*s && *s == ' ')
+		s++;
+	sl = strlen(heretag);
+	if (!strncmp(s, heretag, sl))
+	{
+		s += sl;
+		r = 1;
+	}
+	while (*s && *s == ' ')
+		s++;
+	if (*s != 0)
+		r = 0;
+	return (r);
+}
+
+void	job_heretag(t_rdtype *rd)
+{
+	char	*s;
+	int		fd[2];
+
+	pipe(fd);
+	while ((s = ft_readline("heretag> ", strlen("heretag> "))) &&
+		   s != (char *)-1)
+	{
+		if (is_heretag(s, rd->fd_.s))
+			break ;
+		write(fd[1], s, strlen(s));
+		write(fd[1], "\n", 1);
+		free(s);
+	}
+	close(fd[1]);
+	if (s == (char *)-1)
+		exit(127);
+	if (s)
+		free(s);
+	dup2(fd[0], STDIN_FILENO);
+}
+
 void	job_openfds(t_lst *redir)
 {
 	t_rdtype	*rd;
@@ -85,7 +131,7 @@ void	job_openfds(t_lst *redir)
 		else if (rd->type == RDF_STDIN)
 		{
 			if (rd->fd_.o_flag == -1)
-				;
+				job_heretag(rd);
 			else
 				job_openstdin(rd);
 		}
@@ -100,11 +146,15 @@ void	job_openfds(t_lst *redir)
 
 void	job_child_norm(t_command *c)
 {
+	int	i;
 	if (c->var_ && c->cmd.c == 0)
 		exit(0);
 	job_openfds(c->redir);
+	i = c->var_;
+	while (i < c->ac)
+		givemeback_letter_pls(c->av.cav[i++]);
 	if (c->cmd.type == C_SHELL_BUILTIN)		
-		((t_builtin)c->cmd.c)(c->ac, c->av.cav, c->envp);
+		((t_builtin)c->cmd.c)(c->ac - c->var_, c->av.cav + c->var_, c->envp);
 	test_execpath(c);
 	execve(c->cmd.c, c->av.cav + c->var_, c->envp);
 }
@@ -148,8 +198,8 @@ void	job_father_cond(t_lst *job)
 	{
 
 		c = job->data;
-		dprintf(2, "%s\n", c->endsym == andsym ? "andsym" :
-						   c->endsym == orsym ? "orsym" : "pipe");
+		/* dprintf(2, "%s\n", c->endsym == andsym ? "andsym" : */
+		/* 				   c->endsym == orsym ? "orsym" : "pipe"); */
 		pid = fork();
 		if (pid == 0)
 			job_child_cond(job, c->endsym);
@@ -232,7 +282,6 @@ void	job_exec(t_job *job)
 	pid_t 		pid;
 	sigset_t	set;
 
-//	job_check();
 	if (job == 0)
 		return ;
 	pid = fork();

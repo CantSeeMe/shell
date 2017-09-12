@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 19:21:56 by jye               #+#    #+#             */
-/*   Updated: 2017/08/26 23:23:47 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/11 16:36:07 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,22 @@ t_rdtype	*get_redirection(t_lst **token)
 	fill_fddata(rd, to, fd);
 	pop_lst__(token, free);
 	return (rd);
+}
+
+void	dummy_redirection(t_lst **token)
+{
+	t_token		*to;
+
+	to = (t_token *)(*token)->data;
+	if (to->sym == number)
+	{
+		free(to->s);
+		pop_lst__(token, free);
+		to = (t_token *)(*token)->data;
+	}
+	free(to->s);
+	pop_lst__(token, free);
+	to = (t_token *)(*token)->data;
+	free(to->s);
+	pop_lst__(token, free);
 }

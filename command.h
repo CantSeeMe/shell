@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/08/26 23:22:38 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/11 16:37:12 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,6 @@ typedef struct	s_rdtype
 
 t_lst			*parse_token(t_lst *token);
 t_rdtype		*get_redirection(t_lst **token);
+void			dummy_redirection(t_lst **token);
 
 #endif

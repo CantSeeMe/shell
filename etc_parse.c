@@ -6,14 +6,17 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 19:39:44 by root              #+#    #+#             */
-/*   Updated: 2017/09/09 13:00:02 by root             ###   ########.fr       */
+/*   Updated: 2017/09/11 14:13:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include <stdio.h>
-#include <etc_parse.h>
-#include <ft_readline.h>
+#include <string.h>
+
+#include "etc_parse.h"
+#include "ft_readline.h"
+#include "htvar.h"
 
 #define WORD_UCHAR	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define WORD_LCHAR	"abcdefghijklmnopqrstuvwxyz"
@@ -177,4 +180,114 @@ char	*transmute_exp_spec(char *s)
 		}
 	}
 	return (org);
+}
+
+struct	dollar_data
+{
+	char	*s;
+	char	*e;
+	char	*v;
+	size_t	vsize;
+
+};
+
+char	*convert_dollar_to_var(t_lst *d, char *sl, ssize_t alloc_)
+{
+	char	*s;
+	t_lst	*tmp;
+	struct dollar_data *d_data;
+	size_t	slen;
+
+	//
+	tmp = d;
+	slen = strlen(sl);
+	while (tmp && (s = malloc(alloc_ + slen + 1)) == 0)
+	{
+		d_data = tmp->data;
+		alloc_ -= d_data->vsize;
+		d_data->vsize = 0;
+		d_data->v = 0;
+		tmp = tmp->next;
+	}
+	//
+	if (s == NULL)
+	{
+		while (d)
+			pop_lst__(&d, free);
+		return (s);
+	}
+	s[alloc_ + slen] = 0;
+	memcpy(s + alloc_, sl, slen);
+	while (d)
+	{
+		d_data = d->data;
+		if (d_data->v)
+		{
+			alloc_ -= d_data->vsize;
+			memcpy(s + alloc_, d_data->v, d_data->vsize);
+		}
+		slen = d_data->e - d_data->s;
+		alloc_ -= slen;
+		memcpy(s + alloc_, d_data->s, slen);
+		pop_lst__(&d, free);
+	}
+	return (s);
+}
+
+char	*transmute_dollar(char *s)
+{
+	ssize_t	alloc_;
+	char	*ptr;
+	struct	dollar_data	*d_data;
+	t_lst	*d;
+	char	c;
+
+	alloc_ = 0;
+	d = 0;
+	while ((ptr = strchr(s, '$')))
+	{
+		*ptr = 0;
+		if (ptr[1] == 0 || !strchr(WORD_ANCHAR2, ptr[1]) ||
+			(d_data = malloc(sizeof(*d_data))) == 0)
+		{
+			*ptr = -'$';
+			continue ;
+		}
+		d_data->s = s;
+		d_data->e = ptr;
+		alloc_ += ptr++ - s;
+		s = ptr++;
+		while (*ptr && strchr(WORD_ANCHAR1, *ptr))
+			ptr++;
+		c = *ptr;
+		*ptr = 0;
+		d_data->v = vhash_search(s);
+		if (d_data->v)
+		{
+			d_data->vsize = strlen(d_data->v);
+			alloc_ += d_data->vsize;
+		}
+		else
+			d_data->v = 0;
+		*ptr = c;
+		if ((push_lst__(&d, d_data)))
+		{
+			alloc_ -= d_data->vsize + (d_data->e - d_data->s);
+			free(d_data);
+		}
+		s = ptr;
+	}
+	if (alloc_ == 0)
+		return (0);
+	return (convert_dollar_to_var(d, s, alloc_));
+}
+
+void	givemeback_letter_pls(char *s)
+{
+	while (*s)
+	{
+		if (*s < 0)
+			*s = -*s;
+		s++;
+	}
 }

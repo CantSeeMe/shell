@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:32 by jye               #+#    #+#             */
-/*   Updated: 2017/08/16 04:47:56 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/12 16:52:08 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 # define MAXTOKEN 10
 # define WHITESPACE " \t\n"
-# define SYMBREAK "><&|;=()"
+# define SYMBREAK "><&|;"
 # define NORMPLS WHITESPACE SYMBREAK
 
 typedef enum	e_symbol

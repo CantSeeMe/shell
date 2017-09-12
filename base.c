@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/09/09 14:56:29 by root             ###   ########.fr       */
+/*   Updated: 2017/09/12 16:16:01 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 int		transmute_av(t_command *c)
 {
 	char	**av;
+	char	*dollar;
 	t_lst	*z;
 	int		i;
 
@@ -39,10 +40,12 @@ int		transmute_av(t_command *c)
 	z = c->av.lav;
 	i = c->ac;
 	av[i--] = 0;
+//	dprintf(1, "HELLO THERE %p %d\n", z, c->ac);
 	while (z)
 	{
-		av[i--] = z->data;
-		pop_lst__(&z, 0);
+		dollar = transmute_dollar((char *)z->data);
+		dprintf(1, "%s\n", (av[i--] = dollar ? dollar : z->data));
+		pop_lst__(&z, dollar ? free : 0);
 	}
 	c->av.cav = av;
 	return (0);
@@ -52,14 +55,33 @@ int		transmute_av(t_command *c)
 /******************************/
 /******************************/
 
+#define WORD_UCHAR	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define WORD_LCHAR	"abcdefghijklmnopqrstuvwxyz"
+#define WORD_SCHAR	"._-"
+#define WORD_NCHAR	"1234567890"
+
+#define WORD_ANCHAR	WORD_UCHAR WORD_LCHAR WORD_NCHAR
+
+
+int		check_varname(char *s)
+{
+	while (*s != '=')
+	{
+		if (!strchr(WORD_ANCHAR, *s))
+			return (0);
+		s++;
+	}
+	return (1);
+}
+
 int		set_execpath(t_command *c)
 {
 	t_ccsh		*z;
 	t_var		*v;
 
-	if (strchr(*c->av.cav, '='))
+	if (strchr(*c->av.cav, '=') && check_varname(*c->av.cav))
 	{
-		if ((v = init_var(*c->av.cav, 0)))
+		if ((v = init_var(*c->av.cav, HTVAR_VAR_GLOBAL)))
 			vhash_insert(v);
 		c->var_ = 1;
 	}
@@ -74,7 +96,6 @@ int		set_execpath(t_command *c)
 		c->cmd = *z;
 	else
 		c->cmd.c = 0;
-//	dprintf(2, "%s\n", c->cmd.c);
 	return (0);
 }
 
@@ -89,10 +110,11 @@ int		set_envp(t_command *c)
 	i = g_envpsize;
 	c->envp[i--] = 0;
 	envp = g_envp;
+	vhash_set_underscore(HTVAR_SET_PATH, c);
 	while (envp)
 	{
 		v = envp->data;
-		c->envp[i--] = defrag_var(v);
+		c->envp[i--] = defrag_var(v->key, v->value);
 		envp = envp->next;
 	}
 	return (0);
@@ -110,47 +132,42 @@ int		main(int ac, char **av, char **envp)
 	init_tokenizer();
 	while (1)
 	{
-		size_t lul;
 		s = ft_readline("minishell> ", strlen("minishell> "));
 		if (s == NULL || s == (char *)-1)
 			exit(127);
-		dprintf(1, "%p\n", s);
+//		dprintf(1, "%p\n", s);
 		e = transmute_exp_spec(s);
-		if (e)
-		{
-			lul = strlen(e);
-			for (int i = 0; i < lul; i++)
-				dprintf(1, "%hhd ", e[i]);
-			dprintf(1, "\n");
-		}
-		t = tokenize(s);
-		t = parse_token(t);
-		for (t_lst *z = t; z; z = z->next)
-		{
-			c = z->data;
-			dprintf(1, "%s\n", c->av.lav->data);
-		}
+		/* if (e) */
+		/* { */
+		/* 	size_t lul; */
+		/* 	lul = strlen(e); */
+		/* 	for (int i = 0; i < lul; i++) */
+		/* 		dprintf(1, "%hhd ", e[i]); */
+		/* 	dprintf(1, "\n"); */
+		/* } */
+		t = tokenize(e);
 		if (e != 0)
-			free(e);	
+			free(e);
+		t = parse_token(t);
+		t_lst	*cp = t;
+		while (cp)
+		{
+			c = cp->data;
+			transmute_av(c);
+			set_execpath(c);
+			dprintf(1, "%s\n", *c->av.cav);
+			set_envp(c);
+			cp = cp->next;
+		}
+		while (t)
+		{
+			t_job	*job;
+			job = job_create(&t);
+			job_exec(job);
+			
+		}
 		exit(1);
 	}
-	/* c = t->data; */
-	/* t_lst	*cp = t; */
-	/* while (cp) */
-	/* { */
-	/* 	c = cp->data; */
-	/* 	transmute_av(c); */
-	/* 	set_execpath(c); */
-	/* 	set_envp(c); */
-	/* 	cp = cp->next; */
-	/* } */
-	/* while (t) */
-	/* { */
-	/* 	t_job	*job; */
-	/* 	job = job_create(&t); */
-	/* 	job_exec(job); */
-	/* } */
-	// cut the pack of command into jobs of ; / &
 	/////
 /*****process parsed bullshit in a fork or not******/
 }

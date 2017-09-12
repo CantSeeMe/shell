@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/08/27 20:28:18 by root             ###   ########.fr       */
+/*   Updated: 2017/09/12 16:17:16 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,28 @@ int		vhash_init(void)
 		return (0);
 }
 
-int		vhash_insert(t_var *var)
+t_var	*vhash_insert(t_var *var)
 {
 	t_bucket	*item;
 	t_var		*c;
 
 	if ((item = hash_insert(g_htvar, var->key, HT_SEARCH)) == 0)
-		return (1);
+		return (0);
 	if (item->c)
 	{
 		c = (t_var *)item->c;
 		free(c->value);
 		c->value = var->value;
 		free(var->key);
-		if (var->lock_)
+		if (var->lock_ && c->lock_)
 		{
 			pop_lst__(&var->lock_, NULL);
 			g_envpsize -= 1;
+		}
+		else if (var->lock_ && !c->lock_)
+		{
+			var->lock_->data = c;
+			c->lock_ = var->lock_;
 		}
 		free(var);
 	}
@@ -55,7 +60,7 @@ int		vhash_insert(t_var *var)
 	{
 		item->c = var;
 	}
-	return (0);
+	return ((t_var *)item->c);
 }
 
 void	vhash_pop(char *key)
@@ -107,19 +112,20 @@ int		frag_var(char *s, char **key, char **value)
 	return (0);
 }
 
-char	*defrag_var(t_var *var)
+char	*defrag_var(char *key, char *value)
 {
 	size_t	ks;
 	size_t	vs;
 	char	*s;
 
-	ks = strlen(var->key);
-	vs = strlen(var->value);
+	ks = strlen(key);
+	vs = value ? strlen(value) : 0;
 	if ((s = malloc(ks + vs + 2)) == 0)
 		return (0);
-	memcpy(s, var->key, ks);
+	memcpy(s, key, ks);
 	s[ks] = '=';
-	memcpy(s + ks + 1, var->value, vs);
+	if (value)
+		memcpy(s + ks + 1, value, vs);
 	s[ks + vs + 1] = 0;
 	return (s);
 }
@@ -140,7 +146,7 @@ t_var	*init_var(char *s, int envp)
 	}
 	v->key = key;
 	v->value = value;
-	if (envp)
+	if (envp == HTVAR_VAR_ENVP)
 	{
 		push_lst__(&g_envp, v);
 		v->lock_ = g_envp;
@@ -159,9 +165,34 @@ int		init_htvar(char **envp)
 		return (1);
 	while (*envp)
 	{
-		if ((v = init_var(*envp, 1)))
+		if ((v = init_var(*envp, HTVAR_VAR_ENVP)))
 			vhash_insert(v);
 		++envp;
+	}
+	return (0);
+}
+
+int		vhash_set_underscore(int opt, t_command *c)
+{
+	t_bucket	*item;
+	t_var		*v;
+
+	if ((item = hash_insert(g_htvar, "_", HT_SEARCH)) == 0)
+		return (1);
+	if (item->c == 0 && (item->c = init_var("_=", HTVAR_VAR_ENVP)) == 0)
+		return (1);
+	v = (t_var *)item->c;
+	free(v->value);
+	if (opt == HTVAR_SET_PATH)
+	{
+		if (c->cmd.type == C_SHELL_BUILTIN)
+			v->value = strdup(c->cmd.key);
+		else
+			v->value = strdup(c->cmd.c);
+	}
+	else
+	{
+		v->value = strdup(c->av.cav[(c->ac - 1)]);
 	}
 	return (0);
 }
