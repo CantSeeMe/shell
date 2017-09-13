@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/09/12 16:16:01 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 14:19:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,10 @@ int		transmute_av(t_command *c)
 	z = c->av.lav;
 	i = c->ac;
 	av[i--] = 0;
-//	dprintf(1, "HELLO THERE %p %d\n", z, c->ac);
 	while (z)
 	{
 		dollar = transmute_dollar((char *)z->data);
-		dprintf(1, "%s\n", (av[i--] = dollar ? dollar : z->data));
+		av[i--] = dollar ? dollar : z->data;
 		pop_lst__(&z, dollar ? free : 0);
 	}
 	c->av.cav = av;

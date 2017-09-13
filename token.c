@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:31 by jye               #+#    #+#             */
-/*   Updated: 2017/09/09 14:56:49 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 02:24:36 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,4 +119,10 @@ t_lst						*tokenize(char *line)
 	}
 	pop_lst__(&token_item, NULL);
 	return (token_item);
+}
+
+void					free_token(t_token *t)
+{
+	free(t->s);
+	free(t);
 }

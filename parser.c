@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/09/11 16:54:57 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 14:53:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,10 +117,8 @@ t_command	*get_command(t_lst **tokens)
 	t_command	*co;
 	t_token		*to;
 
-	if (*tokens == 0)
+	if (*tokens == 0 || (co = init_command()) == 0)
 		return ((t_command *)0);
-	if ((co = init_command()) == 0)
-		return ((t_command *)-1);
 	av = co->av.lav;
 	while (*tokens)
 	{
@@ -128,13 +126,14 @@ t_command	*get_command(t_lst **tokens)
 		if (to->sym > number && to->sym < greater)
 		{
 			co->endsym = to->sym;
-			free(to->s);
-			pop_lst__(tokens, free);
+			pop_lst__(tokens, free_token);
 			break ;
 		}
 		pop_lst__(tokens, 0);
-		append_lst__(av, to);
-		av = av->next;
+		if ((append_lst__(av, to)))
+			free_token(to);
+		else
+			av = av->next;
 	}
 	pop_lst__(&co->av.lav, 0);
 	return (co);
@@ -146,20 +145,34 @@ t_lst		*split_token(t_lst *tokens)
 	t_lst		*cp;
 	t_command	*co;
 
-	clst = init_lst__(NULL);
+	if ((clst = init_lst__(NULL)) == 0)
+	{
+		while (tokens)
+			pop_lst__(&tokens, free_token);
+		return (0);
+	}
 	cp = clst;
 	while ((co = get_command(&tokens)))
 	{
-		if (co == (t_command *)-1)
-			break ;
 		if ((append_lst__(cp, co)))
-			break ;
-		cp = cp->next;
+		{
+			while (co->av.lav)
+				pop_lst__(&co->av.lav, free_token);
+			free(co);
+		}
+		else
+			cp = cp->next;
 	}
 	pop_lst__(&clst, 0);
 	if (tokens)
 	{
-		return (0);
+		while (tokens)
+			pop_lst__(&tokens, free_token);
+		if (clst && cp->data)
+		{
+			co = cp->data;
+			co->endsym = period;
+		}
 	}
 	return (clst);
 }
@@ -177,16 +190,22 @@ int		parse_redir(t_lst **argv_token, t_lst **redir)
 	if ((rd = get_redirection(argv_token)) == 0)
 	{
 		dummy_redirection(argv_token);
-		return (1);
+		return (0);
 	}
+	if (rd->fd_.o_flag == -1 && rd->type == RDF_STDIN)
+		here_tag(rd);
 	if (!*redir ||
 		append_lst__(*redir, rd))
 	{
 		free(rd->fd_.s);
 		free(rd);
-		return (1);
+		return (0);
 	}
 	*redir = (*redir)->next;
+	if (rd->fd_.o_flag == -1 && rd->fd_.heretag == -1)
+	{
+		return (1);
+	}
 	return (0);
 }
 
@@ -195,18 +214,19 @@ int		parse_command(t_command *co)
 	t_lst		*redir;
 	t_lst		*argv_token;
 	t_token		*to;
+	int			r;
 
 	argv_token = co->av.lav;
 	co->av.lav = 0;
 	co->redir = init_lst__(NULL);
 	redir = co->redir;
-	while (argv_token)
+	r = 0;
+	while (!r && argv_token)
 	{
 		to = (t_token *)argv_token->data;
 		if (redir_token(to, argv_token))
 		{
-			if (parse_redir(&argv_token, &redir))
-				continue ;
+			r = parse_redir(&argv_token, &redir);
 		}
 		else
 		{
@@ -216,7 +236,10 @@ int		parse_command(t_command *co)
 	}
 	if (co->redir)
 		pop_lst__(&co->redir, NULL);
-	return (0);
+	if (r)
+		while (argv_token)
+			pop_lst__(&argv_token, free_token);
+	return (r);
 }
 
 t_lst	*parse_token(t_lst *tokens)
@@ -237,8 +260,36 @@ t_lst	*parse_token(t_lst *tokens)
 	h = clst;
 	while (clst)
 	{
-		parse_command((t_command *)clst->data);
+		if (parse_command((t_command *)clst->data))
+			break ;
 		clst = clst->next;
+	}
+	if (clst)
+	{
+		clst = clst->next;
+		while (clst)
+		{
+			t_command *c;
+
+			c = clst->data;
+			while (c->av.lav)
+				pop_lst__(&c->av.lav, free_token);
+			pop_lst__(&clst, free);
+		}
+		while (h)
+		{
+			t_command *c;
+
+			c = h->data;
+			while (c->av.lav)
+				pop_lst__(&c->av.lav, free);
+			while (c->redir)
+			{
+				free(((t_rdtype *)c->redir->data)->fd_.s);
+				pop_lst__(&c->redir, free);
+			}
+			pop_lst__(&h, free);
+		}
 	}
 	return (h);
 }

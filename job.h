@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/08/25 08:08:51 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/13 18:08:21 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,13 @@
 
 # include <unistd.h>
 
-# define JTHANG   00
-# define JTNOHANG 01
-# define JTCOND	  02
-# define JTPIPE   04
+# define JTHANG   	000
+# define JTNOHANG 	001
+# define JTCOND	  	002
+# define JTPIPE   	004
+
+# define JTEXT		000
+# define JTBUILTIN	010
 
 typedef struct	s_job
 {
@@ -36,10 +39,14 @@ int		job_wake(void);
 void	job_check(void);
 void	job_exec(t_job *c);
 void	job_grandfather(t_job *c);
-void	job_father(t_job *c);
-void	job_child_norm(t_command *c);
-void	job_father_cond(t_lst *c);
 void	job_child_pipe(t_lst *c);
-void	job_child_cond(t_lst *c, int endsym);
+void	job_father(t_job *c);
+
+void	job_setlaststatus(int status);
+char	*job_retlaststatus(void);
+
+int		job_father_cond(t_lst *c);
+int		job_child_norm(t_command *c);
+int		job_fork_child(t_lst *c, int endsym);
 
 #endif

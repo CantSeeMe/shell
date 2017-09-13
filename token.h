@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:32 by jye               #+#    #+#             */
-/*   Updated: 2017/09/12 16:52:08 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 02:24:45 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ struct			s_tokentype
 
 int				init_tokenizer(void);
 t_lst			*tokenize(char *line);
+void			free_token(t_token *t);
 
 #endif

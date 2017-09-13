@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 19:21:56 by jye               #+#    #+#             */
-/*   Updated: 2017/09/11 16:36:07 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 12:35:11 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,9 @@ static void	fill_rdtype(t_rdtype *rd, t_token *to)
 	}
 }
 
-static int	fill_fddata(t_rdtype *rd, t_token *to, int fd)
+static void	fill_fddata(t_rdtype *rd, t_token *to, int fd)
 {
-	if (to->sym != number && to->sym != word)
-		return (1);
+	rd->fd_.heretag = 0;
 	rd->fd_.s = to->s;
 	if (rd->type == RDF_FDREDIR && to->sym == word)
 	{
@@ -46,7 +45,6 @@ static int	fill_fddata(t_rdtype *rd, t_token *to, int fd)
 		rd->fd_.fd = (rd->type == RDF_STDOUT);
 	else
 		rd->fd_.fd = fd;
-	return (0);
 }
 
 t_rdtype	*get_redirection(t_lst **token)

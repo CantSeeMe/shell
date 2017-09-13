@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/09/11 16:37:12 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 13:34:12 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ struct			s_fd
 {
 	char	*s;
 	int		o_flag;
+	int		heretag;
 	int		fd;
 };
 
@@ -56,5 +57,6 @@ typedef struct	s_rdtype
 t_lst			*parse_token(t_lst *token);
 t_rdtype		*get_redirection(t_lst **token);
 void			dummy_redirection(t_lst **token);
+void			here_tag(t_rdtype *rd);
 
 #endif

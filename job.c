@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 16:07:52 by jye               #+#    #+#             */
-/*   Updated: 2017/09/12 11:56:09 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 18:07:36 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,48 +72,11 @@ void	job_openstdin(t_rdtype *rd)
 	dup2(fd, rd->fd_.fd);
 }
 
-int		is_heretag(char *s, char *heretag)
-{
-	int		r;
-	size_t	sl;
-
-	r = 0;
-	while (*s && *s == ' ')
-		s++;
-	sl = strlen(heretag);
-	if (!strncmp(s, heretag, sl))
-	{
-		s += sl;
-		r = 1;
-	}
-	while (*s && *s == ' ')
-		s++;
-	if (*s != 0)
-		r = 0;
-	return (r);
-}
-
 void	job_heretag(t_rdtype *rd)
 {
-	char	*s;
-	int		fd[2];
-
-	pipe(fd);
-	while ((s = ft_readline("heretag> ", strlen("heretag> "))) &&
-		   s != (char *)-1)
-	{
-		if (is_heretag(s, rd->fd_.s))
-			break ;
-		write(fd[1], s, strlen(s));
-		write(fd[1], "\n", 1);
-		free(s);
-	}
-	close(fd[1]);
-	if (s == (char *)-1)
-		exit(127);
-	if (s)
-		free(s);
-	dup2(fd[0], STDIN_FILENO);
+	if (rd->fd_.heretag == -2)
+		return ;
+	dup2(rd->fd_.heretag, rd->fd_.fd);
 }
 
 void	job_openfds(t_lst *redir)
@@ -144,7 +107,7 @@ void	job_openfds(t_lst *redir)
 	}
 }
 
-void	job_child_norm(t_command *c)
+int		job_child_norm(t_command *c)
 {
 	int	i;
 	if (c->var_ && c->cmd.c == 0)
@@ -154,17 +117,26 @@ void	job_child_norm(t_command *c)
 	while (i < c->ac)
 		givemeback_letter_pls(c->av.cav[i++]);
 	if (c->cmd.type == C_SHELL_BUILTIN)		
-		((t_builtin)c->cmd.c)(c->ac - c->var_, c->av.cav + c->var_, c->envp);
+		return (((t_builtin)c->cmd.c)(c->ac - c->var_, c->av.cav + c->var_, c->envp) << 8);
 	test_execpath(c);
-	execve(c->cmd.c, c->av.cav + c->var_, c->envp);
+	return (execve(c->cmd.c, c->av.cav + c->var_, c->envp));
 }
 
-void	job_child_cond(t_lst *c, int endsym)
+int		job_fork_child(t_lst *c, int endsym)
 {
-	if (endsym == pip)
-		job_child_pipe(c);
-	else
-		job_child_norm((t_command *)c->data);
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid == 0)
+	{
+		if (endsym == pip)
+			job_child_pipe(c);
+		else
+			job_child_norm((t_command *)c->data);
+	}
+	waitpid(pid, &status, WUNTRACED);
+	return (status);
 }
 
 int		status_check(int status)
@@ -188,22 +160,18 @@ void	job_skipsym(t_lst **job, int sym)
 	*job = c ? c->next : 0;
 }
 
-void	job_father_cond(t_lst *job)
+int		job_father_cond(t_lst *job)
 {
-	pid_t		pid;
 	int			status;
 	t_command	*c;
 
 	while (job)
 	{
-
 		c = job->data;
-		/* dprintf(2, "%s\n", c->endsym == andsym ? "andsym" : */
-		/* 				   c->endsym == orsym ? "orsym" : "pipe"); */
-		pid = fork();
-		if (pid == 0)
-			job_child_cond(job, c->endsym);
-		waitpid(pid, &status, WUNTRACED);
+		if (c->endsym == pip || c->cmd.type == C_SHELL_EXT)
+			status = job_fork_child(c, c->endsym);
+		else
+			status = job_child_norm(c);
 		if (c->endsym == pip)
 			while (job)
 			{
@@ -217,6 +185,7 @@ void	job_father_cond(t_lst *job)
 		if (c->endsym == orsym && !status_check(status))
 			job_skipsym(&job, andsym);
 	}
+	return (status);
 }
 
 void	job_child_pipe(t_lst *job)
@@ -233,10 +202,15 @@ void	job_child_pipe(t_lst *job)
 	{
 		pipe(fd);
 		dup2(fd[1], 1);
-		pid = fork();
-		if (pid == 0)
-			job_child_norm(c);
-		waitpid(pid, &status, WUNTRACED);
+		if (c->cmd.type == C_SHELL_EXT)
+		{
+			pid = fork();
+			if (pid == 0)
+				job_child_norm(c);
+			waitpid(pid, &status, WUNTRACED);
+		}
+		else
+			status = job_child_norm(c);
 		dup2(fd[0], 0);
 		close(fd[1]);
 		job = job->next;
@@ -244,21 +218,32 @@ void	job_child_pipe(t_lst *job)
 	}
 	dup2(fdsave, 1);
 	close(fd[1]);
-	job_child_norm(c);
+	status = job_child_norm(c);
+	exit(WEXITSTATUS(status));
 }
 
 void	job_father(t_job *job)
 {
+	int		status;
+
+	if (job->type & JTNOHANG)
+		g_jobs = (t_lst *)-1;
 	if (job->type & JTCOND)
-		job_father_cond(job->c);
+		status = job_father_cond(job->c);
 	else if (job->type & JTPIPE)
 		job_child_pipe(job->c);
 	else
-		job_child_norm((t_command *)job->c->data);		
+		status = job_child_norm((t_command *)job->c->data);
+	exit(WTERMSIG(status));
 }
 
 void	job_grandfather(t_job *job)
 {
+	sigset_t	set;
+
+	sigemptyset(&set);
+	sigaddset(&set, SIGTSTP);
+	sigaddset(&set, SIGINT);
 	if (job->type == JTNOHANG)
 	{
 		push_lst__(&g_jobs, job);
@@ -266,21 +251,15 @@ void	job_grandfather(t_job *job)
 	else
 	{
 		waitpid(job->pid, &job->type, WUNTRACED);
-		if (WIFSIGNALED(job->type))
-		{
-			if (WTERMSIG(job->type) == SIGTSTP)
-				push_lst__(&g_jobs, job);
-			g_laststatus = WTERMSIG(job->type) + 128;
-		}
-		else
-			g_laststatus = WEXITSTATUS(job->type);
+		job_setlaststatus(job->type);
 	}
+	sigprocmask(SIG_BLOCK, &set, NULL);
+	sigprocmask(SIG_UNBLOCK, &set, NULL);
 }
 
 void	job_exec(t_job *job)
 {
 	pid_t 		pid;
-	sigset_t	set;
 
 	if (job == 0)
 		return ;
@@ -289,16 +268,8 @@ void	job_exec(t_job *job)
 	{
 		job_father(job);
 	}
-	else
-	{
-		sigemptyset(&set);
-		sigaddset(&set, SIGTSTP);
-		sigaddset(&set, SIGINT);
-		sigprocmask(SIG_BLOCK, &set, NULL);
-		job->pid = pid;
-		job_grandfather(job);
-		sigprocmask(SIG_UNBLOCK, &set, NULL);
-	}
+	job->pid = pid;
+	job_grandfather(job);
 }
 
 t_job	*job_create(t_lst **c)
@@ -316,7 +287,8 @@ t_job	*job_create(t_lst **c)
 		z = cp->data;
 		if (z->endsym == ampersand || z->endsym == period)
 			break ;
-		job->type |= z->endsym == pip ? JTPIPE : JTCOND;
+		job->type |= (z->endsym == pip ? JTPIPE : JTCOND) |
+			         (z->cmd.type == C_SHELL_EXT ? 0 : JTBUILTIN);
 		cp = cp->next;
 	}
 	job->type |= z->endsym == ampersand ? JTNOHANG : JTHANG;
@@ -328,4 +300,35 @@ t_job	*job_create(t_lst **c)
 		cp->next = 0;
 	}
 	return (job);
+}
+
+void	job_builtinexec(t_job *job)
+{
+	int			status;
+
+	status = -1;
+	if (job == 0)
+		return ;
+	if (job->type & JTNOHANG)
+		job_exec(job);
+	else if (job->type & JTCOND)
+		status = job_father_cond(job->c);
+	else if (job->type & JTPIPE)
+		job_exec(job);
+	else
+		status = job_child_norm(job->c->data);
+	if (status > -1)
+		job_setlaststatus(status);
+}
+
+void	job_setlaststatus(int status)
+{
+	if (WIFSIGNALED(job->type))
+	{
+		if (WTERMSIG(job->type) == SIGTSTP)
+			push_lst__(&g_jobs, job);
+		g_laststatus = WTERMSIG(job->type) + 128;
+	}
+	else
+		g_laststatus = WEXITSTATUS(job->type);
 }
