@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/09/13 14:19:19 by root             ###   ########.fr       */
+/*   Updated: 2017/09/14 16:12:08 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ int		transmute_av(t_command *c)
 
 #define WORD_ANCHAR	WORD_UCHAR WORD_LCHAR WORD_NCHAR
 
-
 int		check_varname(char *s)
 {
 	while (*s != '=')
@@ -89,33 +88,12 @@ int		set_execpath(t_command *c)
 		c->var_ = 0;
 	}
 	c->cmd.type = C_SHELL_EXT;
-	if (strchr(*c->av.cav + c->var_, '/'))
-		c->cmd.c = (*c->av.cav + c->var_);
+	if (strchr(*(c->av.cav + c->var_), '/'))
+		c->cmd.c = *(c->av.cav + c->var_);
 	else if ((z = chash_lookup(*(c->av.cav + c->var_), vhash_search("PATH"))))
 		c->cmd = *z;
 	else
 		c->cmd.c = 0;
-	return (0);
-}
-
-int		set_envp(t_command *c)
-{
-	int		i;
-	t_lst	*envp;
-	t_var	*v;
-
-	if ((c->envp = malloc(sizeof(char *) * (g_envpsize + 1))) == 0)
-		return (1);
-	i = g_envpsize;
-	c->envp[i--] = 0;
-	envp = g_envp;
-	vhash_set_underscore(HTVAR_SET_PATH, c);
-	while (envp)
-	{
-		v = envp->data;
-		c->envp[i--] = defrag_var(v->key, v->value);
-		envp = envp->next;
-	}
 	return (0);
 }
 
@@ -155,7 +133,7 @@ int		main(int ac, char **av, char **envp)
 			transmute_av(c);
 			set_execpath(c);
 			dprintf(1, "%s\n", *c->av.cav);
-			set_envp(c);
+			c->envp = set_envp();
 			cp = cp->next;
 		}
 		while (t)

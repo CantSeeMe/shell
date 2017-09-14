@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/09/12 16:17:16 by root             ###   ########.fr       */
+/*   Updated: 2017/09/13 22:12:28 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,16 +83,22 @@ void	vhash_pop(char *key)
 
 char	*vhash_search(char *key)
 {
+	t_var	*v;
+
+	v = vhash_search__(key);
+	return (v ? v->value : 0);
+}
+
+t_var	*vhash_search__(char *key)
+{
 	t_bucket	*item;
-	t_var		*v;
 
 	item = hash_search(g_htvar, key);
 	if (item == 0)
 		return (0);
-	v = item->c;
-	return (v->value);
-}
+	return ((t_var *)item->c);
 
+}
 ////////
 
 int		frag_var(char *s, char **key, char **value)

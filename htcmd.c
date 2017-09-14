@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/08/27 12:15:55 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/13 19:17:03 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,6 @@ t_ccsh	*chash_search(char *key, char *envp)
 
 	if (!(item = hash_search(g_htbi, key)) &&
 		!(item = hash_search(g_htext, key)))
-//	if (item == 0)
 	{
 		if ((cpath = path_lookup(key, envp)) == 0)
 			return (0);

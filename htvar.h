@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:44 by jye               #+#    #+#             */
-/*   Updated: 2017/09/12 16:16:35 by root             ###   ########.fr       */
+/*   Updated: 2017/09/14 16:12:21 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,6 @@ char	*vhash_search(char *key);
 t_var	*init_var(char *s, int envp);
 char	*defrag_var(char *key, char *value);
 int		init_htvar(char **envp);
+void	vhash_pop(char *key);
 
 #endif

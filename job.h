@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/09/13 18:08:21 by root             ###   ########.fr       */
+/*   Updated: 2017/09/14 16:13:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,14 @@ void	job_grandfather(t_job *c);
 void	job_child_pipe(t_lst *c);
 void	job_father(t_job *c);
 
-void	job_setlaststatus(int status);
+void	job_setlaststatus(t_job *job, int status);
 char	*job_retlaststatus(void);
 
 int		job_father_cond(t_lst *c);
 int		job_child_norm(t_command *c);
 int		job_fork_child(t_lst *c, int endsym);
+
+int		test_execpath(char *c);
+char	**set_envp(void);
 
 #endif

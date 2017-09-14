@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.h                                            :+:      :+:    :+:   */
+/*   cd.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/22 08:42:05 by root              #+#    #+#             */
-/*   Updated: 2017/09/14 15:54:32 by root             ###   ########.fr       */
+/*   Created: 2017/09/13 15:17:17 by root              #+#    #+#             */
+/*   Updated: 2017/09/13 22:22:01 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ERROR_H
-# define ERROR_H
+#ifndef CD_H
+# define CD_H
 
-void	parse_error(char *pname, char *to, int errortype);
-void	exec_error(char *pname, char *exec, int errortype);
+int		ft_cd(int ac, char **av, char **envp);
 
 #endif
