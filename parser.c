@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:29 by jye               #+#    #+#             */
-/*   Updated: 2017/09/13 14:53:17 by root             ###   ########.fr       */
+/*   Updated: 2017/09/17 13:12:11 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int			syntax_check(t_lst *tokens)
 			{
 				if (stack.sym >= number)
 				{
-					parse_error(stack.s, ERROR_EXPECTED);
+					parse_error("minishell", stack.s, ERROR_EXPECTED);
 					return (1);
 				}
 				stack = ((t_token){.s = to->s, .sym = to->sym, .symbreak = 0});
@@ -185,27 +185,25 @@ int		redir_token(t_token *to, t_lst *argv_token)
 
 int		parse_redir(t_lst **argv_token, t_lst **redir)
 {
-	t_rdtype *rd;
+	t_rd *rd;
 
 	if ((rd = get_redirection(argv_token)) == 0)
 	{
 		dummy_redirection(argv_token);
 		return (0);
 	}
-	if (rd->fd_.o_flag == -1 && rd->type == RDF_STDIN)
+	if (rd->o_flag == -1 && rd->type == RDF_IN)
 		here_tag(rd);
 	if (!*redir ||
 		append_lst__(*redir, rd))
 	{
-		free(rd->fd_.s);
+		free(rd->s);
 		free(rd);
 		return (0);
 	}
 	*redir = (*redir)->next;
-	if (rd->fd_.o_flag == -1 && rd->fd_.heretag == -1)
-	{
+	if (rd->o_flag == -1 && rd->heretag == -1)
 		return (1);
-	}
 	return (0);
 }
 
@@ -285,7 +283,7 @@ t_lst	*parse_token(t_lst *tokens)
 				pop_lst__(&c->av.lav, free);
 			while (c->redir)
 			{
-				free(((t_rdtype *)c->redir->data)->fd_.s);
+				free(((t_rd *)c->redir->data)->s);
 				pop_lst__(&c->redir, free);
 			}
 			pop_lst__(&h, free);

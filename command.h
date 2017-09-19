@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/09/13 13:34:12 by root             ###   ########.fr       */
+/*   Updated: 2017/09/15 15:41:02 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 # include "lst.h"
 # include "htcmd.h"
 # include "error.h"
-# define RDF_STDOUT		0x0
-# define RDF_STDIN		0x1
-# define RDF_FDREDIR	0x2
+# define RDF_OUT	0x0
+# define RDF_IN		0x1
+# define RDF_RDIR	0x2
 
 # define ERROR_UNEXPECTED	0
 # define ERROR_EXPECTED 	1
@@ -40,23 +40,19 @@ typedef struct	s_command
 	int				endsym;
 }				t_command;
 
-struct			s_fd
+typedef struct	s_rd
 {
 	char	*s;
 	int		o_flag;
 	int		heretag;
 	int		fd;
-};
-
-typedef struct	s_rdtype
-{
-	struct s_fd	fd_;
-	int			type;
-}				t_rdtype;
+	int		save;
+	int		type;
+}				t_rd;
 
 t_lst			*parse_token(t_lst *token);
-t_rdtype		*get_redirection(t_lst **token);
+t_rd			*get_redirection(t_lst **token);
 void			dummy_redirection(t_lst **token);
-void			here_tag(t_rdtype *rd);
+void			here_tag(t_rd *rd);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 12:36:28 by root              #+#    #+#             */
-/*   Updated: 2017/09/13 14:25:08 by root             ###   ########.fr       */
+/*   Updated: 2017/09/15 00:06:36 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ int		is_heretag(char *s, char *heretag)
 	sl = strlen(heretag);
 	if (!strncmp(s, heretag, sl))
 	{
-		dprintf(1, "HELLO\n");
 		s += sl;
 		r = 1;
 	}
@@ -42,32 +41,31 @@ int		is_heretag(char *s, char *heretag)
 	return (r);
 }
 
-void	here_tag(t_rdtype *rd)
+void	here_tag(t_rd *rd)
 {
 	char	*s;
 	int		fd[2];
 
-	dprintf(1, "%s\n", rd->fd_.s);
-	rd->fd_.heretag = -1 + pipe(fd);
-	if (rd->fd_.heretag == -2)
+	rd->heretag = -1 + pipe(fd);
+	if (rd->heretag == -2)
 		return ;
 	while ((s = ft_readline("heretag> ", strlen("heretag> "))) &&
 		   s != (char *)-1)
 	{
-		if (is_heretag(s, rd->fd_.s))
+		if (is_heretag(s, rd->s))
 			break ;
 		write(fd[1], s, strlen(s));
 		write(fd[1], "\n", 1);
 		free(s);
 	}
 	close(fd[1]);
-	free(rd->fd_.s);
-	rd->fd_.s = 0;
+	free(rd->s);
+	rd->s = 0;
 	if (s == (char *)-1)
 	{
 		close(fd[0]);
 		return ;
 	}
 	free(s);
-	rd->fd_.heretag = fd[0];
+	rd->heretag = fd[0];
 }

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:44 by jye               #+#    #+#             */
-/*   Updated: 2017/09/14 16:12:21 by root             ###   ########.fr       */
+/*   Updated: 2017/09/17 13:09:40 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct	s_var
 }				t_var;
 
 int		vhash_init(void);
-int		vhash_set_underscore(int opt, t_command *c);
+int		vhash_set_underscore(char *s);
 t_var	*vhash_insert(t_var *var);
 char	*vhash_search(char *key);
 t_var	*init_var(char *s, int envp);

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/29 17:23:12 by jye               #+#    #+#             */
-/*   Updated: 2017/09/13 22:12:28 by root             ###   ########.fr       */
+/*   Updated: 2017/09/19 00:04:59 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ t_var	*vhash_insert(t_var *var)
 		free(var->key);
 		if (var->lock_ && c->lock_)
 		{
-			pop_lst__(&var->lock_, NULL);
+			pop_lst__(g_envp == var->lock_ ? &g_envp : &var->lock_, NULL);
 			g_envpsize -= 1;
 		}
 		else if (var->lock_ && !c->lock_)
@@ -71,22 +71,15 @@ void	vhash_pop(char *key)
 	if ((item = hash_search(g_htvar, key)) == 0)
 		return ;
 	var = (t_var *)item->c;
-	free(var->key);
 	free(var->value);
 	if (var->lock_)
 	{
-		pop_lst__(&var->lock_, NULL);
+		pop_lst__(g_envp == var->lock_ ? &g_envp : &var->lock_, NULL);
 		g_envpsize -= 1;
 	}
-	hash_popentry(g_htvar, key, free);
-}
-
-char	*vhash_search(char *key)
-{
-	t_var	*v;
-
-	v = vhash_search__(key);
-	return (v ? v->value : 0);
+	hash_popentry(g_htvar, key, NULL);
+	free(var->key);
+	free(var);
 }
 
 t_var	*vhash_search__(char *key)
@@ -97,24 +90,34 @@ t_var	*vhash_search__(char *key)
 	if (item == 0)
 		return (0);
 	return ((t_var *)item->c);
-
 }
+
+char	*vhash_search(char *key)
+{
+	t_var	*v;
+
+	v = vhash_search__(key);
+	return (v ? v->value : 0);
+}
+
 ////////
 
 int		frag_var(char *s, char **key, char **value)
 {
 	char	*ptr;
+	size_t	klen;
 
 	if ((ptr = strchr(s, '=')) == 0)
 		return (1);
-	*ptr = 0;
+	klen = ptr - s;
 	*value =  ptr[1] == 0 ? 0 : strdup(ptr + 1);
-	if ((*key = strdup(s)) == 0)
+	if ((*key = malloc(klen + 1)) == 0)
 	{
 		free(*value);
 		return (1);
 	}
-	*ptr = '=';
+	memcpy(*key, s, klen);
+	klen[*key] = 0;
 	return (0);
 }
 
@@ -178,7 +181,7 @@ int		init_htvar(char **envp)
 	return (0);
 }
 
-int		vhash_set_underscore(int opt, t_command *c)
+int		vhash_set_underscore(char *s)
 {
 	t_bucket	*item;
 	t_var		*v;
@@ -189,16 +192,6 @@ int		vhash_set_underscore(int opt, t_command *c)
 		return (1);
 	v = (t_var *)item->c;
 	free(v->value);
-	if (opt == HTVAR_SET_PATH)
-	{
-		if (c->cmd.type == C_SHELL_BUILTIN)
-			v->value = strdup(c->cmd.key);
-		else
-			v->value = strdup(c->cmd.c);
-	}
-	else
-	{
-		v->value = strdup(c->av.cav[(c->ac - 1)]);
-	}
+	v->value = s ? strdup(s) : 0;
 	return (0);
 }

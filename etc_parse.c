@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 19:39:44 by root              #+#    #+#             */
-/*   Updated: 2017/09/11 14:13:19 by root             ###   ########.fr       */
+/*   Updated: 2017/09/19 00:20:44 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,7 +277,7 @@ char	*transmute_dollar(char *s)
 		}
 		s = ptr;
 	}
-	if (alloc_ == 0)
+	if (d == 0)
 		return (0);
 	return (convert_dollar_to_var(d, s, alloc_));
 }

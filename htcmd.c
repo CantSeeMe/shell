@@ -6,13 +6,20 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/09/13 19:17:03 by root             ###   ########.fr       */
+/*   Updated: 2017/09/18 23:56:38 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "hashlib.h"
 #include "lst.h"
 #include "htcmd.h"
+
+#include "cd.h"
+#include "env.h"
+#include "echo.h"
+#include "exit_.h"
+#include "setenv.h"
+#include "unsetenv.h"
 
 #include <dirent.h>
 #include <unistd.h>
@@ -25,10 +32,34 @@
 t_hashtable		*g_htext;
 t_hashtable		*g_htbi;
 
+int		init_builtin_table(void)
+{
+	static t_ccsh	bi[6] = {
+		{"cd", C_SHELL_BUILTIN, ft_cd},
+		{"env", C_SHELL_BUILTIN, ft_env},
+		{"echo", C_SHELL_BUILTIN, ft_echo},
+		{"exit", C_SHELL_BUILTIN, ft_exitsh},
+		{"setenv", C_SHELL_BUILTIN, ft_setenv},
+		{"unsetenv", C_SHELL_BUILTIN, ft_unsetenv}
+	};
+	int				i;
+	t_bucket		*c;
+
+	if ((g_htbi = init_hashtable(96)) == 0)
+		return (1);
+	i = 0;
+	while (i < 6)
+	{
+		c = hash_insert(g_htbi, bi[i].key, HT_NOSEARCH);
+		c->c = &bi[i++];
+	}
+	return (0);
+}
+
 int		chash_init(void)
 {
 	if ((g_htext = init_hashtable(HT_DEFAULT_BUCKET)) == 0 ||
-		(g_htbi = init_hashtable(96)) == 0)
+		(init_builtin_table()))
 	{
 		free(g_htext);
 		free(g_htbi);

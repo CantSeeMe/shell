@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 19:21:56 by jye               #+#    #+#             */
-/*   Updated: 2017/09/13 12:35:11 by root             ###   ########.fr       */
+/*   Updated: 2017/09/17 13:10:53 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,46 +15,48 @@
 #include <fcntl.h>
 //
 #include <stdlib.h>
+#include <string.h>
 
-static void	fill_rdtype(t_rdtype *rd, t_token *to)
+static void	fill_rdtype(t_rd *rd, t_token *to)
 {
 	if (to->sym <= ggreater)
 	{
-		rd->fd_.o_flag = ((to->sym == greater) ? O_TRUNC : O_APPEND)
+		rd->o_flag = ((to->sym == greater) ? O_TRUNC : O_APPEND)
 			| (O_WRONLY | O_CREAT);
-		rd->type = RDF_STDOUT;
+		rd->type = RDF_OUT;
 	}
 	else
 	{
-		rd->fd_.o_flag = ((to->sym == lower) ? O_RDONLY : -1);
-		rd->type = RDF_STDIN + (to->sym == greater_amp);
+		rd->o_flag = ((to->sym == lower) ? O_RDONLY : -1);
+		rd->type = RDF_IN + (to->sym == greater_amp);
 	}
 }
 
-static void	fill_fddata(t_rdtype *rd, t_token *to, int fd)
+static void	fill_fddata(t_rd *rd, t_token *to, int fd)
 {
-	rd->fd_.heretag = 0;
-	rd->fd_.s = to->s;
-	if (rd->type == RDF_FDREDIR && to->sym == word)
+	rd->heretag = -2;
+	rd->s = to->s;
+	if (rd->type == RDF_RDIR && to->sym == word)
 	{
-		rd->type = RDF_STDOUT;
-		rd->fd_.o_flag = O_TRUNC | O_CREAT | O_WRONLY;
+		rd->type = RDF_OUT;
+		rd->o_flag = O_TRUNC | O_CREAT | O_WRONLY;
 	}
 	to->s = 0;
 	if (fd == -1)
-		rd->fd_.fd = (rd->type == RDF_STDOUT);
+		rd->fd = (rd->type == RDF_OUT);
 	else
-		rd->fd_.fd = fd;
+		rd->fd = fd;
 }
 
-t_rdtype	*get_redirection(t_lst **token)
+t_rd		*get_redirection(t_lst **token)
 {
-	t_rdtype	*rd;
-	t_token		*to;
-	int			fd;
+	t_rd	*rd;
+	t_token	*to;
+	int		fd;
 
 	if ((rd = malloc(sizeof(*rd))) == 0)
-		return ((t_rdtype *)0);
+		return ((t_rd *)0);
+	memset(rd, 0, sizeof(*rd));
 	to = (t_token *)(*token)->data;
 	if (to->sym == number)
 	{
