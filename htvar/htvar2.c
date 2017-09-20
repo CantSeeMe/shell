@@ -1,20 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.h                                               :+:      :+:    :+:   */
+/*   htvar2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/13 15:17:17 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 17:25:05 by jye              ###   ########.fr       */
+/*   Created: 2017/09/20 19:44:46 by jye               #+#    #+#             */
+/*   Updated: 2017/09/20 19:48:40 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CD_H
-# define CD_H
+#include "hashlib.h"
+#include "lst.h"
 
-void	chdir_trim_target(char *target, char *t);
-
-int		ft_cd(int ac, char **av, char **envp);
-
-#endif
+t_hashtable		*g_htvar;
+int				g_envpsize;
+t_lst			*g_envp;

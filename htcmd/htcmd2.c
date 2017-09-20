@@ -1,20 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.h                                               :+:      :+:    :+:   */
+/*   htcmd2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/13 15:17:17 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 17:25:05 by jye              ###   ########.fr       */
+/*   Created: 2017/09/20 21:52:52 by jye               #+#    #+#             */
+/*   Updated: 2017/09/20 21:53:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CD_H
-# define CD_H
+#include "hashlib.h"
 
-void	chdir_trim_target(char *target, char *t);
-
-int		ft_cd(int ac, char **av, char **envp);
-
-#endif
+t_hashtable		*g_htext;
+t_hashtable		*g_htbi;

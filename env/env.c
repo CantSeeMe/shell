@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 22:23:03 by root              #+#    #+#             */
-/*   Updated: 2017/09/18 15:50:18 by root             ###   ########.fr       */
+/*   Updated: 2017/09/20 17:45:45 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ int		ft_env_flag(int ac, char **av, char *sep)
 	while ((c = ft_getopt_long(ac, av, ENV_OPTIONS, optarray)) != -1)
 	{
 		if (c == 'u')
-			vhash_pop(optarg_);
+			vhash_pop(g_optarg_);
 		else if (c == '0')
 			*sep = 0;
 		else if (c == 'i')
-			push_lst__(&us, (void *)-1);
+			ft_env_ignore();
 		else
 			break ;
 	}
@@ -53,16 +53,15 @@ int		ft_env_flag(int ac, char **av, char *sep)
 int		ft_env_newenv(int ind, char **av)
 {
 	t_var	*v;
-	t_var	*c;
 
-	while (strchr(av[ind], '='))
+	while (av[ind] && strchr(av[ind], '='))
 	{
 		if ((v = init_var(av[ind], HTVAR_VAR_ENVP)))
 			if (!vhash_insert(v))
 			{
 				free(v->value);
 				free(v->key);
-				pop_lst__(&v->lock_, free);
+				pop_lst__(&g_envp, free);
 				g_envpsize -= 1;
 			}
 		ind++;
@@ -88,28 +87,27 @@ void	ft_env_show(char sep)
 		}
 		env = env->next;
 	}
+	exit(0);
 }
 
-int		ft_env_(int ac, char **av)
+void	ft_env_(int ac, char **av)
 {
 	int		ind;
 	t_ccsh	*cmd;
 	char	c;
+	char	*path;
 	char	*exec_path;
-	char	**envp;
 
 	c = '\n';
-	optind_ = 0;
-	opterr_ = 1;
+	path = strdup(vhash_search("PATH"));
+	g_optind_ = 0;
+	g_opterr_ = 1;
 	if (ft_env_flag(ac, av, &c))
 		exit(2);
-	ind = ft_env_newenv(optind_, av);
+	ind = ft_env_newenv(g_optind_, av);
 	if (av[ind] == 0)
-	{
 		ft_env_show(c);
-		exit(0);
-	}
-	cmd = chash_lookup(av[ind], vhash_search("PATH"));
+	cmd = chash_lookup(av[ind], path);
 	if (!cmd || cmd->type == C_SHELL_BUILTIN)
 	{
 		test_execpath(av[ind]);
@@ -117,8 +115,7 @@ int		ft_env_(int ac, char **av)
 	}
 	else
 		exec_path = cmd->c;
-	envp = set_envp();
-	exit(execve(exec_path, av + ind, envp));
+	exit(execve(exec_path, av + ind, set_envp()));
 }
 
 int		ft_env(int ac, char **av, char **envp)
@@ -129,9 +126,7 @@ int		ft_env(int ac, char **av, char **envp)
 	pid = fork();
 	(void)envp;
 	if (pid == 0)
-	{
 		ft_env_(ac, av);
-	}
 	waitpid(pid, &status, WUNTRACED);
 	return (status);
 }

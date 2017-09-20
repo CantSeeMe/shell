@@ -1,20 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.h                                               :+:      :+:    :+:   */
+/*   echo.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/13 15:17:17 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 17:25:05 by jye              ###   ########.fr       */
+/*   Created: 2017/09/18 15:40:22 by root              #+#    #+#             */
+/*   Updated: 2017/09/20 17:33:05 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CD_H
-# define CD_H
+#ifndef ECHO_H
+# define ECHO_H
+# define ECHO_ESCAPE "\\abtnvfr0x"
+# define ECHO_OCT "01234567"
+# define ECHO_HEX "0123456789ABCDEF"
 
-void	chdir_trim_target(char *target, char *t);
+enum	e_echo_flag
+{
+	null = 1,
+	escape = 2
+};
 
-int		ft_cd(int ac, char **av, char **envp);
+union	u_echo_escape
+{
+	char val;
+	void (*func)();
+};
+
+struct	s_echo_escape
+{
+	char				c;
+	int					type;
+	union u_echo_escape	e;
+};
+
+void	ft_echo_put_escape(char **s, char **ptr, int ec);
+
+int		ft_echo(int ac, char **av, char **envp);
 
 #endif

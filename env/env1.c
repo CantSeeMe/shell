@@ -1,20 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.h                                               :+:      :+:    :+:   */
+/*   env1.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/13 15:17:17 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 17:25:05 by jye              ###   ########.fr       */
+/*   Created: 2017/09/20 17:27:53 by jye               #+#    #+#             */
+/*   Updated: 2017/09/20 17:28:14 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CD_H
-# define CD_H
+#include "htvar.h"
 
-void	chdir_trim_target(char *target, char *t);
+void	ft_env_ignore(void)
+{
+	t_var	*c;
 
-int		ft_cd(int ac, char **av, char **envp);
-
-#endif
+	while (g_envp)
+	{
+		c = g_envp->data;
+		vhash_pop(c->key);
+	}
+}

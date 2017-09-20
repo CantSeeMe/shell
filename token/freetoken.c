@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.h                                               :+:      :+:    :+:   */
+/*   freetoken.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/13 15:17:17 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 17:25:05 by jye              ###   ########.fr       */
+/*   Created: 2017/09/20 17:36:30 by jye               #+#    #+#             */
+/*   Updated: 2017/09/20 17:36:50 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CD_H
-# define CD_H
+#include "token.h"
+#include <stdlib.h>
 
-void	chdir_trim_target(char *target, char *t);
-
-int		ft_cd(int ac, char **av, char **envp);
-
-#endif
+void					free_token(t_token *t)
+{
+	free(t->s);
+	free(t);
+}

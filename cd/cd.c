@@ -6,22 +6,25 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 15:17:20 by root              #+#    #+#             */
-/*   Updated: 2017/09/14 16:29:27 by root             ###   ########.fr       */
+/*   Updated: 2017/09/20 17:24:14 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "htvar.h"
+#include "lst.h"
 #include <unistd.h>
+#include <limits.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 char	*chdir_target(int ac, char **av)
 {
 	if (ac == 1)
 		return (vhash_search("HOME"));
-	else if (ac == 2 && strcmp(av[1], "-"))
+	else if (ac == 2 && !strcmp(av[1], "-"))
 		return (vhash_search("OLDPWD"));
-	else if (ac >= 2 && strcmp(av[1], "--"))
+	else if (ac >= 2 && !strcmp(av[1], "--"))
 	{
 		if (ac == 2)
 			return (vhash_search("HOME"));
@@ -36,53 +39,97 @@ int		chdir_test_target(char *target)
 	int		r;
 
 	if ((r = access(target, F_OK)))
-	{} // no such file or directory
+	{
+		dprintf(2, "%s: cd: %s: No such file or directory\n",
+				"minishell", target);
+	}
 	else if ((r = access(target, R_OK)))
-	{} // permission denied
+	{
+		dprintf(2, "%s: cd: %s: Permission denied\n",
+				"minishell", target);
+	}
 	return (r);
 }
 
-char	*chdir_get_abs_path(char *old, char *new)
+char	*chdir_get_parent(char *cwd)
 {
-	char	*cwdabs;
-	size_t	olen;
-	size_t	nlen;
+	char	*ptr;
+	char	*last_good;
 
-	cwdabs = getcwd(0, 0);
-	if (cwdabs == NULL)
+	last_good = 0;
+	if (cwd)
 	{
-		olen = strlen(old);
-		nlen = strlen(new);
-		if ((cwdabs = malloc(olen + nlen + 2)) == 0)
-			return (0);
-		memcpy(cwdabs, old, olen);
-		cwdabs[olen] = '/';
-		memcpy(cwdabs + olen + 1, new, nlen + 1);
+		ptr = cwd + 1;
+		while ((ptr = strchr(ptr, '/')))
+		{
+			*ptr = 0;
+			if (access(cwd, F_OK | R_OK))
+				break ;
+			last_good = ptr;
+			*ptr++ = '/';
+		}
 	}
-	return (cwdabs);
+	else
+		return (strdup("/"));
+	*last_good = 0;
+	ptr = strdup(cwd);
+	*last_good = '/';
+	return (ptr);
+}
+
+char	*chdir_guess_target(char *t, char *cwd)
+{
+	char		*val;
+	static char	target[PATH_MAX];
+	size_t		z;
+
+	dprintf(1, "%s\n", cwd);
+	if (cwd)
+		val = access(cwd, F_OK | R_OK) ? getcwd(0, 0) : strdup(cwd);
+	else
+		val = 0;
+	if (val == 0)
+	{
+		val = chdir_get_parent(cwd);
+		dprintf(2, "%s: cd: Could not retrieve current working directory,"
+				" rolling back to '%s' folder\n", "minishell", val);
+		t = "";
+		if (!val)
+			return (0);
+	}
+	z = strlen(val);
+	memcpy(target, val, z);
+	if (*t != 0)
+		chdir_trim_target(target, t);
+	free(val);
+	return (target);
 }
 
 int		ft_cd(int ac, char **av, char **envp)
 {
-	char	*target;
-	int		st;
-	t_var	*cwd;
-	t_var	*owd;
+	char		*target;
+	t_var		*cwd;
+	t_var		*owd;
 
+	(void)envp;
 	target = chdir_target(ac, av);
-	if (chdir_test_target(target))
+	if (*target != '/')
+		target = chdir_guess_target(target, vhash_search("PWD"));
+	else
+		target = chdir_guess_target(target + 1, "/");
+	dprintf(1, "target : %s\n", target);
+	if (!target || (chdir_test_target(target)))
 		return (1);
-	st = -(chdir(target));
-	if (!st)
+	chdir(target);
+	if ((cwd = init_var("PWD=", HTVAR_VAR_ENVP)) == 0)
+		return (127);
+	cwd = vhash_insert(cwd);
+	if ((owd = init_var("OLDPWD=", HTVAR_VAR_ENVP)))
 	{
-		//protect it pls
-		cwd = init_var("PWD=", HTVAR_VAR_ENVP);
-		cwd = vhash_insert(cwd);
-		owd = init_var("OLDPWD=", HTVAR_VAR_ENVP);
 		owd = vhash_insert(owd);
 		free(owd->value);
 		owd->value = cwd->value;
-		cwd->value = chdir_get_abs_path(cwd->value, target);
 	}
-	return (st);
+	cwd->value = strdup(target);
+	return (0);
 }
