@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 19:39:44 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 20:55:49 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/21 19:02:27 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static char	*transmute_exp_error(char *s, int err)
 	return (0);
 }
 
-char		*transmute_exp_spec(char *s)
+char		*transmute_exp_spec(char *s, int err)
 {
 	char	*org;
 	size_t	offset;
@@ -42,7 +42,7 @@ char		*transmute_exp_spec(char *s)
 		last = offset[s];
 		exp = expansion_readline(org, "> ", 2);
 		if (exp == 0 && (last == '\'' || last == '"'))
-			return (transmute_exp_error(s, 1));
+			return (transmute_exp_error(s, err));
 		else if (exp == (char *)-1)
 			return (transmute_exp_error(s, 0));
 		else

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/09/19 00:37:40 by root             ###   ########.fr       */
+/*   Updated: 2017/09/21 21:09:06 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,20 @@ extern int		g_laststatus;
 t_job			*job_create(t_lst **c);
 void			job_exec(t_job *job);
 
-void 			job_setstatus(t_job *job, int status);
-char 			*job_getstatus(void);
+void			job_setstatus(t_job *job, int status);
+char			*job_getstatus(void);
 
 int				test_execpath(char *c);
-char 			**set_envp(void);
+int				set_execpath(char *c);
+void			transmute_av(t_command *c);
+char			**set_envp(void);
 
 void			job_restorefd(t_lst *redir);
-
+void			job_openfd(t_lst *redir);
+void			job_cond_fork(t_lst **c, int nohang);
+void			job_fork_alone(t_lst **c, int nohang);
+int				job_pipe_fork(t_lst **c, int nohang);
+void			job_exec(t_job *job);
 void			free_half_parsed_command(t_command *c);
 void			free_full_parsed_command(t_command *c);
 

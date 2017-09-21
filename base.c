@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/09/20 19:50:17 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/21 19:02:51 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	prompt_shell(void)
 			s = strdup("exit");
 		if (s != (char *)-1 && s != 0)
 		{
-			e = transmute_exp_spec(s);
+			e = transmute_exp_spec(s, 1);
 			t = tokenize(e);
 			if (e != 0)
 				free(e);
