@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 11:56:09 by root              #+#    #+#             */
-/*   Updated: 2017/09/23 23:37:20 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/24 02:26:04 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ extern int	g_opterr_;
 
 int		ft_getopt_long(int ac, char **av,
 						char *optstring, struct s_options *longopt);
-int		ft_getopt_long_long(struct s_options *lopt, char *pname);
-int		ft_getopt_init(void);
+int		ft_getopt_long_long(struct s_options *lopt, char **av, char *pname);
+void	ft_getopt_init(char **pname, char **nextchar, char *s);
 
 #endif

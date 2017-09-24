@@ -1,40 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_getopt_long.h                                   :+:      :+:    :+:   */
+/*   env.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/14 11:56:09 by root              #+#    #+#             */
-/*   Updated: 2017/09/23 23:37:20 by jye              ###   ########.fr       */
+/*   Created: 2017/09/13 22:22:42 by root              #+#    #+#             */
+/*   Updated: 2017/09/20 17:27:43 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_GETOPT_LONG_H
-# define FT_GETOPT_LONG_H
+#ifndef ENV_H
+# define ENV_H
 
-enum	e_arg
-{
-	no_arg,
-	req_arg,
-	opt_arg
-};
+void	ft_env_ignore(void);
 
-struct	s_options
-{
-	char	*s;
-	int		has_arg;
-	int		*f;
-	int		val;
-};
-
-extern int	g_optind_;
-extern char	*g_optarg_;
-extern int	g_opterr_;
-
-int		ft_getopt_long(int ac, char **av,
-						char *optstring, struct s_options *longopt);
-int		ft_getopt_long_long(struct s_options *lopt, char *pname);
-int		ft_getopt_init(void);
+int		ft_env(int ac, char **av, char **envp);
 
 #endif

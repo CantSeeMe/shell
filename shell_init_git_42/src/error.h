@@ -1,40 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_getopt_long.h                                   :+:      :+:    :+:   */
+/*   error.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/14 11:56:09 by root              #+#    #+#             */
-/*   Updated: 2017/09/23 23:37:20 by jye              ###   ########.fr       */
+/*   Created: 2017/08/22 08:42:05 by root              #+#    #+#             */
+/*   Updated: 2017/09/14 15:54:32 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_GETOPT_LONG_H
-# define FT_GETOPT_LONG_H
+#ifndef ERROR_H
+# define ERROR_H
 
-enum	e_arg
-{
-	no_arg,
-	req_arg,
-	opt_arg
-};
-
-struct	s_options
-{
-	char	*s;
-	int		has_arg;
-	int		*f;
-	int		val;
-};
-
-extern int	g_optind_;
-extern char	*g_optarg_;
-extern int	g_opterr_;
-
-int		ft_getopt_long(int ac, char **av,
-						char *optstring, struct s_options *longopt);
-int		ft_getopt_long_long(struct s_options *lopt, char *pname);
-int		ft_getopt_init(void);
+void	parse_error(char *pname, char *to, int errortype);
+void	exec_error(char *pname, char *exec, int errortype);
 
 #endif

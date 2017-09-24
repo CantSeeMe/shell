@@ -1,40 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_getopt_long.h                                   :+:      :+:    :+:   */
+/*   echo.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/09/14 11:56:09 by root              #+#    #+#             */
-/*   Updated: 2017/09/23 23:37:20 by jye              ###   ########.fr       */
+/*   Created: 2017/09/18 15:40:22 by root              #+#    #+#             */
+/*   Updated: 2017/09/20 17:33:05 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_GETOPT_LONG_H
-# define FT_GETOPT_LONG_H
+#ifndef ECHO_H
+# define ECHO_H
+# define ECHO_ESCAPE "\\abtnvfr0x"
+# define ECHO_OCT "01234567"
+# define ECHO_HEX "0123456789ABCDEF"
 
-enum	e_arg
+enum	e_echo_flag
 {
-	no_arg,
-	req_arg,
-	opt_arg
+	null = 1,
+	escape = 2
 };
 
-struct	s_options
+union	u_echo_escape
 {
-	char	*s;
-	int		has_arg;
-	int		*f;
-	int		val;
+	char val;
+	void (*func)();
 };
 
-extern int	g_optind_;
-extern char	*g_optarg_;
-extern int	g_opterr_;
+struct	s_echo_escape
+{
+	char				c;
+	int					type;
+	union u_echo_escape	e;
+};
 
-int		ft_getopt_long(int ac, char **av,
-						char *optstring, struct s_options *longopt);
-int		ft_getopt_long_long(struct s_options *lopt, char *pname);
-int		ft_getopt_init(void);
+void	ft_echo_put_escape(char **s, char **ptr, int ec);
+
+int		ft_echo(int ac, char **av, char **envp);
 
 #endif
