@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 16:10:49 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/24 18:17:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,8 @@ int		job_exec_process(t_process *p)
 {
 	t_command	*c;
 	t_lst		*rest;
-	int			i;
 
 	c = p->c;
-	i = c->var_;
 	rest = job_openfd(p->c->redir);
 	if (c->cmd.type == C_SHELL_BUILTIN)
 	{

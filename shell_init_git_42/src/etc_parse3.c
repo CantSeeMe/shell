@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 20:55:59 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 16:28:22 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 11:56:04 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	transmute_dquote(char **s, char **act)
 		}
 		else if (**s == 0)
 		{
-			*((unsigned int *)*act) = *((unsigned int *)"\xf5\"\0\0");
+			*((unsigned int *)*act) = *((unsigned int *)"\xf6\"\0\0");
 			return (1);
 		}
 		else
@@ -49,7 +49,7 @@ static int	transmute_squote(char **s, char **act)
 		*(*act) = -*(*s)++;
 		if (**act == 0)
 		{
-			*((unsigned int *)*act) = *((unsigned int *)"\xf5'\0\0");
+			*((unsigned int *)*act) = *((unsigned int *)"\xf6'\0\0");
 			return (1);
 		}
 		else
