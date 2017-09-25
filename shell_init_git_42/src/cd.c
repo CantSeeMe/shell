@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 15:17:20 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 13:07:30 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 13:23:38 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ char	*chdir_guess_target(char *t, char *cwd)
 			return (0);
 	}
 	z = ft_strlen(val);
-	ft_memcpy(target, val, z);
+	ft_memcpy(target, val, z + 1);
 	if (*t != 0)
 		chdir_trim_target(target, t);
 	free(val);

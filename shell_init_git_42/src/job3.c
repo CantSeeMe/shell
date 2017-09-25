@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:39:15 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 19:55:57 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 13:43:51 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,16 @@ static t_lst	*job_create_process(t_job *job, t_lst *cp)
 		}
 		job_set_ready_for_exec(c);
 		p->pid = -1;
-		job->type = (c->endsym == pip ? JTPIPE : JTCOND) |
-					(c->cmd.type == C_SHELL_BUILTIN ? JTBUILTIN : 0);
+		job->type |= ((c->endsym == pip) * JTPIPE) |
+					((c->endsym == andsym || c->endsym == orsym) * JTCOND) |
+					((c->cmd.type == C_SHELL_BUILTIN ) * JTBUILTIN);
 		cp->data = p;
 		p->c = c;
 		if (c->endsym == ampersand || c->endsym == period)
 			break ;
 		cp = cp->next;
 	}
+	job->type |= c->endsym == ampersand ? JTNOHANG : JTHANG;
 	return (cp ? cp->next : cp);
 }
 
