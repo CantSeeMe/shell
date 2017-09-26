@@ -6,12 +6,13 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:34:38 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 19:48:47 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 21:31:29 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_readline.h"
 #include "libft.h"
+#include "ft_printf.h"
 
 #include <sys/ioctl.h>
 #include <stdlib.h>

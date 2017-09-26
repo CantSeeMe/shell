@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 19:39:44 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 11:49:21 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 22:16:24 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char		*transmute_exp_spec(char *s, int err)
 	char	last;
 
 	last = 0;
-	if (s != (org = maybe_realloc_s1(s, ft_strlen(s), 4)))
+	if ((org = maybe_realloc_s1(s, ft_strlen(s), 4)) != s)
 		free(s);
 	s = org;
 	while (transmute_special(s))

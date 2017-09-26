@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 11:46:33 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 21:49:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ int		main(int ac, char **av, char **envp)
 {
 	(void)ac;
 	(void)av;
+	(void)envp;
 	init_htvar(envp);
 	chash_init();
 	init_tokenizer();

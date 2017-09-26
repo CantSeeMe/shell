@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 18:17:57 by root             ###   ########.fr       */
+/*   Updated: 2017/09/25 20:44:24 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	job_fork_exec(t_command *c)
 {
 	int	i;
 
-	if (c->var_ && c->av.cav[1] == 0)
+	if (c->av.cav[c->var_] == 0 || *c->av.cav[c->var_] == 0)
 		exit(0);
 	if ((i = test_execpath(c->cmd.c)))
 	{
@@ -41,6 +41,7 @@ int		job_exec_process(t_process *p)
 
 	c = p->c;
 	rest = job_openfd(p->c->redir);
+	p->c->redir = (t_lst *)0;
 	if (c->cmd.type == C_SHELL_BUILTIN)
 	{
 		if (p->pid == 0)

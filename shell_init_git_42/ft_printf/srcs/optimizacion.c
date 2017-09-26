@@ -6,13 +6,14 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 20:50:38 by jye               #+#    #+#             */
-/*   Updated: 2017/04/22 21:28:05 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 21:48:52 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 #define IO_SIZE 4096
 
 static char		g_buff[IO_SIZE];
@@ -27,7 +28,7 @@ void		print_pp(int lpp, char cpad)
 	if (lpp > IO_SIZE)
 	{
 		ft_memset(g_buff, cpad, IO_SIZE);
-		while (lpp >= IO_SIZE)
+		while (lpp > IO_SIZE)
 		{
 			write(g_fd, g_buff, IO_SIZE);
 			g_len += IO_SIZE;
@@ -46,18 +47,22 @@ void		print_pp(int lpp, char cpad)
 
 void		write_buf(void *s, unsigned long n)
 {
-	char *buff;
-
 	if (n + g_i > IO_SIZE)
 		print_buf();
 	if (n > IO_SIZE)
 	{
-		if (!(buff = (char *)malloc(sizeof(char) * n)))
-			exit(EXIT_FAILURE);
-		ft_memcpy(buff, s, n);
-		write(g_fd, g_buff, n);
+		while (n > IO_SIZE)
+		{
+			dprintf(3, "lol\n");
+			ft_memcpy(g_buff, s, IO_SIZE);
+			write(g_fd, g_buff, IO_SIZE);
+			s += IO_SIZE;
+			n -= IO_SIZE;
+			g_len += IO_SIZE;
+		}
+		g_i = n;
+		ft_memcpy(g_buff, s, n);
 		g_len += n;
-		free(buff);
 	}
 	else
 	{
