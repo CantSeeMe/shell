@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 21:56:00 by jye               #+#    #+#             */
-/*   Updated: 2017/09/20 21:57:26 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 17:48:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,8 @@ void		hash_flushtable(t_hashtable *table, void (*flush)())
 	i = 0;
 	while (i < table->nbuckets)
 	{
-		n = table->bucket[i++];
+		n = table->bucket[i];
+		table->bucket[i++] = 0;
 		while (n)
 		{
 			item = (t_bucket *)n->data;

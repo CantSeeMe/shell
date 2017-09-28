@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 15:17:20 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 13:07:30 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 18:47:52 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 char	*chdir_target(int ac, char **av)
 {
@@ -27,30 +28,33 @@ char	*chdir_target(int ac, char **av)
 	else if (ac == 2 && !ft_strcmp(av[1], "-"))
 		return (vhash_search("OLDPWD"));
 	else if (ac >= 2 && !ft_strcmp(av[1], "--"))
-	{
-		if (ac == 2)
-			return (vhash_search("HOME"));
-		else
-			return (av[2]);
-	}
+		return (ac == 2 ? vhash_search("HOME") : av[2]);
 	return (av[1]);
 }
 
 int		chdir_test_target(char *target)
 {
-	int		r;
+	struct stat fs;
 
-	if ((r = access(target, F_OK)))
+	if ((stat(target, &fs)))
 	{
 		ft_dprintf(2, "%s: cd: %s: No such file or directory\n",
 				"minishell", target);
+		return (1);
 	}
-	else if ((r = access(target, R_OK)))
+	if ((S_ISDIR(fs.st_mode)) == 0)
+	{
+		ft_dprintf(2, "%s: cd: %s: Not a directory\n",
+				"minishell", target);
+		return (1);
+	}
+	if ((fs.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0)
 	{
 		ft_dprintf(2, "%s: cd: %s: Permission denied\n",
 				"minishell", target);
+		return (1);
 	}
-	return (r);
+	return (0);
 }
 
 char	*chdir_get_parent(char *cwd)
@@ -88,7 +92,7 @@ char	*chdir_guess_target(char *t, char *cwd)
 	if (cwd)
 		val = access(cwd, F_OK | R_OK) ? getcwd(0, 0) : ft_strdup(cwd);
 	else
-		val = 0;
+		val = getcwd(0, 0);
 	if (val == 0)
 	{
 		val = chdir_get_parent(cwd);
@@ -99,7 +103,7 @@ char	*chdir_guess_target(char *t, char *cwd)
 			return (0);
 	}
 	z = ft_strlen(val);
-	ft_memcpy(target, val, z);
+	ft_memcpy(target, val, z + 1);
 	if (*t != 0)
 		chdir_trim_target(target, t);
 	free(val);
@@ -113,21 +117,20 @@ int		ft_cd(int ac, char **av, char **envp)
 	t_var		*owd;
 
 	(void)envp;
-	target = chdir_target(ac, av);
+	if ((target = chdir_target(ac, av)) == 0)
+		return (1);
 	if (*target != '/')
 		target = chdir_guess_target(target, vhash_search("PWD"));
 	if (!target || (chdir_test_target(target)))
 		return (1);
 	chdir(target);
-	if ((cwd = init_var("PWD=", HTVAR_VAR_ENVP)) == 0)
+	if ((cwd = chdir_get_pwd()) == 0)
 		return (127);
-	cwd = vhash_insert(cwd);
-	if ((owd = init_var("OLDPWD=", HTVAR_VAR_ENVP)))
-	{
-		owd = vhash_insert(owd);
-		free(owd->value);
-		owd->value = cwd->value;
-	}
+	if ((owd = init_var("OLDPWD=", HTVAR_VAR_ENVP)) == 0)
+		return (0);
+	owd = vhash_insert(owd);
+	free(owd->value);
+	owd->value = cwd->value;
 	cwd->value = ft_strdup(target);
 	return (0);
 }

@@ -6,11 +6,12 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 17:24:19 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 12:32:23 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 18:29:35 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "htvar.h"
 
 #include <limits.h>
 #include <stdlib.h>
@@ -40,4 +41,23 @@ void	chdir_trim_target(char *target, char *t)
 		}
 		t = ptr + 1;
 	}
+}
+
+t_var	*chdir_get_pwd(void)
+{
+	t_var	*new;
+	t_var	*cwd;
+
+	if ((cwd = vhash_search__("PWD")) == 0)
+	{
+		if ((new = init_var("PWD=", HTVAR_VAR_ENVP)) == 0)
+			return ((t_var *)0);
+		if ((cwd = vhash_insert(new)) == 0)
+		{
+			free(new->key);
+			free(new);
+			return ((t_var *)0);
+		}
+	}
+	return (cwd);
 }
