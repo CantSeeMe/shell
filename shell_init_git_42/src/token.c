@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:31 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 11:12:04 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 15:45:58 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static char					*get_strsymbol(char **line)
 
 	if (*line == 0 || *(s = *line) == 0)
 		return (NULL);
-	while (ft_strchr(WHITESPACE, *s))
+	while (*s && ft_strchr(WHITESPACE, *s))
 		++s;
 	e = s;
 	while (!ft_strchr(NORMPLS, *e))

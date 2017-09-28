@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 12:36:28 by root              #+#    #+#             */
-/*   Updated: 2017/09/28 19:32:05 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 15:44:32 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,8 @@
 
 int		is_heretag(char *s, char *heretag)
 {
-	int		r;
 	size_t	sl;
 
-	r = 0;
 	while (*s && *s == ' ')
 		s++;
 	sl = ft_strlen(heretag);

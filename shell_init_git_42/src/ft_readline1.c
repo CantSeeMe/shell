@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:30:02 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 02:07:58 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 16:03:47 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,6 @@ void		keyboard_event(uint64_t c, int r)
 	else if (IS_CTRL_MODIFIER(c))
 		ctrl_event(c);
 	else
-		buff_insert(&c, r);
+		(g_last_action = buff_insert)(&c, r);
 	buff_yankin();
 }
