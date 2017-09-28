@@ -6,13 +6,14 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 12:36:28 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 12:09:35 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 19:32:05 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "command.h"
 #include "ft_readline.h"
 #include "libft.h"
+#include "ft_printf.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -27,12 +28,11 @@ int		is_heretag(char *s, char *heretag)
 	while (*s && *s == ' ')
 		s++;
 	sl = ft_strlen(heretag);
-	if ((r = !ft_strncmp(s, heretag, sl)))
+	if (!ft_strncmp(s, heretag, sl))
 		s += sl;
 	while (*s && *s == ' ')
 		s++;
-	r = *s != 0;
-	return (r);
+	return (*s == 0);
 }
 
 void	here_tag(t_rd *rd)
@@ -47,7 +47,9 @@ void	here_tag(t_rd *rd)
 			s != (char *)-1)
 	{
 		if (is_heretag(s, rd->s))
+		{
 			break ;
+		}
 		write(fd[1], s, ft_strlen(s));
 		write(fd[1], "\n", 1);
 		free(s);
@@ -59,5 +61,5 @@ void	here_tag(t_rd *rd)
 		close(fd[0]);
 	else
 		free(s);
-	rd->heretag = (s == (char *)-1) ? fd[0] : -1;
+	rd->heretag = (s == (char *)-1) ? -1 : fd[0];
 }

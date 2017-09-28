@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:52:46 by jye               #+#    #+#             */
-/*   Updated: 2017/09/25 20:53:51 by root             ###   ########.fr       */
+/*   Updated: 2017/09/28 19:30:54 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	job_inopen(t_rd *rd)
 
 	if (rd->s == 0 && rd->o_flag == -1)
 	{
-		if (rd->heretag == -2)
+		if (rd->heretag < 1)
 			return ;
 		rd->save = dup(rd->fd);
 		dup2(rd->heretag, rd->fd);
