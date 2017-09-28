@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 10:51:14 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 11:51:02 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 22:13:43 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,18 @@
 
 void	buff_chronicow(char *s, size_t len)
 {
+	char	*tmp;
+
+	if (len > g_buffer.msize)
+	{
+		tmp = g_buffer.s;
+		if (buff_malloc((len & ~DEFAULT_BUFFER_SIZE) + DEFAULT_BUFFER_SIZE))
+		{
+			g_buffer.s = tmp;
+			return ;
+		}
+		free(tmp);
+	}
 	shift_cursor(g_buffer.cu, 0);
 	ft_memcpy(g_buffer.s, s, len);
 	if (g_buffer.len > len)

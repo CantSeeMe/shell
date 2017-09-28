@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 21:51:18 by jye               #+#    #+#             */
-/*   Updated: 2017/09/20 21:52:39 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 15:43:18 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ t_ccsh	*chash_lookup(char *key, char *envp)
 {
 	static char	*cpath;
 
+	if (key == (char *)0)
+		return ((t_ccsh *)0);
 	if (cpath != envp)
 	{
 		cpath = envp;

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 16:15:14 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 12:11:27 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 15:54:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int		ft_setenv(int ac, char **av, char **envp)
 
 	(void)envp;
 	if (ac <= 1)
-		return (ft_env(0, NULL, 0));
+		return (ft_env(1, (char *[]){"env", NULL}, envp));
 	i = 1;
 	while (i < ac)
 	{

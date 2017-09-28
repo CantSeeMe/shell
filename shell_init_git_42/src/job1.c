@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:33:52 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 15:26:10 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 13:42:03 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,11 @@ void		job_cond_fork(t_lst **c, int nohang)
 			push_lst__(&g_jobs, proc);
 		}
 		while (*c)
-			pop_lst__(c, free_full_parsed_command);
+		{
+			proc = (t_process *)(*c)->data;
+			free_full_parsed_command(proc->c);
+			pop_lst__(c, free);
+		}
 	}
 	else
 		job_cond_fork_(c, nohang);

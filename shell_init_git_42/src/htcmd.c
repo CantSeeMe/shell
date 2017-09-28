@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 11:12:47 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 21:01:04 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*path_lookup(char *key, char *envp)
 		path = cat_pathfile(envp, key);
 		if (ptr)
 			*ptr = ':';
-		if (!access(path, X_OK))
+		if (path && !access(path, X_OK))
 			return (path);
 		envp = ptr + 1;
 	}

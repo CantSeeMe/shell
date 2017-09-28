@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 16:07:52 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 15:27:35 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 13:39:08 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,16 @@ int			job_wait_control(t_process *proc, int options)
 void		job_exec(t_job *job)
 {
 	if (job->type & JTCOND)
+	{
 		job_cond_fork(&job->proc, job->type & JTNOHANG);
+	}
 	else if (job->type & JTPIPE)
+	{
 		job_pipe_fork(&job->proc, job->type & JTNOHANG);
+	}
 	else
+	{
 		job_fork_alone(&job->proc, job->type & JTNOHANG);
+	}
 	free(job);
 }

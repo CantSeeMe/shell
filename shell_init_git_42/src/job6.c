@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:56:12 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 20:01:55 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/25 15:51:24 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ void	transmute_av(t_command *c)
 
 int		check_varname(char *s)
 {
+	if (*s == '=')
+		return (0);
 	while (*s != '=')
 	{
 		if (!ft_strchr(WORD_ANCHAR, *s))
@@ -63,8 +65,9 @@ int		check_varname(char *s)
 	return (1);
 }
 
-int		set_execpath(t_command *c)
+void	set_execpath(t_command *c)
 {
+	char		*s;
 	t_ccsh		*z;
 	t_var		*v;
 	int			i;
@@ -77,17 +80,17 @@ int		set_execpath(t_command *c)
 	}
 	else
 		c->var_ = 0;
-	i = 0;
+	i = c->var_;
 	while (i < c->ac)
 		givemeback_letter_pls(c->av.cav[i++]);
 	c->cmd.type = C_SHELL_EXT;
-	if (ft_strchr(*(c->av.cav + c->var_), '/'))
+	s = *(c->av.cav + c->var_);
+	if (s && ft_strchr(s, '/'))
 		c->cmd.c = *(c->av.cav + c->var_);
-	else if ((z = chash_lookup(*(c->av.cav + c->var_), vhash_search("PATH"))))
+	else if ((z = chash_lookup(s, vhash_search("PATH"))))
 		c->cmd = *z;
 	else
 		c->cmd.c = 0;
-	return (0);
 }
 
 char	**set_envp(void)

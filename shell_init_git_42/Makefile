@@ -6,14 +6,14 @@
 #    By: jye <jye@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/24 01:49:55 by jye               #+#    #+#              #
-#    Updated: 2017/09/24 15:52:54 by jye              ###   ########.fr        #
+#    Updated: 2017/09/24 18:18:31 by root             ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 CC       = gcc
 CFLAGS   = -Wall -Wextra -Werror -g3
 INCLUDE  = -Isrc
-LINKLIB  = -lcurses -Llibft -lft -Lft_printf -lftprintf
+LINKLIB  = -lcurses -Lft_printf -lftprintf -Llibft -lft
 
 SRC_PATH = src
 OBJ_PATH = obj

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 11:55:45 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 11:49:43 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/24 18:17:27 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ struct s_options	*ft_opt_getstruct_long(char *s,
 	has_arg = ft_strchr(s, '=');
 	if (has_arg)
 		g_optarg_ = has_arg + 1;
-	ncmp = has_arg ? has_arg - s : ft_strlen(s);
+	ncmp = (size_t)has_arg ? (size_t)(has_arg - s) : ft_strlen(s);
 	while (longopt->s != NULL)
 	{
 		if (ncmp == ft_strlen(longopt->s) &&
