@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 15:17:20 by root              #+#    #+#             */
-/*   Updated: 2017/09/28 18:50:34 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/28 18:48:37 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,11 +124,12 @@ int		ft_cd(int ac, char **av, char **envp)
 	if (!target || (chdir_test_target(target)))
 		return (1);
 	chdir(target);
-	if ((cwd = chdir_get_pwd()) == 0)
+	if ((cwd = chdir_get_wd(CHDIR_PWD)) == 0)
 		return (127);
-	if ((owd = init_var("OLDPWD=", HTVAR_VAR_ENVP)) == 0)
+	if ((owd = chdir_get_wd(CHDIR_OLDPWD)) == 0)
 		return (0);
-	owd = vhash_insert(owd);
+	if (cwd->value && !ft_strcmp(cwd->value, target))
+		return (0);
 	free(owd->value);
 	owd->value = cwd->value;
 	cwd->value = ft_strdup(target);
