@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/09/25 11:44:35 by root             ###   ########.fr       */
+/*   Updated: 2017/09/30 21:54:01 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include "lst.h"
 #include "htvar.h"
 #include "libft.h"
-#include "ft_printf.h"
 
 #include <termios.h>
 #include <curses.h>
@@ -30,7 +29,7 @@ static int	set_manual_ttymode(void)
 	struct termios termios;
 
 	tcgetattr(STDIN_FILENO, &termios);
-	g_otermios = termios;
+	ft_memcpy(&g_otermios, &termios, sizeof(termios));
 	termios.c_iflag &= ~INLCR;
 	termios.c_iflag |= ICRNL;
 	termios.c_oflag |= OPOST | ONLCR;

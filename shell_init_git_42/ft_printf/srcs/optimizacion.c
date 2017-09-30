@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 20:50:38 by jye               #+#    #+#             */
-/*   Updated: 2017/09/25 21:48:52 by root             ###   ########.fr       */
+/*   Updated: 2017/09/30 21:40:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void		write_buf(void *s, unsigned long n)
 	{
 		while (n > IO_SIZE)
 		{
-			dprintf(3, "lol\n");
 			ft_memcpy(g_buff, s, IO_SIZE);
 			write(g_fd, g_buff, IO_SIZE);
 			s += IO_SIZE;
