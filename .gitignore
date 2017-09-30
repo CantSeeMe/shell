@@ -1,6 +1,6 @@
 minishell
 a.out
-a.out.dSYM
+*.dSYM
 *.o
 *.exe
 *.a
@@ -8,3 +8,4 @@ a.out.dSYM
 #*#
 .#*
 debug
+*test*

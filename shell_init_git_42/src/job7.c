@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/09/25 20:44:24 by root             ###   ########.fr       */
+/*   Updated: 2017/09/30 21:08:02 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "error.h"
 #include "job.h"
 #include "htcmd.h"
+#include "htvar.h"
 #include "ft_printf.h"
 
 #include <stdlib.h>
@@ -65,6 +66,7 @@ void	job_fork_alone(t_lst **c, int nohang)
 	t_process	*proc;
 
 	proc = (t_process *)(*c)->data;
+	vhash_set_underscore(*(proc->c->av.cav + proc->c->ac - 1));
 	if (proc->c->cmd.type == C_SHELL_BUILTIN)
 	{
 		job_exec_process(proc);

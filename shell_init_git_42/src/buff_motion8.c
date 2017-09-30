@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:10:28 by jye               #+#    #+#             */
-/*   Updated: 2017/09/28 15:59:07 by root             ###   ########.fr       */
+/*   Updated: 2017/09/30 21:26:31 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,6 @@ void	buff_yankin(void)
 	if (g_last_action == buff_kill_prev || g_last_action == buff_kill_next ||
 		g_last_action == buff_del_word)
 	{
-		ft_dprintf(3, "%d %d %d\n",
-				   g_last_action == buff_kill_prev,
-				   g_last_action == buff_kill_next,
-				   g_last_action == buff_del_word);
 		if (prev_action == buff_del_word && g_last_action == buff_del_word)
 			buff_yank_keep();
 		else

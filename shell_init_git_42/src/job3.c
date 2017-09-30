@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:39:15 by jye               #+#    #+#             */
-/*   Updated: 2017/09/28 19:29:50 by jye              ###   ########.fr       */
+/*   Updated: 2017/09/30 21:06:05 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ static void		job_set_ready_for_exec(t_command *c)
 	set_execpath(c);
 	if ((c->cmd.type != C_SHELL_BUILTIN))
 		vhash_set_underscore(c->cmd.c);
+	else
+		vhash_set_underscore(c->cmd.key);
 	c->envp = set_envp();
 }
 
