@@ -6,13 +6,14 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:07:01 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 11:43:17 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/01 11:33:53 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_readline.h"
 #include "buff_auto.h"
 #include "libft.h"
+#include "ft_printf.h"
 
 #include <stdlib.h>
 #include <curses.h>
@@ -50,9 +51,9 @@ void	buff_fill_alike(char **fold, char **alike)
 	char	*p;
 	char	c;
 
+	g_buffer.s[g_buffer.cu] = 0;
 	p = g_buffer.s + g_buffer.cu;
 	c = g_buffer.s[g_buffer.cu];
-	g_buffer.s[g_buffer.cu] = 0;
 	while (p > g_buffer.s)
 	{
 		if (*p == '/' || *p == ' ')
@@ -65,6 +66,7 @@ void	buff_fill_alike(char **fold, char **alike)
 		*alike = ft_strdup(p);
 	g_buffer.s[g_buffer.cu] = c;
 	buff_fill_fold(fold, p);
+	ft_dprintf(2, "|%s| |%s|\n", *alike, *fold);
 }
 
 void	buff_autocomplete(void)
@@ -74,10 +76,16 @@ void	buff_autocomplete(void)
 	char	*alike;
 
 	buff_fill_alike(&fold, &alike);
+	if (!ft_strcmp(fold, ".") && *alike == 0)
+	{
+		free(fold);
+		free(alike);
+		return ;
+	}
 	if ((cdir = buff_get_alike(fold, alike)) == 0)
 		return ;
 	ft_qsort((void **)cdir->file, cdir->nb_file, ft_strcmp);
-	if (g_last_action == buff_autocomplete && cdir->bae != 1)
+	if (g_last_action == buff_autocomplete && cdir->bae > 1)
 		buff_show_alike(cdir);
 	cdir->bae = cdir->nb_file;
 	buff_autocomplete_(cdir, fold, alike);

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/01 16:21:36 by jye               #+#    #+#             */
-/*   Updated: 2017/10/01 06:12:33 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/01 06:20:23 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "lst.h"
 #include "htcmd.h"
 #include "libft.h"
+#include "ft_printf.h"
 
 #include <dirent.h>
 #include <unistd.h>
@@ -33,7 +34,7 @@ char	*cat_pathfile(char *cur_dir, size_t path_s, char *file)
 	ft_memcpy(path, cur_dir, path_s);
 	path[path_s] = '/';
 	ft_memcpy(path + path_s + 1, file, f_len);
-	(path_s + f_len)[path + 1] = 0;
+	(path_s + f_len + 1)[path] = 0;
 	return (path);
 }
 
@@ -48,7 +49,7 @@ char	*path_lookup(char *key, char *envp)
 	while (envp != (char *)1)
 	{
 		ptr = ft_strchr(envp, ':');
-		path_s = ptr - envp;
+		path_s = ptr ? (size_t)(ptr - envp) : ft_strlen(envp);
 		path = cat_pathfile(envp, path_s, key);
 		if (path && !access(path, X_OK))
 			return (path);
