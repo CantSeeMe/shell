@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:56:12 by jye               #+#    #+#             */
-/*   Updated: 2017/09/25 15:51:24 by root             ###   ########.fr       */
+/*   Updated: 2017/10/01 06:18:27 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ void	set_execpath(t_command *c)
 	if (ft_strchr(*c->av.cav, '=') && check_varname(*c->av.cav))
 	{
 		if ((v = init_var(*c->av.cav, HTVAR_VAR_GLOBAL)))
-			vhash_insert(v);
+			v = vhash_insert(v);
+		givemeback_letter_pls(v->value);
 		c->var_ = 1;
 	}
 	else
