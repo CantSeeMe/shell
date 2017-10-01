@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/09/30 21:54:01 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/01 06:26:09 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "lst.h"
 #include "htvar.h"
 #include "libft.h"
+#include "ft_printf.h"
 
 #include <termios.h>
 #include <curses.h>

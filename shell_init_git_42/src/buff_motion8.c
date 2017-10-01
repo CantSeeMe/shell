@@ -6,13 +6,12 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:10:28 by jye               #+#    #+#             */
-/*   Updated: 2017/09/30 21:26:31 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/01 06:45:17 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_readline.h"
 #include "libft.h"
-#include "ft_printf.h"
 
 #include <stdlib.h>
 #include <curses.h>
@@ -23,6 +22,8 @@ void	buff_yank_reset(void)
 {
 	t_record	*r;
 
+	if (g_record == 0)
+		return ;
 	free(g_yank);
 	r = g_record->data;
 	if ((g_yank = malloc(r->bufsize)) == 0)

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 19:39:22 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/01 06:23:46 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void					buff_insert(void *c, int r);
 void					buff_newline(void);
 void					buff_delete(void);
 void					buff_reset_state(void);
-void					buff_clear_line(void);
+void					buff_clear_content(void);
 
 void					buff_record(int start, ssize_t bufsize, int action);
 void					buff_revert(void);
