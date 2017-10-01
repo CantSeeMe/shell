@@ -6,13 +6,13 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 16:33:14 by root              #+#    #+#             */
-/*   Updated: 2017/09/14 16:33:44 by root             ###   ########.fr       */
+/*   Updated: 2017/10/01 06:14:42 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UNSETENV_H
 # define UNSETENV_H
 
-int		ft_unsetenv(int ac, char **av, char **envp);
+int		ft_unset(int ac, char **av, char **envp);
 
 #endif

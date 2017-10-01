@@ -6,13 +6,13 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 16:33:53 by root              #+#    #+#             */
-/*   Updated: 2017/09/14 16:35:51 by root             ###   ########.fr       */
+/*   Updated: 2017/10/01 06:14:58 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "htvar.h"
 
-int		ft_unsetenv(int ac, char **av, char **envp)
+int		ft_unset(int ac, char **av, char **envp)
 {
 	int		i;
 

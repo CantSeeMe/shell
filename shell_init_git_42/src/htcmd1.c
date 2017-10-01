@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 21:51:18 by jye               #+#    #+#             */
-/*   Updated: 2017/09/25 15:43:18 by root             ###   ########.fr       */
+/*   Updated: 2017/10/01 06:14:21 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "echo.h"
 #include "exit_.h"
 #include "setenv.h"
-#include "unsetenv.h"
+#include "unset.h"
 
 #include <unistd.h>
 
@@ -33,8 +33,8 @@ int		init_builtin_table(void)
 		{"env", C_SHELL_BUILTIN, ft_env},
 		{"echo", C_SHELL_BUILTIN, ft_echo},
 		{"exit", C_SHELL_BUILTIN, ft_exitsh},
-		{"setenv", C_SHELL_BUILTIN, ft_setenv},
-		{"unsetenv", C_SHELL_BUILTIN, ft_unsetenv}
+		{"export", C_SHELL_BUILTIN, ft_setenv},
+		{"unset", C_SHELL_BUILTIN, ft_unset}
 	};
 	int				i;
 	t_bucket		*c;

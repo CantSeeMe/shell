@@ -6,7 +6,7 @@
 #    By: jye <jye@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/24 01:49:55 by jye               #+#    #+#              #
-#    Updated: 2017/09/24 18:18:31 by root             ###   ########.fr        #
+#    Updated: 2017/10/01 06:15:21 by jye              ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -36,7 +36,7 @@ SRC_FILE = base.c ft_qsort.c buff_auto.c buff_auto1.c buff_auto2.c buff_motion.c
            parser.c parser1.c parser2.c parser3.c get_redirection.c heretag.c \
            setenv.c \
            freetoken.c token.c tokentype.c \
-           unsetenv.c
+           unset.c
 
 OBJ_FILE = $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(basename $(SRC_FILE))))
 

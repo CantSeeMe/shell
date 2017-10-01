@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 22:23:03 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 11:27:18 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/01 06:12:18 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	ft_env_(int ac, char **av)
 	char	*exec_path;
 
 	c = '\n';
-	path = ft_strdup(vhash_search("PATH"));
+	path = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin";
 	g_optind_ = 0;
 	g_opterr_ = 1;
 	if (ft_env_flag(ac, av, &c))
@@ -109,7 +109,7 @@ void	ft_env_(int ac, char **av)
 	if (av[ind] == 0)
 		ft_env_show(c);
 	cmd = chash_lookup(av[ind], path);
-	if (!cmd || cmd->type == C_SHELL_BUILTIN)
+	if (!cmd || cmd->type != C_SHELL_BUILTIN)
 	{
 		test_execpath(av[ind]);
 		exec_path = av[ind];
