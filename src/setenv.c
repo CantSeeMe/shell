@@ -40,7 +40,7 @@ int		ft_setenv(int ac, char **av, char **envp)
 				}
 		}
 		else
-			ft_dprintf(2, "%s: %s requires an argument\n", "minishell", av[i]);
+			ft_dprintf(2, "%s: %s requires an argument\n", "21sh", av[i]);
 		i++;
 	}
 	return (0);

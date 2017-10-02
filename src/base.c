@@ -45,7 +45,7 @@ void	prompt_shell(void)
 	t = 0;
 	while (1)
 	{
-		s = ft_readline("minishell> ", ft_strlen("minishell> "));
+		s = ft_readline("21sh> ", ft_strlen("21sh> "));
 		if (s == NULL)
 			s = ft_strdup("exit");
 		if (s != (char *)-1 && s != 0)

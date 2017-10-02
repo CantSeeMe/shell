@@ -45,7 +45,7 @@ int		ft_exitsh(int ac, char **av, char **envp)
 			ft_exit_kill_job();
 		else
 		{
-			ft_dprintf(1, "%s: there are suspended jobs\n", "minishell");
+			ft_dprintf(1, "%s: there are suspended jobs\n", "21sh");
 			g_laststatus |= ~(0xffff);
 			return (1);
 		}

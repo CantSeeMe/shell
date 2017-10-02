@@ -47,7 +47,7 @@ static t_lst	*syntax_get_next_token_node(t_token *stack)
 	if (exp == 0 || exp == (char *)-1)
 	{
 		if (exp == 0)
-			ft_dprintf(2, "%s: Unexpected end of line\n", "minishell");
+			ft_dprintf(2, "%s: Unexpected end of line\n", "21sh");
 		return ((t_lst *)0);
 	}
 	return (tokens);
@@ -59,7 +59,7 @@ static int		syntax_check_stack(t_token *to, t_token *stack)
 		*stack = ((t_token){.s = 0, .sym = 0, .symbreak = 0});
 	else if (stack->sym > number)
 	{
-		parse_error("minishell", stack->s, ERROR_EXPECTED);
+		parse_error("21sh", stack->s, ERROR_EXPECTED);
 		return (1);
 	}
 	else

@@ -39,19 +39,19 @@ int		chdir_test_target(char *target)
 	if ((stat(target, &fs)))
 	{
 		ft_dprintf(2, "%s: cd: %s: No such file or directory\n",
-				"minishell", target);
+				"21sh", target);
 		return (1);
 	}
 	if ((S_ISDIR(fs.st_mode)) == 0)
 	{
 		ft_dprintf(2, "%s: cd: %s: Not a directory\n",
-				"minishell", target);
+				"21sh", target);
 		return (1);
 	}
 	if ((fs.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0)
 	{
 		ft_dprintf(2, "%s: cd: %s: Permission denied\n",
-				"minishell", target);
+				"21sh", target);
 		return (1);
 	}
 	return (0);
@@ -97,7 +97,7 @@ char	*chdir_guess_target(char *t, char *cwd)
 	{
 		val = chdir_get_parent(cwd);
 		ft_dprintf(2, "%s: cd: Could not retrieve current working directory,"
-				" rolling back to '%s' folder\n", "minishell", val);
+				" rolling back to '%s' folder\n", "21sh", val);
 		t = "";
 		if (!val)
 			return (0);

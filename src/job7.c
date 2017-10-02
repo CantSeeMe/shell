@@ -29,7 +29,7 @@ void	job_fork_exec(t_command *c)
 		exit(0);
 	if ((i = test_execpath(c->cmd.c)))
 	{
-		exec_error("minishell", *(c->av.cav + c->var_), i - 1);
+		exec_error("21sh", *(c->av.cav + c->var_), i - 1);
 		exit(126 + (i <= 2));
 	}
 	exit(execve((const char *)c->cmd.c, c->av.cav + c->var_, c->envp));
