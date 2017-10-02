@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 16:07:52 by jye               #+#    #+#             */
-/*   Updated: 2017/09/21 21:09:34 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/02 14:01:05 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "job.h"
 #include "htvar.h"
 #include "command.h"
+#include "ft_printf.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -23,13 +24,13 @@
 t_lst	*g_jobs;
 int		g_laststatus;
 
-char	*job_getstatus(void)
+char		*job_getstatus(void)
 {
 	int			l;
 	char		*itoa_ptr;
 	static char	status[4];
 
-	if (!g_laststatus)
+	if (!(g_laststatus & 0xff))
 	{
 		status[0] = 0x30;
 		status[1] = 0;
@@ -43,7 +44,7 @@ char	*job_getstatus(void)
 		itoa_ptr++;
 	}
 	*itoa_ptr-- = 0;
-	l = g_laststatus;
+	l = g_laststatus & 0xff;
 	while (l)
 	{
 		*itoa_ptr-- = 0x30 + (l % 10);
@@ -52,23 +53,28 @@ char	*job_getstatus(void)
 	return (status);
 }
 
-int		job_wait_control_(pid_t pid, int options)
+static int	job_wait_control_(pid_t pid, int options)
 {
-	sigset_t	set;
-	int			status;
+	struct sigaction	act;
+	int					status;
 
-	sigemptyset(&set);
-	sigaddset(&set, SIGTSTP);
-	sigaddset(&set, SIGINT);
-	sigprocmask(SIG_BLOCK, &set, NULL);
+	sigemptyset(&act.sa_mask);
+	sigaddset(&act.sa_mask, SIGTSTP);
+	sigaddset(&act.sa_mask, SIGINT);
+	act.sa_handler = SIG_IGN;
+	act.sa_flags = 0;
+	sigaction(SIGINT, &act, 0);
+	sigaction(SIGTSTP, &act, 0);
 	status = 127 << 8;
-	if (proc->pid > 0)
-		waitpid(proc->pid, &status, options);
-	sigprocmask(SIG_UNBLOCK, &set, NULL);
+	if (pid > 0)
+		waitpid(pid, &status, options);
+	act.sa_handler = SIG_DFL;
+	sigaction(SIGINT, &act, 0);
+	sigaction(SIGTSTP, &act, 0);
 	return (status);
 }
 
-int		job_wait_control(t_process *proc, int options)
+int			job_wait_control(t_process *proc, int options)
 {
 	int			status;
 
@@ -76,7 +82,7 @@ int		job_wait_control(t_process *proc, int options)
 	if ((proc->flag = ((options & WNOHANG) |
 						((WIFSTOPPED(status) * WTERMSIG(status)) << 16))))
 	{
-		p->qid = g_jobs ? ((t_process *)g_jobs->data)->qid + 1 : 1;
+		proc->qid = g_jobs ? ((t_process *)g_jobs->data)->qid + 1 : 1;
 		push_lst__(&g_jobs, proc);
 	}
 	else
@@ -86,19 +92,25 @@ int		job_wait_control(t_process *proc, int options)
 	}
 	if ((options & WNOHANG))
 		return (status);
-	else if (WTERMSIG(status))
-		return (g_laststatus = WTERMSIG(status) + 128);
-	else
-		return (g_laststatus = WEXITSTATUS(status));
+	g_laststatus &= 0xffff;
+	if (WTERMSIG(status))
+		return (g_laststatus |= WTERMSIG(status) + 128);
+	return (g_laststatus |= WEXITSTATUS(status));
 }
 
-void	job_exec(t_job *job)
+void		job_exec(t_job *job)
 {
 	if (job->type & JTCOND)
+	{
 		job_cond_fork(&job->proc, job->type & JTNOHANG);
+	}
 	else if (job->type & JTPIPE)
+	{
 		job_pipe_fork(&job->proc, job->type & JTNOHANG);
+	}
 	else
+	{
 		job_fork_alone(&job->proc, job->type & JTNOHANG);
+	}
 	free(job);
 }

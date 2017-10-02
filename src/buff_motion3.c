@@ -6,13 +6,15 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:07:01 by jye               #+#    #+#             */
-/*   Updated: 2017/09/20 19:21:17 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/02 13:59:22 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_readline.h"
-#include <string.h>
-#include <stdio.h>
+#include "buff_auto.h"
+#include "libft.h"
+#include "ft_printf.h"
+
 #include <stdlib.h>
 #include <curses.h>
 #include <term.h>
@@ -32,16 +34,16 @@ void	buff_fill_fold(char **fold, char *p)
 	s += (s != g_buffer.s);
 	if (*p == '/' && s == p)
 	{
-		*fold = strdup("/");
+		*fold = ft_strdup("/");
 	}
 	else if (*p == '/')
 	{
 		*p = 0;
-		*fold = strdup(s);
+		*fold = ft_strdup(s);
 		*p = '/';
 	}
 	else
-		*fold = strdup(".");
+		*fold = ft_strdup(".");
 }
 
 void	buff_fill_alike(char **fold, char **alike)
@@ -49,9 +51,9 @@ void	buff_fill_alike(char **fold, char **alike)
 	char	*p;
 	char	c;
 
+	g_buffer.s[g_buffer.cu] = 0;
 	p = g_buffer.s + g_buffer.cu;
 	c = g_buffer.s[g_buffer.cu];
-	g_buffer.s[g_buffer.cu] = 0;
 	while (p > g_buffer.s)
 	{
 		if (*p == '/' || *p == ' ')
@@ -59,9 +61,9 @@ void	buff_fill_alike(char **fold, char **alike)
 		p--;
 	}
 	if (p != g_buffer.s + g_buffer.cu && (*p == '/' || *p == ' '))
-		*alike = strdup(p + 1);
+		*alike = ft_strdup(p + 1);
 	else
-		*alike = strdup(p);
+		*alike = ft_strdup(p);
 	g_buffer.s[g_buffer.cu] = c;
 	buff_fill_fold(fold, p);
 }
@@ -73,10 +75,16 @@ void	buff_autocomplete(void)
 	char	*alike;
 
 	buff_fill_alike(&fold, &alike);
+	if (!ft_strcmp(fold, ".") && *alike == 0)
+	{
+		free(fold);
+		free(alike);
+		return ;
+	}
 	if ((cdir = buff_get_alike(fold, alike)) == 0)
 		return ;
-	ft_qsort((void **)cdir->file, cdir->nb_file, strcmp);
-	if (g_last_action == buff_autocomplete && cdir->bae != 1)
+	ft_qsort((void **)cdir->file, cdir->nb_file, ft_strcmp);
+	if (g_last_action == buff_autocomplete && cdir->bae > 1)
 		buff_show_alike(cdir);
 	cdir->bae = cdir->nb_file;
 	buff_autocomplete_(cdir, fold, alike);
