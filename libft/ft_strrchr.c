@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/06 14:22:09 by jye               #+#    #+#             */
-/*   Updated: 2017/10/02 14:33:41 by root             ###   ########.fr       */
+/*   Updated: 2017/10/02 22:38:14 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	*ft_strrchr(const char *s, unsigned char c)
 {
-	const char *f;
-	const char *p;
+	register const char *f;
+	register const char *p;
 
 	if (c == 0)
 		return (ft_strchr(s, 0));
@@ -25,5 +25,5 @@ char	*ft_strrchr(const char *s, unsigned char c)
 		f = p;
 		s = p + 1;
 	}
-	return (f);
+	return ((char *)f);
 }

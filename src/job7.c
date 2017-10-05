@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/09/30 21:08:02 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/02 22:40:46 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "job.h"
 #include "htcmd.h"
 #include "htvar.h"
+#include "exit_.h"
 #include "ft_printf.h"
 
 #include <stdlib.h>
@@ -49,7 +50,8 @@ int		job_exec_process(t_process *p)
 			exit(((t_builtin)c->cmd.c)(c->ac - c->var_,
 										c->av.cav + c->var_,
 										c->envp));
-		g_laststatus &= ~0xffff;
+		if (c->cmd.c != ft_exitsh)
+			g_laststatus &= 0xffff;
 		g_laststatus |= (((t_builtin)c->cmd.c)
 						(c->ac - c->var_,
 						c->av.cav + c->var_,

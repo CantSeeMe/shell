@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:33:52 by jye               #+#    #+#             */
-/*   Updated: 2017/09/25 13:42:03 by root             ###   ########.fr       */
+/*   Updated: 2017/10/03 12:13:09 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void		job_cond_fork(t_lst **c, int nohang)
 		if ((proc = malloc(sizeof(*proc))) != 0)
 		{
 			proc->flag = WNOHANG;
-			proc->qid = g_jobs ? ((t_process *)g_jobs->data)->qid + 1 : 1;
 			proc->c = (t_command *)0;
 			proc->pid = fork();
 			if (proc->pid == 0)
