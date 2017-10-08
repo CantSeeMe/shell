@@ -6,7 +6,7 @@
 #    By: jye <jye@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/24 01:49:55 by jye               #+#    #+#              #
-#    Updated: 2017/10/02 14:02:08 by root             ###   ########.fr        #
+#    Updated: 2017/10/05 14:24:53 by root             ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -23,7 +23,6 @@ SRC_FILE = base.c ft_qsort.c buff_auto.c buff_auto1.c buff_auto2.c buff_motion.c
            ft_readline.c ft_readline1.c ft_readline2.c glob_rl.c putchar_.c \
 	       cd.c cd1.c \
 	       echo.c echo1.c \
-           env.c env1.c \
            error.c \
            etc_parse.c etc_parse1.c etc_parse2.c etc_parse3.c \
            exit_.c \

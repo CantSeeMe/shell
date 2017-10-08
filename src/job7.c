@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/10/02 22:40:46 by root             ###   ########.fr       */
+/*   Updated: 2017/10/07 15:49:16 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ int		job_exec_process(t_process *p)
 	t_lst		*rest;
 
 	c = p->c;
-	rest = job_openfd(p->c->redir);
+	if ((rest = job_openfd(p->c->redir)) == (t_lst *)-1)
+		return (127 << 16);
 	p->c->redir = (t_lst *)0;
 	if (c->cmd.type == C_SHELL_BUILTIN)
 	{
@@ -60,7 +61,7 @@ int		job_exec_process(t_process *p)
 		return (g_laststatus);
 	}
 	job_fork_exec(c);
-	return (127 << 8);
+	return (127 << 16);
 }
 
 void	job_fork_alone(t_lst **c, int nohang)

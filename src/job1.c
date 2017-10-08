@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:33:52 by jye               #+#    #+#             */
-/*   Updated: 2017/10/03 12:13:09 by root             ###   ########.fr       */
+/*   Updated: 2017/10/07 12:32:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,14 @@ static void	job_cond_fork_(t_lst **c, int nohang)
 			sym = job_pipe_fork(&cp, 0);
 		else
 			job_fork_alone(&cp, 0);
-		if (sym == andsym && (g_laststatus & 0xff))
+		if (sym == andsym && (g_js.pstat))
 			job_cond_skip(&cp, orsym);
-		else if (sym == orsym && !(g_laststatus & 0xff))
+		else if (sym == orsym && !(g_js.pstat))
 			job_cond_skip(&cp, andsym);
 	}
 	*c = 0;
 	if (nohang)
-		exit(g_laststatus & 0xff);
+		exit(g_js.pstat);
 }
 
 void		job_cond_fork(t_lst **c, int nohang)
@@ -72,7 +72,7 @@ void		job_cond_fork(t_lst **c, int nohang)
 			proc->pid = fork();
 			if (proc->pid == 0)
 				job_cond_fork_(c, nohang);
-			push_lst__(&g_jobs, proc);
+			job_insert_to_list(proc);
 		}
 		while (*c)
 		{

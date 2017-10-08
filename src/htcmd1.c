@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 21:51:18 by jye               #+#    #+#             */
-/*   Updated: 2017/10/01 06:14:21 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/05 14:24:37 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "htcmd.h"
 
 #include "cd.h"
-#include "env.h"
 #include "echo.h"
 #include "exit_.h"
 #include "setenv.h"
@@ -30,7 +29,6 @@ int		init_builtin_table(void)
 {
 	static t_ccsh	bi[6] = {
 		{"cd", C_SHELL_BUILTIN, ft_cd},
-		{"env", C_SHELL_BUILTIN, ft_env},
 		{"echo", C_SHELL_BUILTIN, ft_echo},
 		{"exit", C_SHELL_BUILTIN, ft_exitsh},
 		{"export", C_SHELL_BUILTIN, ft_setenv},

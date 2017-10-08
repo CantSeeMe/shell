@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/04 19:42:52 by root             ###   ########.fr       */
+/*   Updated: 2017/10/07 12:30:00 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ struct			s_jstat
 	int		jnodecur;
 	int		jnodesize;
 	int		suspended;
-	int		fg_status;
+	int		pstat;
 	int		exit;
 };
 
