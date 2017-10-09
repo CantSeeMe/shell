@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/09/25 21:49:26 by root             ###   ########.fr       */
+/*   Updated: 2017/10/08 21:46:35 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	prompt_shell(void)
 				free(e);
 			t = parse_token(t);
 		}
+		job_check_list();
 		while (t)
 		{
 			job = job_create(&t);

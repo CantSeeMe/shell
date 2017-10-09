@@ -6,50 +6,68 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:52:46 by jye               #+#    #+#             */
-/*   Updated: 2017/09/28 19:30:54 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/08 21:35:15 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lst.h"
+#include "job.h"
 #include "command.h"
 #include "libft.h"
 
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
-static void	job_outopen(t_rd *rd)
+static int	job_outopencheck(const char *s)
+{
+	struct stat	fstat;
+
+	return (!stat(s, &fstat) && S_ISDIR(fstat.st_mode));
+}
+
+int			job_outopen(t_rd *rd)
 {
 	int		fd;
 
 	if (ft_strcmp(rd->s, "-"))
 	{
-		if ((fd = open(rd->s, rd->o_flag, 0644)) == -1)
+		if (job_outopencheck(rd->s) ||
+			(fd = open(rd->s, rd->o_flag, 0644)) == -1)
 		{
-			free(rd->s);
 			rd->save = -1;
-			return ;
+			return (1);
 		}
 	}
 	else
 		fd = -1;
-	free(rd->s);
 	rd->save = dup(rd->fd);
-	if (fd > 2)
+	if (fd != -1)
+	{
 		dup2(fd, rd->fd);
+		close(fd);
+	}
 	else
 		close(rd->fd);
-	close(fd);
+	return (0);
 }
 
-static void	job_inopen(t_rd *rd)
+static int	job_inopencheck(const char *s)
+{
+	struct stat	fstat;
+
+	return (stat(s, &fstat) || S_ISDIR(fstat.st_mode));
+}
+
+int			job_inopen(t_rd *rd)
 {
 	int			fd;
 
 	if (rd->s == 0 && rd->o_flag == -1)
 	{
 		if (rd->heretag < 1)
-			return ;
+			return (1);
 		rd->save = dup(rd->fd);
 		dup2(rd->heretag, rd->fd);
 		close(rd->heretag);
@@ -57,16 +75,16 @@ static void	job_inopen(t_rd *rd)
 	}
 	else
 	{
-		if ((fd = open(rd->s, rd->o_flag)) == -1)
+		if (job_inopencheck(rd->s) || (fd = open(rd->s, rd->o_flag)) == -1)
 		{
-			free(rd->s);
-			return ;
+			rd->s = 0;
+			return (1);
 		}
-		free(rd->s);
 		rd->save = dup(rd->fd);
 		dup2(fd, rd->fd);
 		close(fd);
 	}
+	return (0);
 }
 
 static void	job_rdiropen(t_rd *rd)
@@ -74,9 +92,6 @@ static void	job_rdiropen(t_rd *rd)
 	int	fd;
 
 	fd = ft_atoi(rd->s);
-	free(rd->s);
-	if (fd == -1)
-		return ;
 	rd->save = dup(rd->fd);
 	dup2(fd, rd->fd);
 }
@@ -90,20 +105,26 @@ t_lst		*job_openfd(t_lst *redir)
 	while (redir)
 	{
 		rd = (t_rd *)redir->data;
-		pop_lst__(&redir, 0);
-		push_lst__(&rest, rd);
 		if (rd->type == RDF_OUT)
 		{
-			job_outopen(rd);
+			if ((job_outopen(rd)))
+				break ;
 		}
 		else if (rd->type == RDF_IN)
 		{
-			job_inopen(rd);
+			if ((job_inopen(rd)))
+				break ;
 		}
 		else if (rd->type == RDF_RDIR)
-		{
 			job_rdiropen(rd);
-		}
+		pop_lst__(&redir, 0);
+		push_lst__(&rest, rd);
+	}
+	if (redir)
+	{
+		job_restorefd(redir);
+		job_restorefd(rest);
+		rest = (t_lst *)(-1);
 	}
 	return (rest);
 }
@@ -115,8 +136,12 @@ void		job_restorefd(t_lst *rest)
 	while (rest)
 	{
 		rd = (t_rd *)rest->data;
-		dup2(rd->save, rd->fd);
-		close(rd->save);
+		free(rd->s);
+		if (rd->save > 0)
+		{
+			dup2(rd->save, rd->fd);
+			close(rd->save);
+		}
 		pop_lst__(&rest, free);
 	}
 }

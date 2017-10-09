@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 16:37:33 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 15:26:36 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/08 21:32:09 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,21 @@
 void	ft_exit_kill_job(void)
 {
 	t_process	*proc;
+	int			i;
 	int			status;
 
-	while (g_jobs)
+	i = 0;
+	while (i < g_js.jnodecur)
 	{
-		proc = g_jobs->data;
-		waitpid(proc->pid, &status, WUNTRACED | WNOHANG);
-		if (proc->flag & ~(0xffff))
-			kill(proc->pid, SIGKILL);
-		g_jobs = g_jobs->next;
+		if ((proc = g_jobs[i]))
+		{
+			if (proc->state & JT_SUSPENDED)
+			{
+				kill(proc->pid, SIGKILL);	
+				waitpid(proc->pid, &status, WNOHANG);
+			}
+		}
+		i++;
 	}
 }
 
@@ -39,17 +45,17 @@ int		ft_exitsh(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	(void)envp;
-	if (g_jobs)
+	if (g_js.suspended)
 	{
-		if ((g_laststatus & ~(0xffff)))
+		if (g_js.exit)
 			ft_exit_kill_job();
 		else
 		{
 			ft_dprintf(1, "%s: there are suspended jobs\n", "21sh");
-			g_laststatus |= ~(0xffff);
+			g_js.exit = 1;
 			return (1);
 		}
 	}
-	exit(g_laststatus & 0xff);
+	exit(g_js.pstat);
 	return (0);
 }

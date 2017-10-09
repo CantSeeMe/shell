@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/07 12:30:00 by root             ###   ########.fr       */
+/*   Updated: 2017/10/09 09:54:48 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,11 @@ typedef struct	s_job
 }				t_job;
 
 extern t_process		**g_jobs;
-extern struct s_jstat	*g_js;
+extern struct s_jstat	g_js;
 
 t_job					*job_create(t_lst **c);
 void					job_exec(t_job *job);
 
-void					job_setstatus(t_job *job, int status);
 char					*job_getstatus(void);
 
 int						test_execpath(char *c);
@@ -85,5 +84,9 @@ void					job_exec(t_job *job);
 int						job_wait_control(t_process *proc, int options);
 void					free_half_parsed_command(t_command *c);
 void					free_full_parsed_command(t_command *c);
+
+void					job_insert_to_list(t_process *proc);
+void					job_check_list(void);
+int						job_wait_control_(pid_t pid, int options);
 
 #endif

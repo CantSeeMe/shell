@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 21:51:18 by jye               #+#    #+#             */
-/*   Updated: 2017/10/05 14:24:37 by root             ###   ########.fr       */
+/*   Updated: 2017/10/09 08:19:55 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,27 @@
 #include "exit_.h"
 #include "setenv.h"
 #include "unset.h"
+#include "fg.h"
 
 #include <unistd.h>
 
 #include <string.h>
 #include <stdlib.h>
 
+#define BUILTIN_NO 9
+
 int		init_builtin_table(void)
 {
-	static t_ccsh	bi[6] = {
+	static t_ccsh	bi[BUILTIN_NO] = {
 		{"cd", C_SHELL_BUILTIN, ft_cd},
 		{"echo", C_SHELL_BUILTIN, ft_echo},
 		{"exit", C_SHELL_BUILTIN, ft_exitsh},
 		{"export", C_SHELL_BUILTIN, ft_setenv},
-		{"unset", C_SHELL_BUILTIN, ft_unset}
+		{"unset", C_SHELL_BUILTIN, ft_unset},
+		{"fg", C_SHELL_BUILTIN, ft_fg},
+		{"bg", C_SHELL_BUILTIN, 0},
+		{"disown", C_SHELL_BUILTIN, 0},
+		{"jobs", C_SHELL_BUILTIN, 0},
 	};
 	int				i;
 	t_bucket		*c;
@@ -40,7 +47,7 @@ int		init_builtin_table(void)
 	if ((g_htbi = init_hashtable(96)) == 0)
 		return (1);
 	i = 0;
-	while (i < 6)
+	while (i < BUILTIN_NO)
 	{
 		c = hash_insert(g_htbi, bi[i].key, HT_NOSEARCH);
 		c->c = &bi[i++];

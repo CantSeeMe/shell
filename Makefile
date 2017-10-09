@@ -6,7 +6,7 @@
 #    By: jye <jye@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/24 01:49:55 by jye               #+#    #+#              #
-#    Updated: 2017/10/05 14:24:53 by root             ###   ########.fr        #
+#    Updated: 2017/10/09 08:20:15 by jye              ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -30,12 +30,13 @@ SRC_FILE = base.c ft_qsort.c buff_auto.c buff_auto1.c buff_auto2.c buff_motion.c
            hashlib.c hashlib1.c \
            htcmd.c htcmd1.c htcmd2.c \
            htvar.c htvar1.c htvar2.c \
-           job.c job1.c job2.c job3.c job4.c job5.c job6.c job7.c \
+           job.c job1.c job2.c job3.c job4.c job5.c job6.c job7.c job8.c job9.c \
            lst.c \
            parser.c parser1.c parser2.c parser3.c get_redirection.c heretag.c \
            setenv.c \
            freetoken.c token.c tokentype.c \
-           unset.c
+           unset.c \
+	       fg.c
 
 OBJ_FILE = $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(basename $(SRC_FILE))))
 

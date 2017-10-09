@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/10/07 15:49:16 by root             ###   ########.fr       */
+/*   Updated: 2017/10/08 21:38:47 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,14 @@ int		job_exec_process(t_process *p)
 	if (c->cmd.type == C_SHELL_BUILTIN)
 	{
 		if (p->pid == 0)
-			exit(((t_builtin)c->cmd.c)(c->ac - c->var_,
-										c->av.cav + c->var_,
-										c->envp));
+			exit(((t_builtin)c->cmd.c)
+				(c->ac - c->var_, c->av.cav + c->var_, c->envp));
 		if (c->cmd.c != ft_exitsh)
-			g_laststatus &= 0xffff;
-		g_laststatus |= (((t_builtin)c->cmd.c)
-						(c->ac - c->var_,
-						c->av.cav + c->var_,
-						c->envp));
+			g_js.exit = 0;
+		g_js.pstat = (((t_builtin)c->cmd.c)
+				(c->ac - c->var_, c->av.cav + c->var_, c->envp));
 		job_restorefd(rest);
-		return (g_laststatus);
+		return (g_js.pstat);
 	}
 	job_fork_exec(c);
 	return (127 << 16);

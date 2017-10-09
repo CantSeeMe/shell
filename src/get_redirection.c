@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 19:21:56 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 11:22:06 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/08 21:38:57 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static void	fill_rdtype(t_rd *rd, t_token *to)
 
 static void	fill_fddata(t_rd *rd, t_token *to, int fd)
 {
+	rd->save = -1;
 	rd->heretag = -2;
 	rd->s = to->s;
 	if (rd->type == RDF_RDIR && to->sym == word)
