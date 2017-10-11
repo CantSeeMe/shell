@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 22:42:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/09 08:05:38 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/10 23:14:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,13 @@ int		job_wait_control_(pid_t pid, int options)
 	int					status;
 
 	sigemptyset(&act.sa_mask);
+	/* sigaddset(&act.sa_mask, SIGINT); */
+	/* sigaddset(&act.sa_mask, SIGTSTP); */
+	/* sigaddset(&act.sa_mask, SIGTTIN); */
+	/* sigaddset(&act.sa_mask, SIGTTOU); */
 	act.sa_handler = SIG_IGN;
 	act.sa_flags = 0;
+	/* sigprocmask(SIG_BLOCK, &act.sa_mask, NULL); */
 	sigaction(SIGINT, &act, 0);
 	sigaction(SIGTSTP, &act, 0);
 	sigaction(SIGTTIN, &act, 0);
@@ -64,6 +69,7 @@ int		job_wait_control_(pid_t pid, int options)
 	status = 127 << 16;
 	if (pid > 0)
 		waitpid(pid, &status, options);
+	/* sigprocmask(SIG_UNBLOCK, &act.sa_mask, NULL); */
 	act.sa_handler = SIG_DFL;
 	sigaction(SIGINT, &act, 0);
 	sigaction(SIGTSTP, &act, 0);

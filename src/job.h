@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/09 09:54:48 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/10 22:42:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ void					free_half_parsed_command(t_command *c);
 void					free_full_parsed_command(t_command *c);
 
 void					job_insert_to_list(t_process *proc);
+void					job_print_process_status(t_process *proc,
+											int status, int qid);
 void					job_check_list(void);
 int						job_wait_control_(pid_t pid, int options);
 
