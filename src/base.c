@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 06:26:37 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/15 16:25:30 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,12 @@ void	prompt_shell(void)
 			job = job_create(&t);
 			job_exec(job);
 		}
+		ft_dprintf(2, "tcgetpgrp1:%d ", tcgetpgrp(2));
+		tcsetpgrp(2, g_shgid);
+		ft_dprintf(2, "tcgetpgrp2:%d\n", tcgetpgrp(2));
 		job_signal_behavior(SIG_DFL);
 	}
+	setpgid(0, g_orgid);
 }
 
 void	input_shell(void)
@@ -86,6 +90,5 @@ int		main(int ac, char **av, char **envp)
 		prompt_shell();
 	else
 		input_shell();
-	setpgid(0, g_orgid);
 	return (g_js.pstat);
 }

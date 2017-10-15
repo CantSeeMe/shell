@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/11 13:03:17 by root              #+#    #+#             */
-/*   Updated: 2017/10/15 06:54:11 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/15 08:12:58 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 #include <sys/wait.h>
 #include <signal.h>
-
-char	*g_sig_[NOSIG];
 
 void	init_sig_string(void)
 {

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 22:42:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/15 07:26:11 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/15 17:52:06 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,10 @@ int			job_wait_control(t_process *proc, int options)
 
 	status = job_wait_control_(proc->pid, options);
 	proc->status = status;
-	proc->state = ((JT_IS_NOHANG(proc->status) * JT_BACKGROUND) |
-				(WIFSTOPPED(proc->status) * JT_SUSPENDED));
+	proc->state =
+		((JT_IS_NOHANG(proc->status) * JT_BACKGROUND) |
+		(WIFSTOPPED(proc->status) * JT_SUSPENDED) |
+		(JT_IS_NOHANG(proc->status) * JT_FOREGROUND));
 	if (proc->state)
 		job_insert(proc);
 	else

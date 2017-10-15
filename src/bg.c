@@ -1,16 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fg.c                                               :+:      :+:    :+:   */
+/*   bg.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/08 23:46:32 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 18:19:55 by jye              ###   ########.fr       */
+/*   Created: 2017/10/15 18:07:35 by jye               #+#    #+#             */
+/*   Updated: 2017/10/15 18:21:04 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fg.h"
 #include "job.h"
 #include "libft.h"
 #include "ft_printf.h"
@@ -20,7 +19,7 @@
 #include <stdlib.h>
 #include <signal.h>
 
-int		fg_test_target(char *s)
+int		bg_test_target(char *s)
 {
 	int	t;
 
@@ -36,7 +35,7 @@ int		fg_test_target(char *s)
 	return (1);
 }
 
-int		fg_get_target_job(char **av)
+int		bg_get_target_job(char **av)
 {
 	if (g_js.cur == -1)
 		return (-1);
@@ -45,7 +44,7 @@ int		fg_get_target_job(char **av)
 	else if (av[1][0] == '%')
 	{
 		if (av[1][1] <= 0x39 && av[1][1] >= 0x30)
-			return (fg_test_target(av[1] + 1) ?
+			return (bg_test_target(av[1] + 1) ?
 					-1 : g_js.cur);
 		else if (av[1][1] == '+')
 			return (g_js.cur);
@@ -60,7 +59,7 @@ int		fg_get_target_job(char **av)
 	return (-1);
 }
 
-int		ft_fg(int ac, char **av, char **envp)
+int		ft_bg(int ac, char **av, char **envp)
 {
 	int			tar;
 	t_process	*p;
@@ -68,7 +67,7 @@ int		ft_fg(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)envp;
-	tar = fg_get_target_job(av);
+	tar = bg_get_target_job(av);
 	if (tar == -1)
 	{
 		if (av[1])
@@ -79,10 +78,11 @@ int		ft_fg(int ac, char **av, char **envp)
 	}
 	p = g_jobs[tar];
 	job_print_process_status(p, tar, g_sig_[SIGCONT]);
-	tcsetpgrp(2, p->pid);
 	if (p->state & JT_SUSPENDED)
 		kill(p->pid, SIGCONT);
-	status = job_wait_control_(p->pid, WUNTRACED);
+	status = job_wait_control_(p->pid, WUNTRACED | WNOHANG);
+	if (JT_IS_NOHANG(status))
+		return (0);
 	p->status = status;
 	if (WIFSTOPPED(status))
 	{
@@ -91,12 +91,13 @@ int		ft_fg(int ac, char **av, char **envp)
 		p->state |= JT_SUSPENDED;
 		job_print_process_status(p, tar, g_sig_[WSTOPSIG(status)]);
 	}
-	else
+	else if (WIFEXITED(status) || WIFSIGNALED(status))
 	{
 		if (p->state & JT_SUSPENDED)
 			g_js.suspended -= 1;
 		p->state = JT_DEAD;
-		job_print_process_status(p, tar, g_sig_[WTERMSIG(status)]);
+		if (WIFSIGNALED(status))
+			job_print_process_status(p, tar, g_sig_[WTERMSIG(status)]);
 	}
 	return (0);
 }

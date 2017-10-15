@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/03 13:09:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/15 07:31:28 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/15 17:49:36 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ void	job_abort_insert(t_process *proc)
 		waitpid(proc->pid, NULL, 0);
 	}
 	setpgid(proc->pid, proc->pid);
-	ft_dprintf(2, "%s: Malloc error, process disowned: %d\n", "21sh", proc->pid);
 	free_full_parsed_command(proc->c);
 	free(proc);
 }
@@ -82,9 +81,10 @@ void	job_insert(t_process *proc)
 			job_abort_insert(proc);
 
 	job_insert_(proc);
-	ft_dprintf(2, "%d\n", WSTOPSIG(proc->status));
 	if (proc->state & JT_SUSPENDED)
 		job_print_process_status(proc, g_js.jnodecur - 1, "suspended");
+	else if (proc->state & JT_BACKGROUND)
+		ft_dprintf(1, "[%d] %d\n", g_js.jnodecur, proc->pid);
 }
 
 void	job_update_state(t_process *proc, int status)
@@ -96,7 +96,7 @@ void	job_update_state(t_process *proc, int status)
 		if (!(proc->state & JT_SUSPENDED))
 		{
 			g_js.suspended += 1;
-			proc->state = JT_SUSPENDED;
+			proc->state |= JT_SUSPENDED;
 			proc->status = status;
 		}
 	}
@@ -128,6 +128,28 @@ void	job_prune_dead_jobs(void)
 	}
 }
 
+void	job_reset_ind(void)
+{
+	if (g_js.jnodecur == 0)
+		return ;
+	if (g_jobs[g_js.cur] == (t_process *)0)
+		g_js.cur = g_js.prev;
+	while (g_js.prev >= 0)
+	{
+		if (g_jobs[g_js.prev] == (t_process *)0)
+			break ;
+		g_js.prev--;
+	}
+	while (g_js.jnodecur)
+	{
+		if (g_jobs[g_js.jnodecur - 1])
+			break ;
+		g_js.jnodecur--;
+	}
+	if (g_js.prev == -1 && g_js.jnodecur - 1 != g_js.cur)
+		g_js.prev = g_js.jnodecur - 1;
+}
+
 void	job_check_jobs(void)
 {
 	int			i;
@@ -137,7 +159,7 @@ void	job_check_jobs(void)
 	i = 0;
 	while (i < g_js.jnodecur)
 	{
-		if (g_jobs[i])
+		if (g_jobs[i] && !(g_jobs[i]->state & JT_DEAD))
 		{
 			proc = g_jobs[i];
 			if ((waitpid(proc->pid, &status, WNOHANG | WUNTRACED)))
@@ -152,6 +174,7 @@ void	job_check_jobs(void)
 		i++;
 	}
 	job_prune_dead_jobs();
+	job_reset_ind();
 }
 
 void	job_signal_behavior(void (*behavior)(int))
@@ -165,7 +188,7 @@ void	job_signal_behavior(void (*behavior)(int))
 	sigaction(SIGTSTP, &act, 0);
 	sigaction(SIGTTOU, &act, 0);
 	sigaction(SIGTTIN, &act, 0);
-	sigaction(SIGTERM, &act, 0);
+	sigaction(SIGQUIT, &act, 0);
 	sigaction(SIGTERM, &act, 0);
 }
 
@@ -178,10 +201,11 @@ pid_t	job_make_child(int nohang)
 		return (pid);
 	if (pid == 0)
 	{
-		if (nohang)
-			setpgid(0, 0);
 		job_signal_behavior(SIG_DFL);
 	}
+	setpgid(pid, pid);
+	if (!nohang)
+		tcsetpgrp(2, pid);
 	return (pid);
 }
 
