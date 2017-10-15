@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/10/11 00:08:02 by root             ###   ########.fr       */
+/*   Updated: 2017/10/15 06:26:37 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,14 @@ void	prompt_shell(void)
 				free(e);
 			t = parse_token(t);
 		}
-		job_check_list();
+		job_check_jobs();
+		job_signal_behavior(SIG_IGN);
 		while (t)
 		{
 			job = job_create(&t);
 			job_exec(job);
 		}
+		job_signal_behavior(SIG_DFL);
 	}
 }
 
@@ -78,8 +80,12 @@ int		main(int ac, char **av, char **envp)
 	init_htvar(envp);
 	chash_init();
 	init_tokenizer();
+	job_init_job_control();
+	init_sig_string();
 	if (!ft_isatty(STDIN_FILENO))
 		prompt_shell();
 	else
 		input_shell();
+	setpgid(0, g_orgid);
+	return (g_js.pstat);
 }

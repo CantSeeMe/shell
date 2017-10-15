@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:33:52 by jye               #+#    #+#             */
-/*   Updated: 2017/10/07 12:32:26 by root             ###   ########.fr       */
+/*   Updated: 2017/10/15 05:57:29 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void		job_cond_fork(t_lst **c, int nohang)
 			proc->pid = fork();
 			if (proc->pid == 0)
 				job_cond_fork_(c, nohang);
-			job_insert_to_list(proc);
+			job_insert(proc);
 		}
 		while (*c)
 		{

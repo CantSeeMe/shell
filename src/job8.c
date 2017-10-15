@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 22:42:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/10 23:14:17 by root             ###   ########.fr       */
+/*   Updated: 2017/10/15 07:26:11 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,52 +51,36 @@ char		*job_getstatus(void)
 
 int		job_wait_control_(pid_t pid, int options)
 {
-	struct sigaction	act;
 	int					status;
 
-	sigemptyset(&act.sa_mask);
-	/* sigaddset(&act.sa_mask, SIGINT); */
-	/* sigaddset(&act.sa_mask, SIGTSTP); */
-	/* sigaddset(&act.sa_mask, SIGTTIN); */
-	/* sigaddset(&act.sa_mask, SIGTTOU); */
-	act.sa_handler = SIG_IGN;
-	act.sa_flags = 0;
-	/* sigprocmask(SIG_BLOCK, &act.sa_mask, NULL); */
-	sigaction(SIGINT, &act, 0);
-	sigaction(SIGTSTP, &act, 0);
-	sigaction(SIGTTIN, &act, 0);
-	sigaction(SIGTTOU, &act, 0);
 	status = 127 << 16;
 	if (pid > 0)
 		waitpid(pid, &status, options);
-	/* sigprocmask(SIG_UNBLOCK, &act.sa_mask, NULL); */
-	act.sa_handler = SIG_DFL;
-	sigaction(SIGINT, &act, 0);
-	sigaction(SIGTSTP, &act, 0);
-	sigaction(SIGTTIN, &act, 0);
-	sigaction(SIGTTOU, &act, 0);
 	return (status);
 }
 
 int			job_wait_control(t_process *proc, int options)
 {
-	int			status;
+	int		status;
 
 	status = job_wait_control_(proc->pid, options);
-	proc->state = ((JT_IS_NOHANG(status) * JT_BACKGROUND) |
-				(WIFSTOPPED(status) * JT_SUSPENDED));
+	proc->status = status;
+	proc->state = ((JT_IS_NOHANG(proc->status) * JT_BACKGROUND) |
+				(WIFSTOPPED(proc->status) * JT_SUSPENDED));
 	if (proc->state)
-		job_insert_to_list(proc);
+		job_insert(proc);
 	else
 	{
 		free_full_parsed_command(proc->c);
 		free(proc);
 	}
 	if ((options & WNOHANG))
-		return (status);
+		return (-1);
 	g_js.exit = 0;
-	if (WTERMSIG(status))
+	if (WIFSIGNALED(status))
 		return (g_js.pstat = WTERMSIG(status) + 128);
+	else if (WIFSTOPPED(status))
+		return (g_js.pstat = WSTOPSIG(status) + 128);
 	return (g_js.pstat = WEXITSTATUS(status));
 }
 

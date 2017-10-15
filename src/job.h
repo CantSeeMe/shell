@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/10 22:42:19 by root             ###   ########.fr       */
+/*   Updated: 2017/10/15 06:56:32 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include "lst.h"
 
 # include <unistd.h>
+# include <signal.h>
 
 # define JTHANG   	000
 # define JTNOHANG 	001
@@ -31,10 +32,17 @@
 # define JT_BACKGROUND	002
 # define JT_FOREGROUND	004
 # define JT_SUSPENDED	010
-# define JT_SIGNALED	020
 
 # define JT_DEFAULT_SIZE 1024
-# define JT_IS_NOHANG(x) (status == (127 << 16))
+# define JT_IS_NOHANG(x) ((x) == (127 << 16))
+
+# if defined(_NSIG)
+#  define NOSIG _NSIG
+# elif defined(NSIG)
+#  define NOSIG NSIG
+# elif defined(__DARWIN_NSIG)
+#  define NOSIG __DARWIN_NSIG
+# endif
 
 struct			s_jstat
 {
@@ -53,6 +61,7 @@ typedef struct	s_process
 	t_command	*c;
 	int			flag;
 	int			state;
+	int			status;
 }				t_process;
 
 typedef struct	s_job
@@ -62,7 +71,10 @@ typedef struct	s_job
 }				t_job;
 
 extern t_process		**g_jobs;
+extern pid_t			g_shgid;
+extern pid_t			g_orgid;
 extern struct s_jstat	g_js;
+extern char				*g_sig_[NOSIG];
 
 t_job					*job_create(t_lst **c);
 void					job_exec(t_job *job);
@@ -85,10 +97,13 @@ int						job_wait_control(t_process *proc, int options);
 void					free_half_parsed_command(t_command *c);
 void					free_full_parsed_command(t_command *c);
 
-void					job_insert_to_list(t_process *proc);
-void					job_print_process_status(t_process *proc,
-											int status, int qid);
-void					job_check_list(void);
 int						job_wait_control_(pid_t pid, int options);
+void					job_signal_behavior(void (*behavior)(int));
+pid_t					job_make_child(int nohang);
+void					job_init_job_control(void);
+void					job_check_jobs(void);
+void					job_insert(t_process *proc);
+void					job_print_process_status(t_process *proc, int qid, char *s);
+void					init_sig_string(void);
 
 #endif
