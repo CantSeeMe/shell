@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fg.c                                               :+:      :+:    :+:   */
+/*   disown.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/08 23:46:32 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 21:32:55 by jye              ###   ########.fr       */
+/*   Created: 2017/10/15 21:20:10 by jye               #+#    #+#             */
+/*   Updated: 2017/10/15 21:39:55 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fg.h"
 #include "job.h"
-#include "libft.h"
 #include "ft_printf.h"
 #include "job_target.h"
 
-#include <sys/wait.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <signal.h>
-
-int		ft_fg(int ac, char **av, char **envp)
+int		ft_disown(int ac, char **av, char **envp)
 {
 	int			tar;
 	t_process	*p;
-	int			status;
 
 	(void)ac;
+	(void)av;
 	(void)envp;
 	tar = job_get_target_job(av);
 	if (tar == -1)
@@ -39,25 +32,10 @@ int		ft_fg(int ac, char **av, char **envp)
 		return (1);
 	}
 	p = g_jobs[tar];
-	job_print_process_status(p, tar, g_sig_[SIGCONT]);
-	tcsetpgrp(2, p->pid);
-	if (p->state & JT_SUSPENDED)
-		kill(p->pid, SIGCONT);
-	status = job_wait_control_(p->pid, WUNTRACED);
-	p->status = status;
-	if (WIFSTOPPED(status))
-	{
-		if (!(p->state & JT_SUSPENDED))
-			g_js.suspended += 1;
-		p->state |= JT_SUSPENDED;
-		job_print_process_status(p, tar, g_sig_[WSTOPSIG(status)]);
-	}
-	else
-	{
-		if (p->state & JT_SUSPENDED)
-			g_js.suspended -= 1;
-		p->state = JT_DEAD;
-		job_print_process_status(p, tar, g_sig_[WTERMSIG(status)]);
-	}
+	ft_dprintf(1, "%s: [%d] %s%sjob %d disowned", "21sh", tar + 1,
+			   tar == g_js.cur ? "+ " : "",
+			   tar == g_js.prev ? "- " : "",
+			   p->pid);
+	p->state = JT_DEAD;
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 21:51:18 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 18:16:57 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 03:35:53 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,15 @@
 #include "unset.h"
 #include "fg.h"
 #include "bg.h"
+#include "job_.h"
+#include "disown.h"
 
 #include <unistd.h>
 
 #include <string.h>
 #include <stdlib.h>
 
-#define BUILTIN_NO 10
+#define BUILTIN_NO 9
 
 int		init_builtin_table(void)
 {
@@ -39,9 +41,8 @@ int		init_builtin_table(void)
 		{"unset", C_SHELL_BUILTIN, ft_unset},
 		{"fg", C_SHELL_BUILTIN, ft_fg},
 		{"bg", C_SHELL_BUILTIN, ft_bg},
-		{"disown", C_SHELL_BUILTIN, 0},
-		{"jobs", C_SHELL_BUILTIN, 0},
-		{"kill", C_SHELL_BUILTIN, 0}
+		{"disown", C_SHELL_BUILTIN, ft_disown},
+		{"jobs", C_SHELL_BUILTIN, ft_job},
 	};
 	int				i;
 	t_bucket		*c;

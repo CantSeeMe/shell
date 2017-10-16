@@ -6,7 +6,7 @@
 #    By: jye <jye@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/24 01:49:55 by jye               #+#    #+#              #
-#    Updated: 2017/10/15 18:17:10 by jye              ###   ########.fr        #
+#    Updated: 2017/10/15 21:39:19 by jye              ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -36,7 +36,7 @@ SRC_FILE = base.c ft_qsort.c buff_auto.c buff_auto1.c buff_auto2.c buff_motion.c
            setenv.c \
            freetoken.c token.c tokentype.c \
            unset.c \
-	       fg.c bg.c
+	       fg.c bg.c job_.c job_target.c disown.c
 
 OBJ_FILE = $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(basename $(SRC_FILE))))
 
