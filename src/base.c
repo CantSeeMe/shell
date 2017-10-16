@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 07:26:23 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 07:37:31 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ void	execute_command_line(t_lst *t)
 	t_job	*job;
 
 	job_signal_behavior(SIG_IGN);
-	job_check_jobs();
 	while (t)
 	{
 		job = job_create(&t);
 		job_exec(job);
 	}
 	tcsetpgrp(2, g_shgid);
+	job_check_jobs();
 	job_signal_behavior(SIG_DFL);
 }
 

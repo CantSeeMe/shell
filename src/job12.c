@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/16 03:39:45 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 07:32:21 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 07:39:56 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	job_reset_ind(void)
 		g_js.cur = g_js.prev;
 	while (g_js.prev >= 0)
 	{
-		if (g_jobs[g_js.prev] == (t_process *)0)
+		if (g_jobs[g_js.prev])
 			break ;
 		g_js.prev--;
 	}
