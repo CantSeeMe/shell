@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 22:42:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/15 17:52:06 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 07:31:25 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char		*job_getstatus(void)
 	return (status);
 }
 
-int		job_wait_control_(pid_t pid, int options)
+int			job_wait_control_(pid_t pid, int options)
 {
 	int					status;
 
@@ -64,6 +64,8 @@ int			job_wait_control(t_process *proc, int options)
 	int		status;
 
 	status = job_wait_control_(proc->pid, options);
+	if (WIFSIGNALED(status))
+		ft_dprintf(2, "%s\n", g_sig_[WTERMSIG(status)]);
 	proc->status = status;
 	proc->state =
 		((JT_IS_NOHANG(proc->status) * JT_BACKGROUND) |

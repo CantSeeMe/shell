@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 21:51:18 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 03:35:53 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 07:03:14 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@
 #include "bg.h"
 #include "job_.h"
 #include "disown.h"
+#include "env.h"
 
 #include <unistd.h>
 
 #include <string.h>
 #include <stdlib.h>
 
-#define BUILTIN_NO 9
+#define BUILTIN_NO 11
 
 int		init_builtin_table(void)
 {
@@ -37,8 +38,10 @@ int		init_builtin_table(void)
 		{"cd", C_SHELL_BUILTIN, ft_cd},
 		{"echo", C_SHELL_BUILTIN, ft_echo},
 		{"exit", C_SHELL_BUILTIN, ft_exitsh},
-		{"export", C_SHELL_BUILTIN, ft_setenv},
+		{"setenv", C_SHELL_BUILTIN, ft_setenv},
 		{"unset", C_SHELL_BUILTIN, ft_unset},
+		{"unsetenv", C_SHELL_BUILTIN, ft_unset},
+		{"env", C_SHELL_BUILTIN, ft_env},
 		{"fg", C_SHELL_BUILTIN, ft_fg},
 		{"bg", C_SHELL_BUILTIN, ft_bg},
 		{"disown", C_SHELL_BUILTIN, ft_disown},

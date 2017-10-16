@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:30:02 by jye               #+#    #+#             */
-/*   Updated: 2017/10/01 06:47:54 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 03:51:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ static void	ctrl_event(uint64_t c)
 	static void (*f[])() = {
 		buff_head, buff_prev, reset_readline, buff_delete, buff_end,
 		buff_next, place_holder, place_holder, buff_autocomplete, exit_readline,
-		buff_kill_next, buff_clear_content, place_holder, place_holder, place_holder,
+		buff_kill_next, buff_clear_content,
+		place_holder, place_holder, place_holder,
 		place_holder, place_holder, place_holder, place_holder, place_holder,
 		buff_kill_prev, place_holder, buff_del_word, place_holder, buff_yankout,
 		place_holder, place_holder, place_holder, place_holder, place_holder,

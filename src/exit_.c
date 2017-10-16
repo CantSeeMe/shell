@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 16:37:33 by root              #+#    #+#             */
-/*   Updated: 2017/10/08 21:32:09 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 06:41:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ft_exit_kill_job(void)
 		{
 			if (proc->state & JT_SUSPENDED)
 			{
-				kill(proc->pid, SIGKILL);	
+				kill(proc->pid, SIGKILL);
 				waitpid(proc->pid, &status, WNOHANG);
 			}
 		}

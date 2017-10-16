@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/15 06:56:32 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 03:50:29 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 #  define NOSIG __DARWIN_NSIG
 # endif
 
-struct			s_jstat
+struct					s_jstat
 {
 	int		prev;
 	int		cur;
@@ -55,20 +55,20 @@ struct			s_jstat
 	int		exit;
 };
 
-typedef struct	s_process
+typedef struct			s_process
 {
 	pid_t		pid;
 	t_command	*c;
 	int			flag;
 	int			state;
 	int			status;
-}				t_process;
+}						t_process;
 
-typedef struct	s_job
+typedef struct			s_job
 {
 	t_lst		*proc;
 	int			type;
-}				t_job;
+}						t_job;
 
 extern t_process		**g_jobs;
 extern pid_t			g_shgid;
@@ -85,6 +85,10 @@ int						test_execpath(char *c);
 int						set_execpath(t_command *c);
 void					transmute_av(t_command *c);
 char					**set_envp(void);
+
+void					job_rdiropen(t_rd *rd);
+int						job_inopen(t_rd *rd);
+int						job_outopen(t_rd *rd);
 
 void					job_restorefd(t_lst *redir);
 t_lst					*job_openfd(t_lst *redir);
@@ -103,7 +107,8 @@ pid_t					job_make_child(int nohang);
 void					job_init_job_control(void);
 void					job_check_jobs(void);
 void					job_insert(t_process *proc);
-void					job_print_process_status(t_process *proc, int qid, char *s);
+void					job_print_process_status(t_process *proc,
+												int qid, char *s);
 void					init_sig_string(void);
 
 #endif

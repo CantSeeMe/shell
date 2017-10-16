@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/10/15 16:23:36 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 06:53:02 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char		*ft_readline(char *prompt, size_t psize)
 	uint64_t	c;
 	int			r;
 
-	if ((tgetent(vhash_search("TERM"), NULL)) < 1)
+	if ((tgetent("xterm-256color", NULL)) < 1)
 		return ((char *)0);
 	if (init_readline())
 		return ((char *)0);

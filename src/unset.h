@@ -6,12 +6,12 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 16:33:14 by root              #+#    #+#             */
-/*   Updated: 2017/10/01 06:14:42 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 03:37:47 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UNSETENV_H
-# define UNSETENV_H
+#ifndef UNSET_H
+# define UNSET_H
 
 int		ft_unset(int ac, char **av, char **envp);
 

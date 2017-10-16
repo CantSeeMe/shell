@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/11 13:03:17 by root              #+#    #+#             */
-/*   Updated: 2017/10/15 08:12:58 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 03:48:45 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,22 @@
 
 #include <sys/wait.h>
 #include <signal.h>
+
+void	init_sig_string2(void)
+{
+	g_sig_[SIGPIPE] = "Broken pipe";
+	g_sig_[SIGALRM] = "Alarm clock";
+	g_sig_[SIGTERM] = "Terminated";
+	g_sig_[SIGURG] = "Urgent IO condition";
+	g_sig_[SIGSTOP] = "Stopped (signal)";
+	g_sig_[SIGTSTP] = "Stopped";
+	g_sig_[SIGCONT] = "Continue";
+	g_sig_[SIGCHLD] = "Child death or stop";
+	g_sig_[SIGTTIN] = "Stopped (tty input)";
+	g_sig_[SIGTTOU] = "Stopped (tty output)";
+	g_sig_[SIGIO] = "I/O ready";
+	g_sig_[SIGXCPU] = "CPU limit";
+}
 
 void	init_sig_string(void)
 {
@@ -36,25 +52,14 @@ void	init_sig_string(void)
 	g_sig_[SIGBUS] = "Bus error";
 	g_sig_[SIGSEGV] = "Segmentation Fault";
 	g_sig_[SIGSYS] = "Bad system call";
-	g_sig_[SIGPIPE] = "Broken pipe";
-	g_sig_[SIGALRM] = "Alarm clock";
-	g_sig_[SIGTERM] = "Terminated";
-	g_sig_[SIGURG] = "Urgent IO condition";
-	g_sig_[SIGSTOP] = "Stopped (signal)";
-	g_sig_[SIGTSTP] = "Stopped";
-	g_sig_[SIGCONT] = "Continue";
-	g_sig_[SIGCHLD] = "Child death or stop";
-	g_sig_[SIGTTIN] = "Stopped (tty input)";
-	g_sig_[SIGTTOU] = "Stopped (tty output)";
-	g_sig_[SIGIO] = "I/O ready";
-	g_sig_[SIGXCPU] = "CPU limit";
+	init_sig_string2();
 }
 
 void	job_print_process_status(t_process *proc, int qid, char *s)
 {
 	ft_dprintf(1, "[%d] %s%s%s %d %s\n", qid + 1,
-			   qid == g_js.cur ? "+ " : "",
-			   qid == g_js.prev ? "- " : "",
-			   proc->c ? *(proc->c->av.cav + proc->c->var_) : "", proc->pid,
-			   s);
+			qid == g_js.cur ? "+ " : "",
+			qid == g_js.prev ? "- " : "",
+			proc->c ? *(proc->c->av.cav + proc->c->var_) : "", proc->pid,
+			s);
 }

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 16:25:30 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 07:26:23 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,26 @@ int		ft_isatty(int fileno)
 	return (tcgetattr(fileno, &termios));
 }
 
+void	execute_command_line(t_lst *t)
+{
+	t_job	*job;
+
+	job_signal_behavior(SIG_IGN);
+	job_check_jobs();
+	while (t)
+	{
+		job = job_create(&t);
+		job_exec(job);
+	}
+	tcsetpgrp(2, g_shgid);
+	job_signal_behavior(SIG_DFL);
+}
+
 void	prompt_shell(void)
 {
 	char	*s;
 	char	*e;
 	t_lst	*t;
-	t_job	*job;
 
 	t = 0;
 	while (1)
@@ -55,18 +69,8 @@ void	prompt_shell(void)
 			if (e != 0)
 				free(e);
 			t = parse_token(t);
+			execute_command_line(t);
 		}
-		job_check_jobs();
-		job_signal_behavior(SIG_IGN);
-		while (t)
-		{
-			job = job_create(&t);
-			job_exec(job);
-		}
-		ft_dprintf(2, "tcgetpgrp1:%d ", tcgetpgrp(2));
-		tcsetpgrp(2, g_shgid);
-		ft_dprintf(2, "tcgetpgrp2:%d\n", tcgetpgrp(2));
-		job_signal_behavior(SIG_DFL);
 	}
 	setpgid(0, g_orgid);
 }

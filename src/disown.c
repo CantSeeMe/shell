@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/15 21:20:10 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 21:39:55 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 06:41:20 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ int		ft_disown(int ac, char **av, char **envp)
 	}
 	p = g_jobs[tar];
 	ft_dprintf(1, "%s: [%d] %s%sjob %d disowned", "21sh", tar + 1,
-			   tar == g_js.cur ? "+ " : "",
-			   tar == g_js.prev ? "- " : "",
-			   p->pid);
+			tar == g_js.cur ? "+ " : "",
+			tar == g_js.prev ? "- " : "",
+			p->pid);
 	p->state = JT_DEAD;
 	return (0);
 }

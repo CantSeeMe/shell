@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:52:46 by jye               #+#    #+#             */
-/*   Updated: 2017/10/08 21:35:15 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 03:46:29 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,80 +20,21 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-static int	job_outopencheck(const char *s)
+int			job_openfd_(t_rd *rd)
 {
-	struct stat	fstat;
-
-	return (!stat(s, &fstat) && S_ISDIR(fstat.st_mode));
-}
-
-int			job_outopen(t_rd *rd)
-{
-	int		fd;
-
-	if (ft_strcmp(rd->s, "-"))
+	if (rd->type == RDF_OUT)
 	{
-		if (job_outopencheck(rd->s) ||
-			(fd = open(rd->s, rd->o_flag, 0644)) == -1)
-		{
-			rd->save = -1;
+		if ((job_outopen(rd)))
 			return (1);
-		}
 	}
-	else
-		fd = -1;
-	rd->save = dup(rd->fd);
-	if (fd != -1)
+	else if (rd->type == RDF_IN)
 	{
-		dup2(fd, rd->fd);
-		close(fd);
+		if ((job_inopen(rd)))
+			return (1);
 	}
-	else
-		close(rd->fd);
+	else if (rd->type == RDF_RDIR)
+		job_rdiropen(rd);
 	return (0);
-}
-
-static int	job_inopencheck(const char *s)
-{
-	struct stat	fstat;
-
-	return (stat(s, &fstat) || S_ISDIR(fstat.st_mode));
-}
-
-int			job_inopen(t_rd *rd)
-{
-	int			fd;
-
-	if (rd->s == 0 && rd->o_flag == -1)
-	{
-		if (rd->heretag < 1)
-			return (1);
-		rd->save = dup(rd->fd);
-		dup2(rd->heretag, rd->fd);
-		close(rd->heretag);
-		rd->heretag = -1;
-	}
-	else
-	{
-		if (job_inopencheck(rd->s) || (fd = open(rd->s, rd->o_flag)) == -1)
-		{
-			rd->s = 0;
-			return (1);
-		}
-		rd->save = dup(rd->fd);
-		dup2(fd, rd->fd);
-		close(fd);
-	}
-	return (0);
-}
-
-static void	job_rdiropen(t_rd *rd)
-{
-	int	fd;
-
-	fd = ft_atoi(rd->s);
-	rd->save = dup(rd->fd);
-	dup2(fd, rd->fd);
 }
 
 t_lst		*job_openfd(t_lst *redir)
@@ -105,18 +46,8 @@ t_lst		*job_openfd(t_lst *redir)
 	while (redir)
 	{
 		rd = (t_rd *)redir->data;
-		if (rd->type == RDF_OUT)
-		{
-			if ((job_outopen(rd)))
-				break ;
-		}
-		else if (rd->type == RDF_IN)
-		{
-			if ((job_inopen(rd)))
-				break ;
-		}
-		else if (rd->type == RDF_RDIR)
-			job_rdiropen(rd);
+		if (job_openfd_(rd))
+			break ;
 		pop_lst__(&redir, 0);
 		push_lst__(&rest, rd);
 	}

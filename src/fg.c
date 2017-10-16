@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/08 23:46:32 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 21:32:55 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 03:53:06 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,24 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+
+void	fg_2(t_process *p, int status, int tar)
+{
+	if (WIFSTOPPED(status))
+	{
+		if (!(p->state & JT_SUSPENDED))
+			g_js.suspended += 1;
+		p->state |= JT_SUSPENDED;
+		job_print_process_status(p, tar, g_sig_[WSTOPSIG(status)]);
+	}
+	else
+	{
+		if (p->state & JT_SUSPENDED)
+			g_js.suspended -= 1;
+		p->state = JT_DEAD;
+		job_print_process_status(p, tar, g_sig_[WTERMSIG(status)]);
+	}
+}
 
 int		ft_fg(int ac, char **av, char **envp)
 {
@@ -45,19 +63,6 @@ int		ft_fg(int ac, char **av, char **envp)
 		kill(p->pid, SIGCONT);
 	status = job_wait_control_(p->pid, WUNTRACED);
 	p->status = status;
-	if (WIFSTOPPED(status))
-	{
-		if (!(p->state & JT_SUSPENDED))
-			g_js.suspended += 1;
-		p->state |= JT_SUSPENDED;
-		job_print_process_status(p, tar, g_sig_[WSTOPSIG(status)]);
-	}
-	else
-	{
-		if (p->state & JT_SUSPENDED)
-			g_js.suspended -= 1;
-		p->state = JT_DEAD;
-		job_print_process_status(p, tar, g_sig_[WTERMSIG(status)]);
-	}
+	fg_2(p, status, tar);
 	return (0);
 }
