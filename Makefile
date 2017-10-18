@@ -6,7 +6,7 @@
 #    By: jye <jye@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/24 01:49:55 by jye               #+#    #+#              #
-#    Updated: 2017/10/16 07:02:43 by jye              ###   ########.fr        #
+#    Updated: 2017/10/18 03:10:48 by root             ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -18,7 +18,7 @@ LINKLIB  = -lcurses -Lft_printf -lftprintf -Llibft -lft
 SRC_PATH = src
 OBJ_PATH = obj
 
-SRC_FILE = base.c ft_qsort.c buff_auto.c buff_auto1.c buff_auto2.c buff_motion.c buff_motion1.c buff_motion2.c \
+SRC_FILE = base.c ft_qsort.c buff_auto.c buff_auto1.c buff_auto2.c buff_motion.c buff_motion1.c buff_motion2.c buff_motion10.c \
            buff_motion3.c buff_motion4.c buff_motion5.c buff_motion6.c buff_motion7.c buff_motion8.c buff_motion9.c cursor.c \
            ft_readline.c ft_readline1.c ft_readline2.c glob_rl.c putchar_.c \
 	       cd.c cd1.c \

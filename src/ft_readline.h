@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/10/01 06:23:46 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/18 03:12:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@
 # define WORD_ANCHAR	WORD_UCHAR WORD_LCHAR WORD_NCHAR
 # define WORD_FCHAR		WORD_ANCHAR WORD_SCHAR "/"
 
+# define KEYCODE_ARROW_UP		0x415b1b
+# define KEYCODE_ARROW_DOWN		0x425b1b
+# define KEYCODE_ARROW_RIGHT	0x435b1b
+# define KEYCODE_ARROW_LEFT		0x445b1b
 /*
 **# define KEYCODE_ARROW_UP		0x41
 **# define KEYCODE_ARROW_DOWN		0x42
@@ -114,6 +118,8 @@ void					buff_head(void);
 void					buff_end(void);
 void					buff_prev(void);
 void					buff_next(void);
+void					buff_down(void);
+void					buff_up(void);
 void					buff_prev_word(void);
 void					buff_next_word(void);
 

@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 22:08:32 by jye               #+#    #+#             */
-/*   Updated: 2017/09/13 02:24:45 by root             ###   ########.fr       */
+/*   Updated: 2017/10/17 20:27:03 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "lst.h"
 
-# define MAXTOKEN 10
+# define MAXTOKEN 11
 # define WHITESPACE " \t\n"
 # define SYMBREAK "><&|;"
 # define NORMPLS WHITESPACE SYMBREAK
@@ -25,7 +25,7 @@ typedef enum	e_symbol
 	word, number,
 	ampersand, period,
 	andsym, orsym, pip,
-	greater, ggreater, lower, llower, greater_amp
+	greater, ggreater, lower, llower, lower_amp, greater_amp
 }				t_symbol;
 
 typedef struct	s_token

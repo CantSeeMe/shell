@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:30:02 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 03:51:00 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/18 03:10:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ static void	meta_event(void)
 
 	c = 0;
 	read(STDIN_FILENO, &c, sizeof(c));
-	if (c == 'f')
+	if (c == 'f' || c == KEYCODE_ARROW_RIGHT)
 		(g_last_action = buff_next_word)();
-	else if (c == 'b')
+	else if (c == 'b' || c == KEYCODE_ARROW_LEFT)
 		(g_last_action = buff_prev_word)();
 	else if (c == 'u')
 		(g_last_action = buff_lowtoup)();
@@ -65,6 +65,10 @@ static void	meta_event(void)
 		(g_last_action = buff_reset_state)();
 	else if (c == 'c')
 		(g_last_action = buff_capitalize)();
+	else if (c == KEYCODE_ARROW_DOWN)
+		(g_last_action = buff_down)();
+	else if (c == KEYCODE_ARROW_UP)
+		(g_last_action = buff_up)();
 }
 
 static void	special_event(uint64_t c)

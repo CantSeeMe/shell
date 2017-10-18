@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/11 13:03:17 by root              #+#    #+#             */
-/*   Updated: 2017/10/16 03:48:45 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 17:19:45 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ void	init_sig_string(void)
 	g_sig_[SIGILL] = "Illegal Instruction";
 	g_sig_[SIGTRAP] = "Trapped";
 	g_sig_[SIGABRT] = "Aborted";
-	g_sig_[SIGEMT] = "EMT instruction";
 	g_sig_[SIGFPE] = "Floating point exception";
 	g_sig_[SIGKILL] = "Killed";
 	g_sig_[SIGBUS] = "Bus error";

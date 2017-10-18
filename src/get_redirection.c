@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 19:21:56 by jye               #+#    #+#             */
-/*   Updated: 2017/10/08 21:38:57 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/18 02:22:55 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static void	fill_rdtype(t_rd *rd, t_token *to)
 	else
 	{
 		rd->o_flag = ((to->sym == lower) ? O_RDONLY : -1);
-		rd->type = RDF_IN + (to->sym == greater_amp);
+		rd->type = RDF_IN + (to->sym >= lower_amp);
 	}
 }
 
@@ -38,10 +38,7 @@ static void	fill_fddata(t_rd *rd, t_token *to, int fd)
 	rd->heretag = -2;
 	rd->s = to->s;
 	if (rd->type == RDF_RDIR && to->sym == word)
-	{
-		rd->type = RDF_OUT;
-		rd->o_flag = O_TRUNC | O_CREAT | O_WRONLY;
-	}
+		rd->o_flag = 0;
 	to->s = 0;
 	if (fd == -1)
 		rd->fd = (rd->type == RDF_OUT);

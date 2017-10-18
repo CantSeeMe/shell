@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 05:43:47 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/17 19:36:01 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,28 +36,38 @@ void	job_fork_exec(t_command *c)
 	exit(execve((const char *)c->cmd.c, c->av.cav + c->var_, c->envp));
 }
 
-int		job_exec_process(t_process *p)
+void	job_builtin_exec(t_process *p)
 {
 	t_command	*c;
-	t_lst		*rest;
 
 	c = p->c;
+	if (p->pid == 0)
+		exit(((t_builtin)c->cmd.c)
+			 (c->ac - c->var_, c->av.cav + c->var_, c->envp));
+	g_js.pstat = (((t_builtin)c->cmd.c)
+				  (c->ac - c->var_, c->av.cav + c->var_, c->envp));
+	g_js.exit = c->cmd.c == ft_exitsh;
+}
+
+int		job_exec_process(t_process *p)
+{
+	t_lst		*rest;
+
 	if ((rest = job_openfd(p->c->redir)) == (t_lst *)-1)
-		return (127 << 16);
-	p->c->redir = (t_lst *)0;
-	if (c->cmd.type == C_SHELL_BUILTIN)
 	{
 		if (p->pid == 0)
-			exit(((t_builtin)c->cmd.c)
-				(c->ac - c->var_, c->av.cav + c->var_, c->envp));
-		if (c->cmd.c != ft_exitsh)
-			g_js.exit = 0;
-		g_js.pstat = (((t_builtin)c->cmd.c)
-				(c->ac - c->var_, c->av.cav + c->var_, c->envp));
+			exit(127);
+		else
+			return (127 << 8);
+	}
+	p->c->redir = (t_lst *)0;
+	if (p->c->cmd.type == C_SHELL_BUILTIN)
+	{
+		job_builtin_exec(p);
 		job_restorefd(rest);
 		return (g_js.pstat);
 	}
-	job_fork_exec(c);
+	job_fork_exec(p->c);
 	return (127 << 16);
 }
 

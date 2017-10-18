@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/16 03:39:45 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 07:39:56 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/16 17:23:15 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	job_check_jobs(void)
 	while (i < g_js.jnodecur)
 	{
 		if ((proc = g_jobs[i]) && !(proc->state & JT_DEAD))
-			if ((waitpid(proc->pid, &status, WNOHANG | WUNTRACED)))
+			if ((waitpid(proc->pid, &status, WNOHANG | WUNTRACED)) > 0)
 			{
 				if (!ll)
 				{

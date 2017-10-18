@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:52:46 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 03:46:29 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/18 02:28:42 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ int			job_openfd_(t_rd *rd)
 			return (1);
 	}
 	else if (rd->type == RDF_RDIR)
-		job_rdiropen(rd);
+	{
+		if ((job_rdiropen(rd)))
+			return (1);
+	}
 	return (0);
 }
 

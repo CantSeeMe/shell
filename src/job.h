@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/16 03:50:29 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/18 02:24:18 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int						set_execpath(t_command *c);
 void					transmute_av(t_command *c);
 char					**set_envp(void);
 
-void					job_rdiropen(t_rd *rd);
+int						job_rdiropen(t_rd *rd);
 int						job_inopen(t_rd *rd);
 int						job_outopen(t_rd *rd);
 

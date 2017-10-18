@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/16 03:42:08 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 03:44:01 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/18 02:30:07 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "job.h"
 #include "command.h"
 #include "libft.h"
+#include "ft_printf.h"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -36,7 +37,7 @@ int			job_outopen(t_rd *rd)
 		if (job_outopencheck(rd->s) ||
 			(fd = open(rd->s, rd->o_flag, 0644)) == -1)
 		{
-			rd->save = -1;
+			ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n", rd->s);
 			return (1);
 		}
 	}
@@ -55,9 +56,7 @@ int			job_outopen(t_rd *rd)
 
 static int	job_inopencheck(const char *s)
 {
-	struct stat	fstat;
-
-	return (stat(s, &fstat) || S_ISDIR(fstat.st_mode));
+	return (access(s, R_OK));
 }
 
 int			job_inopen(t_rd *rd)
@@ -77,7 +76,7 @@ int			job_inopen(t_rd *rd)
 	{
 		if (job_inopencheck(rd->s) || (fd = open(rd->s, rd->o_flag)) == -1)
 		{
-			rd->s = 0;
+			ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n", rd->s);
 			return (1);
 		}
 		rd->save = dup(rd->fd);
@@ -87,11 +86,17 @@ int			job_inopen(t_rd *rd)
 	return (0);
 }
 
-void		job_rdiropen(t_rd *rd)
+int		job_rdiropen(t_rd *rd)
 {
 	int	fd;
 
+	if (rd->o_flag == 0)
+	{
+		ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n", rd->s);
+		return (1);
+	}
 	fd = ft_atoi(rd->s);
 	rd->save = dup(rd->fd);
 	dup2(fd, rd->fd);
+	return (0);
 }
