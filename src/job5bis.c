@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/16 03:42:08 by jye               #+#    #+#             */
-/*   Updated: 2017/10/21 17:51:45 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/21 21:39:17 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,13 @@ int			job_outopen(t_rd *rd)
 {
 	int		fd;
 
-	if (ft_strcmp(rd->s, "-"))
+	if (job_outopencheck(rd->s) ||
+		(fd = open(rd->s, rd->o_flag, 0644)) == -1)
 	{
-		if (job_outopencheck(rd->s) ||
-			(fd = open(rd->s, rd->o_flag, 0644)) == -1)
-		{
-			ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n",
-				rd->s);
-			return (1);
-		}
+		ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n",
+				   rd->s);
+		return (1);
 	}
-	else
-		fd = -1;
 	rd->save = dup(rd->fd);
 	if (fd != -1)
 	{
@@ -92,13 +87,22 @@ int			job_rdiropen(t_rd *rd)
 {
 	int	fd;
 
+	if (!ft_strcmp(rd->s, "-"))
+		rd->o_flag = -2;
 	if (rd->o_flag == 0)
 	{
 		ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n", rd->s);
 		return (1);
 	}
-	fd = ft_atoi(rd->s);
 	rd->save = dup(rd->fd);
-	dup2(fd, rd->fd);
+	if (rd->o_flag == -2)
+	{
+		close(rd->fd);
+	}
+	else
+	{
+		fd = ft_atoi(rd->s);
+		dup2(fd, rd->fd);
+	}
 	return (0);
 }

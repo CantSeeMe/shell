@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:35:52 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 05:42:22 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/21 23:21:38 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,10 @@ void	job_pipe_fork_(t_process *proc, int nohang)
 	close(fd[1]);
 	proc->pid = job_make_child(nohang);
 	if (proc->pid == 0)
+	{
+		close(fd[0]);
 		job_exec_process(proc);
+	}
 	dup2(fd[0], 0);
 	close(fd[0]);
 }
@@ -68,7 +71,7 @@ int		job_pipe_fork(t_lst **c, int nohang)
 	}
 	dup2(fdsave[1], 1);
 	close(fdsave[1]);
-	proc->pid = fork();
+	proc->pid = job_make_child(nohang);
 	if (proc->pid == 0)
 		job_exec_process(proc);
 	dup2(fdsave[0], 0);
