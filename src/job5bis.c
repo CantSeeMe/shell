@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/16 03:42:08 by jye               #+#    #+#             */
-/*   Updated: 2017/10/18 02:30:07 by root             ###   ########.fr       */
+/*   Updated: 2017/10/21 17:51:45 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ int			job_outopen(t_rd *rd)
 		if (job_outopencheck(rd->s) ||
 			(fd = open(rd->s, rd->o_flag, 0644)) == -1)
 		{
-			ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n", rd->s);
+			ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n",
+				rd->s);
 			return (1);
 		}
 	}
@@ -76,7 +77,8 @@ int			job_inopen(t_rd *rd)
 	{
 		if (job_inopencheck(rd->s) || (fd = open(rd->s, rd->o_flag)) == -1)
 		{
-			ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n", rd->s);
+			ft_dprintf(2, "21sh: oops, can't run, can't do shit with %s\n",
+				rd->s);
 			return (1);
 		}
 		rd->save = dup(rd->fd);
@@ -86,7 +88,7 @@ int			job_inopen(t_rd *rd)
 	return (0);
 }
 
-int		job_rdiropen(t_rd *rd)
+int			job_rdiropen(t_rd *rd)
 {
 	int	fd;
 

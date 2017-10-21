@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 15:17:17 by root              #+#    #+#             */
-/*   Updated: 2017/09/28 18:40:00 by root             ###   ########.fr       */
+/*   Updated: 2017/10/21 18:50:08 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 void	chdir_trim_target(char *target, char *t);
 t_var	*chdir_get_wd(int wd);
+void	chdir_change_wd(char *target, t_var *owd, t_var *cwd);
 
 int		ft_cd(int ac, char **av, char **envp);
 

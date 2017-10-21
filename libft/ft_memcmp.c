@@ -6,7 +6,7 @@
 /*   By: jye <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/04 17:34:30 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 08:39:14 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/21 19:01:07 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#define PTR(ptr1, ptr2) ((void *)ptr1 ? (void *)ptr1 : (void *)ptr2)
 
 static int	ft_memcmp_last(void *l_ptr1,
 							void *l_ptr2,
@@ -67,18 +65,17 @@ int			ft_memcmp(const void *s1, const void *s2, size_t n)
 	unsigned long *l_ptr1;
 	unsigned long *l_ptr2;
 
-	if ((l_ptr1 = NULL)
-		|| (l_ptr2 = NULL) || n == 0)
+	if (n == 0)
 		return (0);
 	c_ptr1 = (unsigned char *)s1;
 	c_ptr2 = (unsigned char *)s2;
 	while (((unsigned long)c_ptr1 & (sizeof(unsigned long) - 1)) && n)
 		if (n-- && *c_ptr1++ != *c_ptr2++)
 			return (c_ptr1[-1] - c_ptr2[-1]);
+	l_ptr1 = (unsigned long *)c_ptr1;
+	l_ptr2 = (unsigned long *)c_ptr2;
 	if (n > 8)
 	{
-		l_ptr1 = (unsigned long *)s1;
-		l_ptr2 = (unsigned long *)s2;
 		while (n > 8)
 		{
 			if ((*l_ptr1++ ^ *l_ptr2++) != 0)
@@ -86,5 +83,5 @@ int			ft_memcmp(const void *s1, const void *s2, size_t n)
 			n -= 8;
 		}
 	}
-	return (ft_memcmp_last(PTR(l_ptr1, c_ptr1), PTR(l_ptr2, c_ptr2), n));
+	return (ft_memcmp_last(l_ptr1, l_ptr2, n));
 }

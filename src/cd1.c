@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 17:24:19 by jye               #+#    #+#             */
-/*   Updated: 2017/09/28 18:41:09 by root             ###   ########.fr       */
+/*   Updated: 2017/10/21 18:49:29 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,15 @@ t_var	*chdir_get_wd(int wd)
 		}
 	}
 	return (cwd);
+}
+
+void	chdir_change_wd(char *target, t_var *owd, t_var *cwd)
+{
+	char	*old;
+
+	old = owd->value;
+	owd->value = cwd->value;
+	cwd->value = ft_strdup(target);
+	free(old);
+
 }

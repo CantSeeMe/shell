@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/10/17 19:36:01 by root             ###   ########.fr       */
+/*   Updated: 2017/10/21 17:50:18 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ void	job_builtin_exec(t_process *p)
 	c = p->c;
 	if (p->pid == 0)
 		exit(((t_builtin)c->cmd.c)
-			 (c->ac - c->var_, c->av.cav + c->var_, c->envp));
+			(c->ac - c->var_, c->av.cav + c->var_, c->envp));
 	g_js.pstat = (((t_builtin)c->cmd.c)
-				  (c->ac - c->var_, c->av.cav + c->var_, c->envp));
+				(c->ac - c->var_, c->av.cav + c->var_, c->envp));
 	g_js.exit = c->cmd.c == ft_exitsh;
 }
 

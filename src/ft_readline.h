@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:54 by root              #+#    #+#             */
-/*   Updated: 2017/10/18 03:12:26 by root             ###   ########.fr       */
+/*   Updated: 2017/10/21 17:49:51 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@
 # define KEYCODE_ARROW_DOWN		0x425b1b
 # define KEYCODE_ARROW_RIGHT	0x435b1b
 # define KEYCODE_ARROW_LEFT		0x445b1b
+
 /*
 **# define KEYCODE_ARROW_UP		0x41
 **# define KEYCODE_ARROW_DOWN		0x42

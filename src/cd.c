@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 15:17:20 by root              #+#    #+#             */
-/*   Updated: 2017/09/28 18:48:37 by root             ###   ########.fr       */
+/*   Updated: 2017/10/21 18:50:18 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,10 +128,10 @@ int		ft_cd(int ac, char **av, char **envp)
 		return (127);
 	if ((owd = chdir_get_wd(CHDIR_OLDPWD)) == 0)
 		return (0);
+	ft_dprintf(2, "%s\n", target);
+	ft_dprintf(2, "%s\n", cwd->value);
 	if (cwd->value && !ft_strcmp(cwd->value, target))
 		return (0);
-	free(owd->value);
-	owd->value = cwd->value;
-	cwd->value = ft_strdup(target);
+	chdir_change_wd(target, owd, cwd);
 	return (0);
 }
