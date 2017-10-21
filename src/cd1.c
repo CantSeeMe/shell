@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 17:24:19 by jye               #+#    #+#             */
-/*   Updated: 2017/10/21 18:49:29 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/21 19:43:40 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,4 @@ void	chdir_change_wd(char *target, t_var *owd, t_var *cwd)
 	owd->value = cwd->value;
 	cwd->value = ft_strdup(target);
 	free(old);
-
 }
