@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/10/18 03:15:56 by root             ###   ########.fr       */
+/*   Updated: 2017/10/23 09:33:25 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ char		*ft_readline(char *prompt, size_t psize)
 	{
 		signal(SIGWINCH, reload_line);
 		c = 0;
-		r = read(STDIN_FILENO, &c, sizeof(c));
+		r = read(STDIN_FILENO, &c, 1);
 		keyboard_event(c, r);
 	}
 	revert_manual_ttymode();

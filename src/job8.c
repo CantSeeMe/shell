@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 22:42:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/16 07:31:25 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/23 11:47:13 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ int			job_wait_control(t_process *proc, int options)
 	int		status;
 
 	status = job_wait_control_(proc->pid, options);
-	if (WIFSIGNALED(status))
-		ft_dprintf(2, "%s\n", g_sig_[WTERMSIG(status)]);
 	proc->status = status;
 	proc->state =
 		((JT_IS_NOHANG(proc->status) * JT_BACKGROUND) |
@@ -101,6 +99,8 @@ void		job_exec(t_job *job)
 	else
 	{
 		job_fork_alone(&job->proc, job->type & JTNOHANG);
+		if (g_js.pstat > 128)
+			ft_dprintf(2, "%s\n", g_sig_[g_js.pstat - 128]);
 	}
 	free(job);
 }

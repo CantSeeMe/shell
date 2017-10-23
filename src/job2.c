@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:35:52 by jye               #+#    #+#             */
-/*   Updated: 2017/10/21 23:21:38 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/23 11:47:52 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "command.h"
 #include "job.h"
 #include "token.h"
+#include "ft_printf.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -22,16 +23,19 @@
 int		job_pipe_wait(t_lst **c, t_lst *end, int nohang)
 {
 	t_lst		*cp;
+	t_process	*p;
 	int			sym;
 
 	cp = *c;
 	while (cp != end)
 	{
-		sym = ((t_process *)cp->data)->c->endsym;
-		job_wait_control((t_process *)cp->data,
-							(nohang ? WNOHANG : 0) | WUNTRACED);
+		p = (t_process *)cp->data;
+		sym = p->c->endsym;
+		job_wait_control(p, (nohang ? WNOHANG : 0) | WUNTRACED);
 		pop_lst__(&cp, 0);
 	}
+	if (g_js.pstat > 128)
+		ft_dprintf(2, "%s\n", g_sig_[g_js.pstat - 128]);
 	*c = cp;
 	return (sym);
 }

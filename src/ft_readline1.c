@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 19:30:02 by jye               #+#    #+#             */
-/*   Updated: 2017/10/18 03:10:26 by root             ###   ########.fr       */
+/*   Updated: 2017/10/23 09:34:02 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,32 @@ static void	ctrl_event(uint64_t c)
 **c forward word upper first letter
 */
 
+static void	special_event(uint64_t c)
+{
+	static void (*special1[8])() = {
+		buff_chronicup, buff_chronicdown, buff_next, buff_prev,
+		place_holder, buff_end, place_holder, buff_head};
+	static void (*special2[4])() = {
+		place_holder, place_holder, buff_next_word, buff_prev_word};
+	static void (*special3[4])() = {
+		buff_del_next, place_holder, place_holder, place_holder};
+
+	c = c >> 8;
+	if (c >= 0x41 && c <= 0x48)
+	{
+		(g_last_action = special1[c - 0x41])();
+	}
+	else if (IS_CTRL_ARROW(c))
+	{
+		(g_last_action = special2[(c >> 24) - 0x41])();
+	}
+	else if ((c & 0x7e30) == 0x7e30 &&
+			((c & 0xf) > 2 && (c & 0xf) <= 6))
+	{
+		(g_last_action = special3[(c ^ 0x7e30) - 0x3])();
+	}
+}
+
 static void	meta_event(void)
 {
 	uint64_t	c;
@@ -69,40 +95,14 @@ static void	meta_event(void)
 		(g_last_action = buff_down)();
 	else if (c == KEYCODE_ARROW_UP)
 		(g_last_action = buff_up)();
-}
-
-static void	special_event(uint64_t c)
-{
-	static void (*special1[8])() = {
-		buff_chronicup, buff_chronicdown, buff_next, buff_prev,
-		place_holder, buff_end, place_holder, buff_head};
-	static void (*special2[4])() = {
-		place_holder, place_holder, buff_next_word, buff_prev_word};
-	static void (*special3[4])() = {
-		buff_del_next, place_holder, place_holder, place_holder};
-
-	c = c >> 16;
-	if (c >= 0x41 && c <= 0x48)
-	{
-		(g_last_action = special1[c - 0x41])();
-	}
-	else if (IS_CTRL_ARROW(c))
-	{
-		(g_last_action = special2[(c >> 24) - 0x41])();
-	}
-	else if ((c & 0x7e30) == 0x7e30 &&
-			((c & 0xf) > 2 && (c & 0xf) <= 6))
-	{
-		(g_last_action = special3[(c ^ 0x7e30) - 0x3])();
-	}
+	else if ((c & 0x5b) == 0x5b)
+		special_event(c);
 }
 
 void		keyboard_event(uint64_t c, int r)
 {
 	if (IS_BACKSPACE_KEYCODE(c))
 		buff_del_prev();
-	else if (IS_SPECIAL_KEYCODE(c))
-		special_event(c);
 	else if (IS_META_MODIFIER(c))
 		meta_event();
 	else if (IS_CTRL_MODIFIER(c))

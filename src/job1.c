@@ -6,13 +6,14 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:33:52 by jye               #+#    #+#             */
-/*   Updated: 2017/10/15 05:57:29 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/23 11:47:37 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "job.h"
 #include "lst.h"
 #include "token.h"
+#include "ft_printf.h"
 
 #include <stdlib.h>
 
@@ -49,6 +50,8 @@ static void	job_cond_fork_(t_lst **c, int nohang)
 			sym = job_pipe_fork(&cp, 0);
 		else
 			job_fork_alone(&cp, 0);
+		if (g_js.pstat > 128)
+			ft_dprintf(2, "%s\n", g_sig_[g_js.pstat - 128]);
 		if (sym == andsym && (g_js.pstat))
 			job_cond_skip(&cp, orsym);
 		else if (sym == orsym && !(g_js.pstat))
