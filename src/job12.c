@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/16 03:39:45 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 17:23:15 by root             ###   ########.fr       */
+/*   Updated: 2017/10/23 13:10:46 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,20 +65,22 @@ void	job_reset_ind(void)
 		return ;
 	if (g_jobs[g_js.cur] == (t_process *)0)
 		g_js.cur = g_js.prev;
-	while (g_js.prev >= 0)
-	{
-		if (g_jobs[g_js.prev])
-			break ;
-		g_js.prev--;
-	}
 	while (g_js.jnodecur)
 	{
 		if (g_jobs[g_js.jnodecur - 1])
 			break ;
 		g_js.jnodecur--;
 	}
-	if (g_js.prev == -1 && g_js.jnodecur - 1 != g_js.cur)
-		g_js.prev = g_js.jnodecur - 1;
+	if (!g_jobs[g_js.prev])
+	{
+		g_js.prev = g_js.jnodecur;
+		while (g_js.prev >= 0)
+		{
+			if (g_jobs[g_js.prev] && g_js.prev != g_js.cur)
+				break ;
+			g_js.prev--;
+		}
+	}
 }
 
 void	job_check_jobs(void)
