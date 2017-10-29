@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/14 20:41:30 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 02:43:50 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/29 15:45:06 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 # include "error.h"
 # define RDF_OUT	0x0
 # define RDF_IN		0x1
-# define RDF_RDIR	0x2
+# define RDF_RDOUT	0x2
+# define RDF_RDIN	0x3
 
 # define ERROR_UNEXPECTED	0
 # define ERROR_EXPECTED 	1

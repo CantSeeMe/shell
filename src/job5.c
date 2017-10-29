@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:52:46 by jye               #+#    #+#             */
-/*   Updated: 2017/10/18 02:28:42 by root             ###   ########.fr       */
+/*   Updated: 2017/10/29 15:45:58 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int			job_openfd_(t_rd *rd)
 		if ((job_inopen(rd)))
 			return (1);
 	}
-	else if (rd->type == RDF_RDIR)
+	else if (rd->type >= RDF_RDOUT)
 	{
 		if ((job_rdiropen(rd)))
 			return (1);

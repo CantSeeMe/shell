@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 19:21:56 by jye               #+#    #+#             */
-/*   Updated: 2017/10/18 02:22:55 by root             ###   ########.fr       */
+/*   Updated: 2017/10/29 15:49:01 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ static void	fill_fddata(t_rd *rd, t_token *to, int fd)
 	rd->save = -1;
 	rd->heretag = -2;
 	rd->s = to->s;
-	if (rd->type == RDF_RDIR && to->sym == word)
+	if (rd->type >= RDF_RDOUT && to->sym == word)
 		rd->o_flag = 0;
 	to->s = 0;
 	if (fd == -1)
-		rd->fd = (rd->type == RDF_OUT);
+		rd->fd = (rd->type == RDF_OUT) | (rd->type == RDF_RDOUT);
 	else
 		rd->fd = fd;
 }
