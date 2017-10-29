@@ -6,12 +6,13 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 17:31:24 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 11:40:48 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/29 17:19:57 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "echo.h"
 #include "libft.h"
+#include "ft_printf.h"
 
 static int	ft_echo_atoc_base(char *s, int ibase, char *cbase)
 {
@@ -35,10 +36,11 @@ static void	ft_echo_escape_hex(char **s, char **ptr)
 	char	c;
 
 	cp = *s;
+	r = 0;
 	i = 0;
 	while (cp[i] && i < 2 && (r = ft_strchr(ECHO_HEX, cp[i])))
 		i++;
-	if (r == 0 && i == 0)
+	if (!r && !i)
 	{
 		*(*ptr)++ = '\\';
 		*(*ptr)++ = 'x';
@@ -62,9 +64,10 @@ static void	ft_echo_escape_oct(char **s, char **ptr)
 
 	cp = *s;
 	i = 0;
+	r = 0;
 	while (cp[i] && i < 3 && (r = ft_strchr(ECHO_OCT, cp[i])))
 		i++;
-	if (r == 0 && i == 0)
+	if (!r && !i)
 	{
 		*(*ptr)++ = '\\';
 		*(*ptr)++ = '0';

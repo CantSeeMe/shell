@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 15:40:22 by root              #+#    #+#             */
-/*   Updated: 2017/09/20 17:33:05 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/29 17:04:11 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define ECHO_H
 # define ECHO_ESCAPE "\\abtnvfr0x"
 # define ECHO_OCT "01234567"
-# define ECHO_HEX "0123456789ABCDEF"
+# define ECHO_HEX "0123456789abcdef"
 
 enum	e_echo_flag
 {

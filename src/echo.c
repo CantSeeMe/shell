@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 15:40:24 by root              #+#    #+#             */
-/*   Updated: 2017/09/24 11:36:39 by jye              ###   ########.fr       */
+/*   Updated: 2017/10/29 17:02:12 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,10 @@ int		ft_echo(int ac, char **av, char **envp)
 	flag = ft_echo_get_flag(ac, av);
 	ind = g_optind_;
 	if (flag & escape)
+	{
 		while (ind < ac)
 			ft_echo_process_escape(av[ind++]);
+	}
 	ft_echo_(ac, av, flag & null ? 0 : '\n');
 	return (0);
 }
