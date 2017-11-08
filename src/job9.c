@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/03 13:09:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/16 07:27:19 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/08 20:35:58 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ pid_t	job_make_child(int nohang)
 	return (pid);
 }
 
-void	job_init_job_control(void)
+int		job_init_job_control(void)
 {
 	pid_t	pid;
 
@@ -61,5 +61,5 @@ void	job_init_job_control(void)
 	g_orgid = pid;
 	pid = getpid();
 	g_shgid = pid;
-	setpgid(0, pid);
+	return (setpgid(0, pid));
 }

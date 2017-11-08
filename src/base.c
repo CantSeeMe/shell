@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 04:00:33 by jye               #+#    #+#             */
-/*   Updated: 2017/10/16 07:37:31 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/08 20:38:19 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,11 @@ int		main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	(void)envp;
-	init_htvar(envp);
-	chash_init();
-	init_tokenizer();
-	job_init_job_control();
+	if (init_htvar(envp) ||
+		chash_init() ||
+		init_tokenizer() ||
+		job_init_job_control())
+		return (127);
 	init_sig_string();
 	if (!ft_isatty(STDIN_FILENO))
 		prompt_shell();

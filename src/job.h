@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/10/18 02:24:18 by root             ###   ########.fr       */
+/*   Updated: 2017/11/08 20:36:10 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void					free_full_parsed_command(t_command *c);
 int						job_wait_control_(pid_t pid, int options);
 void					job_signal_behavior(void (*behavior)(int));
 pid_t					job_make_child(int nohang);
-void					job_init_job_control(void);
+int						job_init_job_control(void);
 void					job_check_jobs(void);
 void					job_insert(t_process *proc);
 void					job_print_process_status(t_process *proc,

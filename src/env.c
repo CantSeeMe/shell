@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 22:23:03 by root              #+#    #+#             */
-/*   Updated: 2017/10/21 23:21:39 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/08 20:32:07 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,28 +94,25 @@ void	ft_env_show(char sep)
 void	ft_env_(int ac, char **av)
 {
 	int		ind;
-	t_ccsh	*cmd;
 	char	c;
 	char	*path;
 	char	*exec_path;
 
 	c = '\n';
-	path = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin";
 	g_optind_ = 0;
 	g_opterr_ = 1;
 	if (ft_env_flag(ac, av, &c))
 		exit(2);
+	path = vhash_search("PATH");
 	ind = ft_env_newenv(g_optind_, av);
 	if (av[ind] == 0)
 		ft_env_show(c);
-	cmd = chash_lookup(av[ind], path);
-	if (!cmd || cmd->type != C_SHELL_BUILTIN)
+	exec_path = path_lookup(av[ind], path);
+	if (!exec_path)
 	{
 		test_execpath(av[ind]);
 		exec_path = av[ind];
 	}
-	else
-		exec_path = cmd->c;
 	exit(execve(exec_path, av + ind, set_envp()));
 }
 
