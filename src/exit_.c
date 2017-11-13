@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/14 16:37:33 by root              #+#    #+#             */
-/*   Updated: 2017/10/16 06:41:00 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/13 20:49:51 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int		ft_exitsh(int ac, char **av, char **envp)
 			return (1);
 		}
 	}
-	exit(g_js.pstat);
+	exit((JT_SIGNALED(g_js.pstat) * (JT_SIG(g_js.pstat) + 128)) |
+		JT_EXIT(g_js.pstat));
 	return (0);
 }

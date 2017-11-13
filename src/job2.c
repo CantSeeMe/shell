@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:35:52 by jye               #+#    #+#             */
-/*   Updated: 2017/10/23 11:47:52 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/11 01:02:33 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ int		job_pipe_wait(t_lst **c, t_lst *end, int nohang)
 		job_wait_control(p, (nohang ? WNOHANG : 0) | WUNTRACED);
 		pop_lst__(&cp, 0);
 	}
-	if (g_js.pstat > 128)
-		ft_dprintf(2, "%s\n", g_sig_[g_js.pstat - 128]);
+	if (JT_SIGNALED(g_js.pstat))
+		ft_dprintf(2, "%s\n", g_sig_[JT_SIG(g_js.pstat)]);
 	*c = cp;
 	return (sym);
 }

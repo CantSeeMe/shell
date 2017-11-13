@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:33:52 by jye               #+#    #+#             */
-/*   Updated: 2017/11/08 19:21:15 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/11 00:42:03 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,16 @@ static void	job_cond_skip(t_lst **c, int sym)
 	while (cp)
 	{
 		proc = (t_process *)cp->data;
-		if (proc->c->endsym != sym)
+		if (proc->c->endsym == sym)
 			break ;
 		free_full_parsed_command(proc->c);
 		pop_lst__(&cp, free);
 	}
-	free_full_parsed_command(proc->c);
-	pop_lst__(&cp, free);
+	if (cp)
+	{
+		free_full_parsed_command(proc->c);
+		pop_lst__(&cp, free);
+	}
 	*c = cp;
 }
 
@@ -50,16 +53,18 @@ static void	job_cond_fork_(t_lst **c, int nohang)
 			sym = job_pipe_fork(&cp, 0);
 		else
 			job_fork_alone(&cp, 0);
-		if (g_js.pstat > 128)
-			ft_dprintf(2, "%s\n", g_sig_[g_js.pstat - 128]);
-		if (sym == andsym && (g_js.pstat))
+		if (JT_SIGNALED(g_js.pstat))
+			ft_dprintf(2, "%s\n", g_sig_[JT_SIG(g_js.pstat)]);
+		if (sym == andsym && (JT_SIGNALED(g_js.pstat) || JT_EXIT(g_js.pstat)))
 			job_cond_skip(&cp, orsym);
-		else if (sym == orsym && !(g_js.pstat))
+		else if (sym == orsym &&
+				!(JT_SIGNALED(g_js.pstat) || JT_EXIT(g_js.pstat)))
 			job_cond_skip(&cp, andsym);
 	}
 	*c = 0;
 	if (nohang)
-		exit(g_js.pstat);
+		exit(JT_SIGNALED(g_js.pstat) ?
+			JT_SIG(g_js.pstat) : JT_EXIT(g_js.pstat));
 }
 
 void		job_cond_fork(t_lst **c, int nohang)

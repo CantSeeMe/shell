@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/10/29 17:19:01 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/11 03:51:28 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ char		*ft_readline(char *prompt, size_t psize)
 	update_prompt(prompt, psize);
 	while (g_buffer.msize)
 	{
+		ft_dprintf(3, "%-10lu %lu\n", g_buffer.len, g_buffer.msize);
 		signal(SIGWINCH, reload_line);
 		c = 0;
 		r = read(STDIN_FILENO, &c, 1);

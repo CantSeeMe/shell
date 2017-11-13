@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/22 10:44:01 by root              #+#    #+#             */
-/*   Updated: 2017/11/08 20:36:10 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/11 00:37:14 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 # include <unistd.h>
 # include <signal.h>
+# include <sys/wait.h>
 
 # define JTHANG   	000
 # define JTNOHANG 	001
@@ -35,6 +36,12 @@
 
 # define JT_DEFAULT_SIZE 1024
 # define JT_IS_NOHANG(x) ((x) == (127 << 16))
+
+# define JT_SIGNALED(x) (!WIFEXITED(x))
+# define JT_STOPSIG(x)	(WIFSTOPPED((x)) * WSTOPSIG((x)))
+# define JT_SIGTERM(x)	(WIFSIGNALED((x)) * WTERMSIG((x)))
+# define JT_SIG(x)		(JT_STOPSIG((x)) | JT_SIGTERM(x))
+# define JT_EXIT(x)		(WEXITSTATUS(x))
 
 # if defined(_NSIG)
 #  define NOSIG _NSIG

@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 22:42:01 by root              #+#    #+#             */
-/*   Updated: 2017/11/08 20:09:34 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/11 01:02:55 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,34 +20,36 @@
 #include <signal.h>
 #include <sys/wait.h>
 
-char		*job_getstatus(void)
-{
-	int			l;
-	char		*itoa_ptr;
-	static char	status[4];
-
-	if (!g_js.pstat)
-	{
-		status[0] = 0x30;
-		status[1] = 0;
-		return (status);
-	}
-	l = g_js.pstat;
-	itoa_ptr = status;
-	while (l)
-	{
-		l /= 10;
-		itoa_ptr++;
-	}
-	*itoa_ptr-- = 0;
-	l = g_js.pstat;
-	while (l)
-	{
-		*itoa_ptr-- = 0x30 + (l % 10);
-		l /= 10;
-	}
-	return (status);
-}
+/*
+**char		*job_getstatus(void)
+**{
+**	int			l;
+**	char		*itoa_ptr;
+**	static char	status[4];
+**
+**	if (!g_js.pstat)
+**	{
+**		status[0] = 0x30;
+**		status[1] = 0;
+**		return (status);
+**	}
+**	l = g_js.pstat;
+**	itoa_ptr = status;
+**	while (l)
+**	{
+**		l /= 10;
+**		itoa_ptr++;
+**	}
+**	*itoa_ptr-- = 0;
+**	l = g_js.pstat;
+**	while (l)
+**	{
+**		*itoa_ptr-- = 0x30 + (l % 10);
+**		l /= 10;
+**	}
+**	return (status);
+**}
+*/
 
 int			job_wait_control_(pid_t pid, int options)
 {
@@ -79,11 +81,12 @@ int			job_wait_control(t_process *proc, int options)
 	if ((options & WNOHANG))
 		return (-1);
 	g_js.exit = 0;
+	g_js.pstat = status;
 	if (WIFSIGNALED(status))
-		return (g_js.pstat = WTERMSIG(status) + 128);
+		return (1);
 	else if (WIFSTOPPED(status))
-		return (g_js.pstat = WSTOPSIG(status) + 128);
-	return (g_js.pstat = WEXITSTATUS(status));
+		return (1);
+	return (0);
 }
 
 void		job_exec(t_job *job)
@@ -99,8 +102,8 @@ void		job_exec(t_job *job)
 	else
 	{
 		job_fork_alone(&job->proc, job->type & JTNOHANG);
-		if (g_js.pstat > 128)
-			ft_dprintf(2, "%s\n", g_sig_[g_js.pstat - 128]);
+		if (JT_SIGNALED(g_js.pstat))
+			ft_dprintf(2, "%s\n", g_sig_[JT_SIG(g_js.pstat)]);
 	}
 	free(job);
 }

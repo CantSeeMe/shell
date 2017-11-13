@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/03 13:09:01 by root              #+#    #+#             */
-/*   Updated: 2017/11/08 20:35:58 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/11 02:31:48 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	job_signal_behavior(void (*behavior)(int))
 {
 	struct sigaction	act;
 
-	sigfillset(&act.sa_mask);
+	sigemptyset(&act.sa_mask);
 	act.sa_handler = behavior;
 	act.sa_flags = 0;
 	sigaction(SIGINT, &act, 0);

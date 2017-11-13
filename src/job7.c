@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/11/08 20:08:05 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/11 01:04:08 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,7 @@ void	job_builtin_exec(t_process *p)
 		exit(((t_builtin)c->cmd.c)
 			(c->ac - c->var_, c->av.cav + c->var_, c->envp));
 	g_js.pstat = (((t_builtin)c->cmd.c)
-				(c->ac - c->var_, c->av.cav + c->var_, c->envp));
-	g_js.pstat = WEXITSTATUS(g_js.pstat);
+				(c->ac - c->var_, c->av.cav + c->var_, c->envp)) << 8;
 	g_js.exit = c->cmd.c == ft_exitsh;
 }
 
@@ -59,7 +58,7 @@ int		job_exec_process(t_process *p)
 		if (p->pid == 0)
 			exit(127);
 		else
-			return (127 << 16);
+			return (127 << 8);
 	}
 	p->c->redir = (t_lst *)0;
 	if (p->c->cmd.type == C_SHELL_BUILTIN)
@@ -69,7 +68,7 @@ int		job_exec_process(t_process *p)
 		return (g_js.pstat);
 	}
 	job_fork_exec(p->c);
-	return (127 << 16);
+	return (127 << 8);
 }
 
 void	job_fork_alone(t_lst **c, int nohang)
