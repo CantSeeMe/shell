@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 21:02:28 by jye               #+#    #+#             */
-/*   Updated: 2017/11/11 01:04:08 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/14 08:21:09 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	job_fork_alone(t_lst **c, int nohang)
 	}
 	else
 	{
-		proc->pid = job_make_child(nohang);
+		proc->pid = job_make_child(nohang, 0);
 		if (proc->pid == 0)
 			job_exec_process(proc);
 		job_wait_control(proc, (nohang ? WNOHANG : 0) | WUNTRACED);

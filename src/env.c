@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 22:23:03 by root              #+#    #+#             */
-/*   Updated: 2017/11/10 21:44:29 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/14 08:21:33 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ int		ft_env(int ac, char **av, char **envp)
 	pid_t	pid;
 	int		status;
 
-	pid = job_make_child(0);
+	pid = job_make_child(0, 0);
 	(void)envp;
 	if (pid == 0)
 		ft_env_(ac, av);
