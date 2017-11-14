@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 20:35:52 by jye               #+#    #+#             */
-/*   Updated: 2017/11/11 01:02:33 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/14 04:16:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,14 @@ int		job_pipe_wait(t_lst **c, t_lst *end, int nohang)
 	return (sym);
 }
 
-void	job_pipe_fork_(t_process *proc, int nohang)
+pid_t	job_pipe_fork_(t_process *proc, int nohang, pid_t pgid)
 {
 	int			fd[2];
 
 	pipe(fd);
 	dup2(fd[1], 1);
 	close(fd[1]);
-	proc->pid = job_make_child(nohang);
+	proc->pid = job_make_child(nohang, pgid);
 	if (proc->pid == 0)
 	{
 		close(fd[0]);
@@ -62,14 +62,16 @@ int		job_pipe_fork(t_lst **c, int nohang)
 	int			fdsave[2];
 	t_lst		*cp;
 	t_process	*proc;
+	pid_t		pid;
 
 	cp = *c;
 	fdsave[0] = dup(0);
 	fdsave[1] = dup(1);
 	proc = (t_process *)cp->data;
+	pid = 0;
 	while (proc->c->endsym == pip)
 	{
-		job_pipe_fork_(proc, nohang);
+		pid = job_pipe_fork_(proc, nohang, pid);
 		cp = cp->next;
 		proc = (t_process *)cp->data;
 	}

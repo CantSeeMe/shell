@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/03 13:09:01 by root              #+#    #+#             */
-/*   Updated: 2017/11/11 02:31:48 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/14 04:15:44 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	job_signal_behavior(void (*behavior)(int))
 	sigaction(SIGTERM, &act, 0);
 }
 
-pid_t	job_make_child(int nohang)
+pid_t	job_make_child(int nohang, pid_t pgid)
 {
 	pid_t	pid;
 
@@ -46,7 +46,7 @@ pid_t	job_make_child(int nohang)
 	}
 	else
 	{
-		setpgid(pid, pid);
+		setpgid(pid, pgid ? pgid : pid);
 		if (!nohang)
 			tcsetpgrp(2, pid);
 	}

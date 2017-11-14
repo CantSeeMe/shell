@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/10 15:04:56 by root              #+#    #+#             */
-/*   Updated: 2017/11/11 03:51:28 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/14 03:17:29 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ static int	set_manual_ttymode(void)
 	ft_memcpy(&g_otermios, &termios, sizeof(termios));
 	termios.c_iflag &= ~INLCR;
 	termios.c_iflag |= ICRNL;
-	termios.c_oflag |= ONLCR | OPOST;
-	termios.c_oflag &= ~(OCRNL);
+	termios.c_oflag |= ONLCR;
+	termios.c_oflag &= ~(OCRNL | OPOST);
 	termios.c_lflag &= ~(ECHO | ECHONL | ECHOK | ICANON | ISIG);
 	return (tcsetattr(STDIN_FILENO, TCSANOW, &termios));
 }
@@ -91,7 +91,6 @@ char		*ft_readline(char *prompt, size_t psize)
 	update_prompt(prompt, psize);
 	while (g_buffer.msize)
 	{
-		ft_dprintf(3, "%-10lu %lu\n", g_buffer.len, g_buffer.msize);
 		signal(SIGWINCH, reload_line);
 		c = 0;
 		r = read(STDIN_FILENO, &c, 1);
