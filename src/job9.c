@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/03 13:09:01 by root              #+#    #+#             */
-/*   Updated: 2017/11/14 04:15:44 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/15 00:45:00 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,11 @@ pid_t	job_make_child(int nohang, pid_t pgid)
 	}
 	else
 	{
-		setpgid(pid, pgid ? pgid : pid);
+		pgid += !pgid * pid;
+		ft_dprintf(2, "%lu %lu\n", pgid, pid);
+		setpgid(pid, pgid);
 		if (!nohang)
-			tcsetpgrp(2, pid);
+			tcsetpgrp(2, pgid);
 	}
 	return (pid);
 }
