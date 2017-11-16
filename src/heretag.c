@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 12:36:28 by root              #+#    #+#             */
-/*   Updated: 2017/09/28 15:44:32 by root             ###   ########.fr       */
+/*   Updated: 2017/11/15 03:27:54 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,16 @@
 int		is_heretag(char *s, char *heretag)
 {
 	size_t	sl;
+	int		i;
 
 	while (*s && *s == ' ')
 		s++;
 	sl = ft_strlen(heretag);
-	if (!ft_strncmp(s, heretag, sl))
+	if ((i = !ft_strncmp(s, heretag, sl)))
 		s += sl;
 	while (*s && *s == ' ')
 		s++;
-	return (*s == 0);
+	return (i && *s == 0);
 }
 
 void	here_tag(t_rd *rd)

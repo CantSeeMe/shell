@@ -6,7 +6,7 @@
 /*   By: root <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/13 22:23:03 by root              #+#    #+#             */
-/*   Updated: 2017/11/14 08:21:33 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/15 03:29:22 by jye              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,5 +126,10 @@ int		ft_env(int ac, char **av, char **envp)
 	if (pid == 0)
 		ft_env_(ac, av);
 	waitpid(pid, &status, WUNTRACED);
+	if (WIFSTOPPED(status))
+	{
+		kill(pid, SIGKILL);
+		waitpid(pid, NULL, 0);
+	}
 	return (status);
 }

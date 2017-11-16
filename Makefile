@@ -6,7 +6,7 @@
 #    By: jye <jye@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/09/24 01:49:55 by jye               #+#    #+#              #
-#    Updated: 2017/10/18 03:10:48 by root             ###   ########.fr        #
+#    Updated: 2017/11/16 12:16:28 by jye              ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -56,6 +56,8 @@ ft_printf/libftprintf.a:
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@mkdir -p $(OBJ_PATH)
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+.PHONY: clean fclean re all
 
 clean:
 	\rm -rf $(OBJ_PATH)
