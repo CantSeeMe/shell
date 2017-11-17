@@ -6,7 +6,7 @@
 /*   By: jye <jye@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 18:13:45 by jye               #+#    #+#             */
-/*   Updated: 2017/09/24 02:03:40 by jye              ###   ########.fr       */
+/*   Updated: 2017/11/17 15:13:10 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	ft_qsort(void **ptr_b, ssize_t size, int (*cmp)())
 	{
 		while (lo < size - 1 && cmp(ptr_b[lo], ptr_b[size - 1]) < 0)
 			lo++;
-		while (lo < hi && cmp(ptr_b[hi], ptr_b[size - 1]) > 0)
+		while (lo < hi && cmp(ptr_b[hi], ptr_b[size - 1]) >= 0)
 			hi--;
 		if (lo >= hi)
 			break ;
