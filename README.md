@@ -1,7 +1,11 @@
-# shell
+MINISHELL / 21SH / 42SH
 
-Supposed to be a shell, but in the end, its gonna be tossed out like everything else
+The goal of this "Shell" project was to understand how the shell parse its command line into structure to execute them. It works mostly like a normal shell with limited features.
 
-features
+MAKEFILE
 
-line editing / pipe / job control / here tag / I/O redirection / Conditionnal execution
+The makefile has been provided with "all" "clean" "fclean" "re" rule.
+
+USAGE
+
+./21sh
